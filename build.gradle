@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'application' // TODO delete this
+    id 'idea'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+group 'org.briarjar'
+version '0.1'
+mainClassName = 'org.briarjar.Main' // TODO delete this
+
+repositories {
+    mavenCentral()
+    jcenter()  // it works!!
+}
+
+dependencies {
+
+    implementation project(path: ':briar:briar-core', configuration: 'default')
+    implementation project(path: ':briar:bramble-java', configuration: 'default')
+
+    /* // Tests not needed right now
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    */
+}
+
+javafx {
+    version = "17"
+    modules = [ 'javafx.controls' ]
+}
+
+/*
+// Tests not needed right now
+test {
+    useJUnitPlatform()
+}
+ */

@@ -1,0 +1,13 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'briarjar'
+
+include("briar:bramble-api")
+include("briar:bramble-core")
+include("briar:bramble-java")
+include("briar:briar-api")
+include("briar:briar-core")
