@@ -1,28 +1,20 @@
 plugins {
     id 'java'
-    id 'application' // TODO delete this
+    id 'application'
     id 'idea'
     id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
 group 'org.briarjar'
 version '0.1'
-mainClassName = 'org.briarjar.Main' // TODO delete this
+mainClassName = 'org.briarjar.briarjar.Main'
 
-repositories {
-    mavenCentral()
-    jcenter()  // it works!!
-}
-
-dependencies {
-
-    implementation project(path: ':briar:briar-core', configuration: 'default')
-    implementation project(path: ':briar:bramble-java', configuration: 'default')
-
-    /* // Tests not needed right now
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    */
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        jcenter()
+    }
 }
 
 javafx {
@@ -30,9 +22,66 @@ javafx {
     modules = [ 'javafx.controls' ]
 }
 
+dependencies {
+
+    implementation "com.google.dagger:dagger:2.24"
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+
+
+    implementation project(path: ':briar:briar-core', configuration: 'default')
+    implementation project(path: ':briar:bramble-java', configuration: 'default')
+
+
+    // TODO create testImplementations (JUnit,...)
+    /*
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    */
+}
+
+
+// TODO create tests
 /*
-// Tests not needed right now
 test {
     useJUnitPlatform()
+}
+ */
+
+
+// TODO create a JAR
+/*
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.briarjar.briarjar.gui.Main'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+*/
+
+// TODO check this
+/*
+buildscript {
+
+    // keep version here sync when updating briar
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.5.0'
+        classpath files('briar/libs/gradle-witness.jar')
+    }
+
+    repositories {
+        jcenter()
+        mavenLocal()
+        google()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+
+    ext {
+        dagger_version = '2.33'
+        junit_version = '4.13.2'
+        jmock_version = '2.12.0'
+    }
 }
  */

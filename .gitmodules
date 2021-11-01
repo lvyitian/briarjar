@@ -1,3 +1,4 @@
 [submodule "briar"]
 	path = briar
-	url = https://code.briarproject.org/briar/briar
+	url = https://code.briarproject.org/briar/briar/
+	branch = briar-as-subproject

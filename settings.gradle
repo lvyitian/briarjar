@@ -1,13 +1,23 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        // maven { url "https://maven.pkg.jetbrains.space/public/p/compose/dev" } // do we need this repo?
     }
 }
 
 rootProject.name = 'briarjar'
 
-include("briar:bramble-api")
-include("briar:bramble-core")
-include("briar:bramble-java")
-include("briar:briar-api")
-include("briar:briar-core")
+include ":briar:bramble-api"
+include ":briar:bramble-core"
+include ":briar:bramble-java"
+include ":briar:briar-api"
+include ":briar:briar-core"
+
+// TODO try this later again
+/*
+project(":bramble-api").projectDir = file("briar/bramble-api")
+project(":bramble-core").projectDir = file("briar/bramble-core")
+project(":bramble-java").projectDir = file("briar/bramble-java")
+project(":briar-api").projectDir = file("briar/briar-api")
+project(":briar-core").projectDir = file("briar/briar-core")
+*/
