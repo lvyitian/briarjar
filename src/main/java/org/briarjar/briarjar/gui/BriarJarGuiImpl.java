@@ -1,6 +1,8 @@
 package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.BriarJarUi;
+import org.briarjar.briarjar.Main;
+import org.briarjar.briarjar.model.LoginViewModel;
 import org.briarproject.bramble.api.account.AccountManager;
 import org.briarproject.bramble.api.contact.ContactManager;
 import org.briarproject.bramble.api.identity.IdentityManager;
@@ -29,9 +31,9 @@ import javax.inject.Singleton;
 @Immutable
 @Singleton
 public class BriarJarGuiImpl implements BriarJarUi
-{/*
-	private RegistrationViewModel registrationViewModel;
+{
 	private LoginViewModel loginViewModel;
+	/*private LoginViewModel loginViewModel;
 	private ContactsViewModel contactsViewModel;*/
 	private AccountManager accountManager;
 	private ContactManager contactManager;
@@ -41,16 +43,20 @@ public class BriarJarGuiImpl implements BriarJarUi
 	private LifecycleManager lifecycleManager;
 
 	@Inject
-	public BriarJarGuiImpl(/*RegistrationViewModel registrationViewModel,
-						  LoginViewModel loginViewModel,
-						  ContactsViewModel contactsViewModel,*/
-						  AccountManager accountManager,
-						  ContactManager contactManager,
-						  ConversationManager conversationManager,
-						  IdentityManager identityManager,
-						  MessagingManager messagingManager,
-						  LifecycleManager lifecycleManager) {
-		/*this.registrationViewModel = registrationViewModel;
+	public BriarJarGuiImpl(
+			/*
+			LoginViewModel loginViewModel,
+			ContactsViewModel contactsViewModel,*/
+			LoginViewModel loginViewModel,
+			AccountManager accountManager,
+			ContactManager contactManager,
+			ConversationManager conversationManager,
+			IdentityManager identityManager,
+			MessagingManager messagingManager,
+			LifecycleManager lifecycleManager) {
+
+		this.loginViewModel = loginViewModel;
+		/*
 		this.loginViewModel = loginViewModel;
 		this.contactsViewModel = contactsViewModel;*/
 		this.accountManager = accountManager;
@@ -64,11 +70,7 @@ public class BriarJarGuiImpl implements BriarJarUi
 	@Override
 	public void start()
 	{
-		System.out.println("I'm starting BriarService.");
-
-		if(!accountManager.accountExists())
-			createAccount();
-		// TODO login procedure
+		MainGUI.startGUI();
 
 		SecretKey dbKey = accountManager.getDatabaseKey();
 
@@ -104,19 +106,5 @@ public class BriarJarGuiImpl implements BriarJarUi
 			e.printStackTrace();
 		}
 		System.out.println("Shutdown wait done!");
-	}
-
-	private void createAccount()
-	{
-		String nickname, password;
-		System.out.println("Creating account... w/ testname and testpass122345");
-
-		// TODO passwordEstimator logic
-
-		nickname = "testname";
-		password = "testpass122345";
-
-		accountManager.createAccount(nickname, password);
-		System.out.println("Account created!");
 	}
 }
