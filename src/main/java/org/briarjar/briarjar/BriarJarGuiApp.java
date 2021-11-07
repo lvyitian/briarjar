@@ -19,8 +19,11 @@ import java.security.SecureRandom;
 		BriarJarGuiModule.class
 })
 
-public interface BriarJarGuiApp extends BrambleCoreEagerSingletons,
+public interface BriarJarGuiApp
+		/* Maybe not needed in this form currently, since it's for testing?
+		extends BrambleCoreEagerSingletons,
 		BriarCoreEagerSingletons
+		*/
 {
 	// TODO add a method to make UI call necessary like
 	BriarJarUi getBriarJarUi();
