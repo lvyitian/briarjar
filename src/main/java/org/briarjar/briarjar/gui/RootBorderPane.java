@@ -112,10 +112,13 @@ public class RootBorderPane extends BorderPane
 		miToggleOnline.setDisable(disable);
 		mContact.setDisable(disable);
 		mChat.setDisable(disable);
+		miDeleteAccount.setDisable(disable);
+		/*
 		if(loginViewModel.isRegistered())
 			miDeleteAccount.setDisable(false);
 		else
 			miDeleteAccount.setDisable(true);
+		 */
 	}
 	
 	// ============================ logic ============================
@@ -131,6 +134,12 @@ public class RootBorderPane extends BorderPane
 		setCenter(messagesBorderPane);
 	}
 
+	public void switchToLogin()
+	{
+		disableComponents(true);
+		setCenter(loginGridPane);
+	}
+
 	// ============================ menu: mBriar ============================
 
 
@@ -138,8 +147,7 @@ public class RootBorderPane extends BorderPane
 	{
 		// TODO check this - might be dangerous!
 		try {
-			if (loginViewModel.getLifeCycleState() ==
-					LifecycleManager.LifecycleState.RUNNING) {
+			if (loginViewModel.hasDbKey()) {
 				loginViewModel.stop();
 				miToggleOnline.setText("Go Online");
 			}
@@ -160,21 +168,26 @@ public class RootBorderPane extends BorderPane
 		
 		if(deletionAlert.getResult() == ButtonType.YES)
 		{
-			loginViewModel.deleteAccount();
-			miDeleteAccount.setDisable(true);
-			loginGridPane = new LoginGridPane(loginViewModel, this); // find better way?
+			if(loginViewModel.hasDbKey()) {
+				loginViewModel.deleteAccount();
+				loginGridPane = new LoginGridPane(loginViewModel,
+						this); // find better way?
+				switchToLogin();
+			}
+			else
+				MainGUI.showAlert(AlertType.ERROR, "No DbKey");
 			// TODO architectural changes... maybe remove the delete feat. completely?
 		}
 	}
 	
 	public void exit()
 	{
-		try
-		{
-			loginViewModel.stop();
-		} catch (Exception e)
-		{
-			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
+		if(loginViewModel.hasDbKey()) {
+			try {
+				loginViewModel.stop();
+			} catch (Exception e) {
+				MainGUI.showAlert(AlertType.ERROR, e.getMessage());
+			}
 		}
 		Platform.exit();
 	}
@@ -216,6 +229,6 @@ public class RootBorderPane extends BorderPane
 	
 	private void about()
 	{
-		//showAlert(AlertType.INFORMATION, "Briar Desktop. This development build is a GUI prototype. Functionality is highly experimental.");
+		// showAlert(AlertType.INFORMATION, "Briar Desktop. This development build is a GUI prototype. Functionality is highly experimental.");
 	}
 }

@@ -39,6 +39,19 @@ dependencies {
     */
 }
 
+// Fix for "Unsupported JavaFX configuration" warning
+run   {
+    doFirst   {
+        jvmArgs   =   [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.controls',
+                '--add-modules', 'javafx.fxml',
+                '--add-modules', 'javafx.graphics',
+                '--add-modules', 'javafx.base',
+                '--add-modules', 'javafx.swing',
+        ]
+    }
+}
 
 // TODO create tests
 /*

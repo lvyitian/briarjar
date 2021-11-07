@@ -2,6 +2,8 @@ package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.LoginViewModel;
 
+import java.text.DecimalFormat;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert.AlertType;
@@ -28,6 +30,7 @@ public class LoginGridPane extends GridPane
 	private TextField     tfUsername;
 	private PasswordField passwordField;
 	private Button        btSignInRegister;
+	private Text          passwordStrength;
 
 	private LoginViewModel loginViewModel;
 	private RootBorderPane rootBorderPane;
@@ -69,6 +72,8 @@ public class LoginGridPane extends GridPane
 		passwordField = new PasswordField();
 			passwordField.setPromptText("Enter Passphrase");
 
+		passwordStrength = new Text("0.00");
+
 		btSignInRegister = new Button("Register");
 
 		// TODO: architectural change -> split in different login / registration "scene"
@@ -87,6 +92,7 @@ public class LoginGridPane extends GridPane
 		add(txtWelcome,       0, 2);
 		add(tfUsername,       0, 4);
 		add(passwordField,    0, 5);
+		add(passwordStrength, 1, 5);
 		add(btSignInRegister, 0, 6);
 	}
 	
@@ -94,6 +100,7 @@ public class LoginGridPane extends GridPane
 	private void addHandlers()
 	{
 		tfUsername.setOnKeyReleased(e -> switchToPassphrase(e));
+		passwordField.setOnKeyTyped(e -> passwordStrength());
 		btSignInRegister.setOnAction(e -> loginOrRegister());
 	}
 
@@ -122,6 +129,13 @@ public class LoginGridPane extends GridPane
 		}
 
 		rootBorderPane.switchToMainScene();
+	}
+
+	private void passwordStrength()
+	{
+		loginViewModel.setPassword(passwordField.getText());
+		DecimalFormat df = new DecimalFormat("#.##");
+		passwordStrength.setText(df.format(loginViewModel.getPasswordStrength()));
 	}
 
 	// ============================ others ============================

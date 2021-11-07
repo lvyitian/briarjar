@@ -113,4 +113,9 @@ public class LoginViewModel {
 	{
 		return lifecycleManager.getLifecycleState();
 	}
+
+	public Boolean hasDbKey()
+	{
+		return accountManager.hasDatabaseKey();
+	}
 }
