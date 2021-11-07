@@ -28,6 +28,15 @@ import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
+
+import static javafx.application.Application.launch;
+
 @Immutable
 @Singleton
 public class BriarJarGuiImpl implements BriarJarUi
@@ -41,6 +50,7 @@ public class BriarJarGuiImpl implements BriarJarUi
 	private IdentityManager identityManager;
 	private MessagingManager messagingManager;
 	private LifecycleManager lifecycleManager;
+
 
 	@Inject
 	public BriarJarGuiImpl(
@@ -65,14 +75,25 @@ public class BriarJarGuiImpl implements BriarJarUi
 		this.identityManager = identityManager;
 		this.messagingManager = messagingManager;
 		this.lifecycleManager = lifecycleManager;
+
+		System.out.println("Constructor done");
 	}
 
 	@Override
 	public void start()
 	{
-		MainGUI.startGUI();
 
-		SecretKey dbKey = accountManager.getDatabaseKey();
+		final MainGUI mainGUI = new MainGUI(loginViewModel);
+		mainGUI.init();
+
+		Platform.startup(() -> {
+			Stage stage = new Stage();
+			mainGUI.start(stage);
+		});
+
+
+		/*  FIXME - TO BE REMOVED
+			SecretKey dbKey = accountManager.getDatabaseKey();
 
 		System.out.println("Start LifeServiceManager Services...");
 		lifecycleManager.startServices(dbKey);
@@ -84,27 +105,20 @@ public class BriarJarGuiImpl implements BriarJarUi
 		}
 		System.out.println("Startup wait done!");
 
-		Runtime.getRuntime().addShutdownHook(new Thread(Thread.currentThread()::stop));
-
-
 		System.out.println("Let's try to find out your Handshake link...");
 		try {
 			System.out.println(contactManager.getHandshakeLink());
 		} catch (DbException e) {
 			e.getMessage();
 		}
+	 */
+
+		Runtime.getRuntime().addShutdownHook(new Thread(Thread.currentThread()::stop));
+
 	}
 
 	@Override
 	public void stop() {
-		System.out.println("Stopping Services....");
-		lifecycleManager.stopServices();
-		try {
-			System.out.println("Waiting for Shutdown...");
-			lifecycleManager.waitForShutdown();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Shutdown wait done!");
+		loginViewModel.stop();
 	}
 }

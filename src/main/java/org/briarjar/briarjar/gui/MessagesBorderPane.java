@@ -11,7 +11,7 @@ public class MessagesBorderPane extends BorderPane
 
 	private TextArea messageBox;
 	private MessageListView messageListView;
-	private Label statusText;		// the Text on the statusBar
+	private Label statusText;		// statusBarText
 	private VBox contactList;
 	
 	private boolean isContactListVisible;

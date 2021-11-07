@@ -11,22 +11,18 @@ public class Main
 	private static String DEFAULT_DATA_DIR = System.getProperty("user.home") + "/.briar";
 
 	public static void main(String[] args) {
-		//MainGUI.main(args);
-		// runs GUI
 
-		/*
-		val dataDir = getDataDir()
-		val app =
-				DaggerBriarDesktopApp.builder().desktopModule( DesktopModule(dataDir) ).build()
-		// We need to load the eager singletons directly after making the
-		// dependency graphs
-		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(app)
-		BriarCoreEagerSingletons.Helper.injectEagerSingletons(app)
+		var dataDir = getDataDir();
 
-		app.getUI().startBriar();
+		var briarJarGuiApp =
+				DaggerBriarJarGuiApp.builder().briarJarGuiModule(new BriarJarGuiModule(dataDir)).build();
 
-		 */
-/*
+		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarGuiApp);
+		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarGuiApp);
+		System.out.println("Starting briarJarGuiApp.getBriarJarUi().start()");
+		briarJarGuiApp.getBriarJarUi().start();
+
+		/* FIXME - TO BE REMOVED
 		// experiment with Dagger
 		System.out.println("1");
 		DependsComponent dependsComponent = DaggerDependsComponent.create();
@@ -34,19 +30,8 @@ public class Main
 		Depends depends = dependsComponent.getDepends();
 		System.out.println("3");
 		depends.method();
-*/
+		*/
 
-
-		var dataDir = getDataDir();
-
-
-		var briarJarGuiApp =
-				DaggerBriarJarGuiApp.builder().briarJarGuiModule(new BriarJarGuiModule(dataDir)).build();
-
-		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarGuiApp);
-		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarGuiApp);
-
-		briarJarGuiApp.getBriarJarUi().start();
 	}
 
 	private static File getDataDir()

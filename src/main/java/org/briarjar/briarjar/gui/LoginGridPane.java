@@ -1,12 +1,15 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.model.LoginViewModel;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -14,18 +17,26 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class LoginGridPane extends GridPane
 {
-	private Image         imgWelcome;
+	private ImageView imgWelcome;
+
 	private Text          txtWelcome;
 	private TextField     tfUsername;
 	private PasswordField passwordField;
 	private Button        btSignInRegister;
 
-	public LoginGridPane()
+	private LoginViewModel loginViewModel;
+	private RootBorderPane rootBorderPane;
+
+	public LoginGridPane(LoginViewModel loginViewModel, RootBorderPane rootBorderPane)
 	{
+		this.loginViewModel = loginViewModel;
+		this.rootBorderPane = rootBorderPane;
+
 		initComponents();
 		addComponents();
 		addHandlers();
@@ -43,14 +54,13 @@ public class LoginGridPane extends GridPane
 		
 		try 
 		{
-			//imgWelcome = new Image(getClass().getResource("briar-logo.png").toExternalForm());
-			//imgViewWelcome = new ImageView(imgWelcome);
+			// imgWelcome = new ImageView(new Image(getClass().getResource("briar-logo.png").toExternalForm()));
 		} catch (Exception e) {
 			MainGUI.showAlert(AlertType.ERROR, "Configured welcome image not found.");
 		}
 		
 		txtWelcome = new Text("Welcome to Briar");
-			txtWelcome.setFont(Font.font(20));
+			txtWelcome.setFont(Font.font("System", FontWeight.LIGHT, 20));
 		setHalignment(txtWelcome, HPos.CENTER);
 		
 		
@@ -58,16 +68,14 @@ public class LoginGridPane extends GridPane
 			tfUsername.setPromptText("Enter a Nickname");
 		passwordField = new PasswordField();
 			passwordField.setPromptText("Enter Passphrase");
-		
+
 		btSignInRegister = new Button("Register");
 
-		/*
-		if (...) { // isRegistered() logic
+		// TODO: architectural change -> split in different login / registration "scene"
+		if (loginViewModel.isRegistered()) {
 			tfUsername.setVisible(false);
 			btSignInRegister.setText("Sign In");
 		}
-
-		 */
 		
 	}
 	
@@ -75,7 +83,7 @@ public class LoginGridPane extends GridPane
 	private void addComponents()
 	{
 		// TODO: don't skip rows, instead correct the heights!
-		//add(imgViewWelcome,   0, 0);
+		//add(imgView, 0, 0);
 		add(txtWelcome,       0, 2);
 		add(tfUsername,       0, 4);
 		add(passwordField,    0, 5);
@@ -86,51 +94,41 @@ public class LoginGridPane extends GridPane
 	private void addHandlers()
 	{
 		tfUsername.setOnKeyReleased(e -> switchToPassphrase(e));
-	}
-
-	// ============================ getters/setters ============================
-
-	public Button getBtSignInRegister()
-	{
-		return btSignInRegister;
-	}
-	
-	public String getUsername()
-	{
-		return tfUsername.getText().trim();
-		//TODO trim maybe should not be done, since the user is not aware about!
-	}
-	
-	public String getPassphrase()
-	{
-		String passphrase = passwordField.getText();
-		passwordField.clear();
-		
-		return passphrase;
-	}
-	
-	public PasswordField getPassphraseField()
-	{
-		return passwordField;
-	}
-	
-	public TextField getUsernameField()
-	{
-		return tfUsername;
+		btSignInRegister.setOnAction(e -> loginOrRegister());
 	}
 
 	// ============================ logic ============================
+
+	public void loginOrRegister()
+	{
+		loginViewModel.setUsername(tfUsername.getText());
+		loginViewModel.setPassword(passwordField.getText());
+
+		try {
+			if (loginViewModel.isRegistered())
+				loginViewModel.signIn();
+			else
+				loginViewModel.register();
+		}
+		catch (Exception e)	{
+			MainGUI.showAlert(AlertType.ERROR, "Login/SignUp Error: " + e.getMessage());
+		}
+
+		try {
+			loginViewModel.start();
+		}
+		catch (Exception e)	{
+			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
+		}
+
+		rootBorderPane.switchToMainScene();
+	}
+
+	// ============================ others ============================
 	
 	private void switchToPassphrase(KeyEvent e)
 	{
 		if(e.getCode() == KeyCode.ENTER)
-		{
 			passwordField.requestFocus();
-		}
 	}
-	
-//	private void clickedtfUsername()
-//	{
-//		tfUsername.clear();
-//	}
 }

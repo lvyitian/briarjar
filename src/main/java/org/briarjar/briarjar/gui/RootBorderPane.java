@@ -1,6 +1,8 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.Main;
 import org.briarjar.briarjar.model.LoginViewModel;
+import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -20,7 +22,7 @@ public class RootBorderPane extends BorderPane
 
 	private MenuBar menuBar;
 	private Menu    mBriar, mChat, mContact, mInfo;
-	private MenuItem 	miLockApp, miToggleOnline, miDeleteAccount, miExit, 		// mBriar
+	private MenuItem 	miToggleOnline, miDeleteAccount, miExit, 		// mBriar
 				miShowContactList, 						// mChat
 				miRemoveContact, miChangeContactDisplayName, 	//mContact
 				miCheckForUpdates, miAbout;				// miInfo
@@ -33,10 +35,12 @@ public class RootBorderPane extends BorderPane
 	
 	public RootBorderPane(LoginViewModel loginViewModel)
 	{
+		this.loginViewModel = loginViewModel;
+
 		initComponents();
 		addComponents();
 		addHandlers();
-		disableCompontents(true);
+		disableComponents(true);
 	}
 	
 	private void initComponents()
@@ -50,7 +54,6 @@ public class RootBorderPane extends BorderPane
 		mInfo 				= new Menu("Info");
 
 
-		miLockApp 			= new MenuItem("Lock App");
 		miToggleOnline 		= new MenuItem("Go Offline");
 		miDeleteAccount		= new MenuItem("Delete Account");
 		miExit 				= new MenuItem("Exit");
@@ -62,7 +65,7 @@ public class RootBorderPane extends BorderPane
 		
 		statusBar 			= new ToolBar();
 
-		loginGridPane      	= new LoginGridPane();
+		loginGridPane      	= new LoginGridPane(loginViewModel, this);
 		messagesBorderPane = new MessagesBorderPane();
 
 
@@ -72,7 +75,7 @@ public class RootBorderPane extends BorderPane
 	{
 		menuBar.getMenus().addAll(mBriar, mChat, mContact, mInfo);
 		
-		mBriar.getItems().addAll(miLockApp, miToggleOnline, miDeleteAccount, miExit);
+		mBriar.getItems().addAll(miToggleOnline, miDeleteAccount, miExit);
 		mChat.getItems().addAll(miShowContactList);
 		mContact.getItems().addAll(miRemoveContact, miChangeContactDisplayName);
 		mInfo.getItems().addAll(miCheckForUpdates, miAbout);
@@ -87,7 +90,6 @@ public class RootBorderPane extends BorderPane
 	private void addHandlers()
 	{
 		// menu: mBriar
-		miLockApp.setOnAction(e -> lockApp());
 		miToggleOnline.setOnAction(e -> toggleOnline());
 		miDeleteAccount.setOnAction(e -> deleteAccount());
 		miExit.setOnAction(e -> exit());
@@ -102,82 +104,53 @@ public class RootBorderPane extends BorderPane
 		// menu: mInfo
 		miCheckForUpdates.setOnAction(e -> checkForUpdates());
 		miAbout.setOnAction(e -> about());
-		
-		// other handlers...
-		loginGridPane.getPassphraseField().setOnKeyReleased(e -> enterPressed(e));
-		loginGridPane.getBtSignInRegister().setOnAction(e -> login());
 
 	}
 	
-	private void disableCompontents(boolean disable)
+	private void disableComponents(boolean disable)
 	{
-		miLockApp.setDisable(disable);
 		miToggleOnline.setDisable(disable);
 		mContact.setDisable(disable);
 		mChat.setDisable(disable);
-		//if(isRegistered())	// disable ONLY if isRegistered
-		//	miDeleteAccount.setDisable(true);
+		if(loginViewModel.isRegistered())
+			miDeleteAccount.setDisable(false);
+		else
+			miDeleteAccount.setDisable(true);
 	}
 	
 	// ============================ logic ============================
-	
-
-	
-	private Boolean login() {
-		/*
-		login logic
-		*/
-		return true;
-	}
-	
-	private void switchToMessages() // TODO maybe this procedure should be part of the logingridpane?
-	{
-		// switch to MessagesBorderPane
-	}
-	
-	/*
-	 * SwitchToMessages if Enter Key is pressed
-	 */
-	private void enterPressed(KeyEvent e)
-	{
-		if(e.getCode() == KeyCode.ENTER)
-			login();
-	}
-	
-	// TODO Find better solution...
-	private void reloadLoginGridPane()
-	{
-		// re-init
-		// loginGridPane = new LoginGridPane(loginViewModel); // FIXME this has to be deleted
-		// reload handlers too...
-		loginGridPane.getPassphraseField().setOnKeyReleased(e -> enterPressed(e));
-		loginGridPane.getBtSignInRegister().setOnAction(e -> switchToMessages());
-		setCenter(loginGridPane);
-	}
 	
 	private void unimplemented()
 	{
 		MainGUI.showAlert(AlertType.INFORMATION, "This feature is not part of the prototype and unimplemented!");
 	}
-	
-	// ============================ menu: mBriar ============================
-	
-	private void lockApp()
-	{
-		disableCompontents(true);
-		miDeleteAccount.setDisable(false);
-		reloadLoginGridPane(); 		// test case: start briar, register and then "lock app"
-		// TODO stop the lifecycle manager here
-		setCenter(loginGridPane);
 
+	public void switchToMainScene()
+	{
+		disableComponents(false);
+		setCenter(messagesBorderPane);
 	}
-	
+
+	// ============================ menu: mBriar ============================
+
+
 	private void toggleOnline()
 	{
-		// toggles online state
-		// also changes to text of the button miToggleOnline
+		// TODO check this - might be dangerous!
+		try {
+			if (loginViewModel.getLifeCycleState() ==
+					LifecycleManager.LifecycleState.RUNNING) {
+				loginViewModel.stop();
+				miToggleOnline.setText("Go Online");
+			}
+			else
+				loginViewModel.start();
+				miToggleOnline.setText("Go Offline");
+		} catch (Exception e) {
+			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
+		}
 	}
-	
+
 	private void deleteAccount()
 	{
 		Alert deletionAlert = new Alert(AlertType.WARNING, "Deleting an account is permanent. You will lose all contacts, messages, etc. forever! Are you sure?", ButtonType.YES, ButtonType.CANCEL);
@@ -187,13 +160,22 @@ public class RootBorderPane extends BorderPane
 		
 		if(deletionAlert.getResult() == ButtonType.YES)
 		{
-			// account deletion procedure
+			loginViewModel.deleteAccount();
+			miDeleteAccount.setDisable(true);
+			loginGridPane = new LoginGridPane(loginViewModel, this); // find better way?
+			// TODO architectural changes... maybe remove the delete feat. completely?
 		}
 	}
 	
 	public void exit()
 	{
-		// stop the lifecycle manager too
+		try
+		{
+			loginViewModel.stop();
+		} catch (Exception e)
+		{
+			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
+		}
 		Platform.exit();
 	}
 	
@@ -234,6 +216,6 @@ public class RootBorderPane extends BorderPane
 	
 	private void about()
 	{
-		MainGUI.showAlert(AlertType.INFORMATION, "Briar Desktop. This development build is a GUI prototype. Functionality is highly experimental.");
+		//showAlert(AlertType.INFORMATION, "Briar Desktop. This development build is a GUI prototype. Functionality is highly experimental.");
 	}
 }
