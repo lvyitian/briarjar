@@ -2,6 +2,7 @@ package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.Main;
 import org.briarjar.briarjar.model.LoginViewModel;
+import org.briarproject.bramble.api.contact.ContactManager;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import javafx.application.Platform;
@@ -32,10 +33,12 @@ public class RootBorderPane extends BorderPane
 	private MessagesBorderPane    messagesBorderPane; // same again
 
 	private LoginViewModel loginViewModel;
+	private ContactManager contactManager;
 	
-	public RootBorderPane(LoginViewModel loginViewModel)
+	public RootBorderPane(LoginViewModel loginViewModel, ContactManager contactManager)
 	{
 		this.loginViewModel = loginViewModel;
+		this.contactManager = contactManager;
 
 		initComponents();
 		addComponents();
@@ -80,7 +83,7 @@ public class RootBorderPane extends BorderPane
 		mContact.getItems().addAll(miRemoveContact, miChangeContactDisplayName);
 		mInfo.getItems().addAll(miCheckForUpdates, miAbout);
 		
-		statusBar.getItems().setAll(new Label("Please log in!"));
+		statusBar.getItems().setAll(new Label("Ready to chat!"));
 		
 		setTop(menuBar);
 		setCenter(loginGridPane);
@@ -198,7 +201,7 @@ public class RootBorderPane extends BorderPane
 	{
 		if(!messagesBorderPane.isContactListVisible())
 		{
-			messagesBorderPane.showContactList();
+			messagesBorderPane.showContactList(contactManager);
 			miShowContactList.setText("Hide Contact List");
 		}
 		else

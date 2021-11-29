@@ -83,7 +83,7 @@ public class BriarJarGuiImpl implements BriarJarUi
 	public void start()
 	{
 
-		final MainGUI mainGUI = new MainGUI(loginViewModel);
+		final MainGUI mainGUI = new MainGUI(loginViewModel, contactManager);
 		mainGUI.init();
 
 		Platform.startup(() -> {

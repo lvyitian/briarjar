@@ -1,5 +1,12 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarproject.bramble.api.contact.Contact;
+import org.briarproject.bramble.api.contact.ContactManager;
+import org.briarproject.bramble.api.db.DbException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -71,13 +78,23 @@ public class MessagesBorderPane extends BorderPane
 	/*
 	 * This method will be used in the RootBorderPane.
 	 */
-	public void showContactList()
+	public void showContactList(ContactManager contactManager)
+
 	{
 		// TODO:
 		// 1. "translate" all Contacts into Buttons/Items of a ListView<String>
 		// 2. add all contacts to contactList
-		
-		contactList.getChildren().setAll(new Button("<alice>")); // for testing only...
+
+		try {
+			Collection<Contact> contacts = contactManager.getContacts();
+
+			for(Contact c : contacts)
+				contactList.getChildren().setAll(new Button(c.getAlias()));
+
+		} catch (DbException e) {
+			e.printStackTrace();
+		}
+		//contactList.getChildren().setAll(new Button("<alice>")); // for testing only...
 
 		// contactList.getChildren().addAll(...)
 		setLeft(contactList);
