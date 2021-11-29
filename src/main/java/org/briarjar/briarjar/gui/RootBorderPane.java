@@ -58,7 +58,7 @@ public class RootBorderPane extends BorderPane
 
 
 		miToggleOnline 		= new MenuItem("Go Offline");
-		miDeleteAccount		= new MenuItem("Delete Account");
+		miDeleteAccount		= new MenuItem("Delete Account & Exit");
 		miExit 				= new MenuItem("Exit");
 		miShowContactList 	= new MenuItem("Show Contact List");
 		miRemoveContact 	= new MenuItem("Remove this Contact");
@@ -137,12 +137,6 @@ public class RootBorderPane extends BorderPane
 		setCenter(messagesBorderPane);
 	}
 
-	public void switchToLogin()
-	{
-		disableComponents(true);
-		setCenter(loginGridPane);
-	}
-
 	// ============================ menu: mBriar ============================
 
 
@@ -165,7 +159,7 @@ public class RootBorderPane extends BorderPane
 	private void deleteAccount()
 	{
 		Alert deletionAlert = new Alert(AlertType.WARNING, "Deleting an account is permanent. You will lose all contacts, messages, etc. forever! Are you sure?", ButtonType.YES, ButtonType.CANCEL);
-		deletionAlert.setTitle("Delete account?");
+		deletionAlert.setTitle("Delete Account & Exit");
 		deletionAlert.setHeaderText(null);
 		deletionAlert.showAndWait();
 		
@@ -175,7 +169,7 @@ public class RootBorderPane extends BorderPane
 				loginViewModel.deleteAccount();
 				loginGridPane = new LoginGridPane(loginViewModel,
 						this); // find better way?
-				switchToLogin();
+				exit();
 			}
 			else
 				MainGUI.showAlert(AlertType.ERROR, "No DbKey");
@@ -185,12 +179,15 @@ public class RootBorderPane extends BorderPane
 	
 	public void exit()
 	{
-		if(loginViewModel.hasDbKey()) {
-			try {
-				loginViewModel.stop();
-			} catch (Exception e) {
-				MainGUI.showAlert(AlertType.ERROR, e.getMessage());
-			}
+		// FIXME
+		// Doesn't work without account (on registration screen)
+		// Doesn't properly exit when "Delete Account & Exit" is used!
+
+		try {
+			loginViewModel.stop();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
 		}
 		Platform.exit();
 	}
