@@ -13,8 +13,8 @@ public class MainGUI extends Application
 {
 	private RootBorderPane rootBorderPane;
 
-	private LoginViewModel loginViewModel;
-	private ContactManager contactManager;
+	final private LoginViewModel loginViewModel;
+	final private ContactManager contactManager;
 
 	public MainGUI (LoginViewModel loginViewModel, ContactManager contactManager)
 	{

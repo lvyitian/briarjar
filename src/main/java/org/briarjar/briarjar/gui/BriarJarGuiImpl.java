@@ -42,7 +42,7 @@ import static javafx.application.Application.launch;
 public class BriarJarGuiImpl implements BriarJarUi
 {
 	private LoginViewModel loginViewModel;
-	/*private LoginViewModel loginViewModel;
+	/**private LoginViewModel loginViewModel;
 	private ContactsViewModel contactsViewModel;*/
 	private AccountManager accountManager;
 	private ContactManager contactManager;
@@ -54,7 +54,7 @@ public class BriarJarGuiImpl implements BriarJarUi
 
 	@Inject
 	public BriarJarGuiImpl(
-			/*
+			/**
 			LoginViewModel loginViewModel,
 			ContactsViewModel contactsViewModel,*/
 			LoginViewModel loginViewModel,
@@ -66,7 +66,7 @@ public class BriarJarGuiImpl implements BriarJarUi
 			LifecycleManager lifecycleManager) {
 
 		this.loginViewModel = loginViewModel;
-		/*
+		/**
 		this.loginViewModel = loginViewModel;
 		this.contactsViewModel = contactsViewModel;*/
 		this.accountManager = accountManager;
@@ -92,7 +92,7 @@ public class BriarJarGuiImpl implements BriarJarUi
 		});
 
 
-		/*  FIXME - TO BE REMOVED
+		/**  FIXME - TO BE REMOVED
 			SecretKey dbKey = accountManager.getDatabaseKey();
 
 		System.out.println("Start LifeServiceManager Services...");

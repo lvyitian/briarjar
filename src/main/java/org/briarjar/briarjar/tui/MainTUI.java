@@ -13,10 +13,10 @@ import org.briarjar.briarjar.model.LoginViewModel;
 import java.io.IOException;
 
 public class MainTUI {
-	public MainTUI(LoginViewModel loginViewModel)
+
+	public MainTUI()
 	{
 		init();
-		start(loginViewModel);
 	}
 	public void start(LoginViewModel loginViewModel)
 	{
@@ -53,7 +53,9 @@ public class MainTUI {
 						loginViewModel.setUsername(tbUsername.getText());
 						loginViewModel.setPassword(tbPassphrase.getText());
 						loginViewModel.register();
-						/*
+
+
+						/**
 						loginViewModel.start();
 						lblOutput.setText("Logging in...");
 						 */
@@ -66,7 +68,8 @@ public class MainTUI {
 					public void run() {
 						loginViewModel.setPassword(tbPassphrase.getText());
 						loginViewModel.signIn();
-						/*
+
+						/**
 						loginViewModel.start();
 						lblOutput.setText("Logging in...");
 						 */
