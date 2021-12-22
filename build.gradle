@@ -1,3 +1,9 @@
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
+import java.util.jar.JarOutputStream
+
+import static java.util.Collections.list
+
 plugins {
     id 'java'
     id 'application'
@@ -14,6 +20,18 @@ allprojects {
         mavenCentral()
         google()
         jcenter()
+
+
+        /*
+        maven {
+            url "https://oss.sonatype.org/service/local/repositories/releases/"
+            artifactUrls "https://oss.sonatype.org/service/local/repositories/releases/content/com/googlecode/lanterna/lanterna/3.2.0-alpha1/"
+        }
+
+        flatDir {
+            dirs 'libs'
+        }
+         */
     }
 }
 
@@ -27,10 +45,12 @@ dependencies {
     implementation "com.google.dagger:dagger:2.24"
     annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
 
-
     implementation project(path: ':briar:briar-core', configuration: 'default')
     implementation project(path: ':briar:bramble-java', configuration: 'default')
 
+    // FIXME - adding dependencies using .jar-files in a local libs/ dir... makes gradle pointless
+    // implementation name: "lanterna-3.1.1.jar"                // not working?!
+    implementation fileTree(dir: 'libs', include: '*.jar')      // this works!
 
     // TODO create testImplementations (JUnit,...)
     /*
@@ -60,8 +80,63 @@ test {
 }
  */
 
-
 // TODO create a JAR
+// jarFactory code from build.gradle of headless - (c) BriarProject
+void jarFactory(Jar jarTask) {
+    String jarArchitecture = "linux-x86_64"
+
+    jarTask.doFirst {
+        println 'Building ' + jarArchitecture + ' version has started'
+    }
+    jarTask.manifest {
+        attributes(
+                'Main-Class': 'org.briarjar.briarjar.Main'
+        )
+    }
+    jarTask.setArchiveClassifier(jarArchitecture)
+    jarTask.from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+            {
+                String[] architectures = ["linux-aarch64", "linux-armhf", "linux-x86_64"]
+                for (String arch : architectures) {
+                    if (arch != jarArchitecture) {
+                        exclude "obfs4proxy_" + arch + ".zip"
+                        exclude "tor_" + arch + ".zip"
+                    }
+                }
+            }
+    jarTask.with jar
+    jarTask.doLast {
+        // Rename the original jar
+        File jar = jarTask.archivePath
+        String srcPath = jar.toString().replaceFirst('\\.jar$', '.unsorted.jar')
+        File srcFile = new File(srcPath)
+        jar.renameTo(srcFile)
+        JarFile srcJarFile = new JarFile(srcFile)
+        OutputStream destStream = new JarOutputStream(new FileOutputStream(jar))
+        // Read and sort the entries
+        Map<String, JarEntry> entries = new TreeMap<>()
+        for (JarEntry e : list(srcJarFile.entries())) entries.put(e.getName(), e)
+        // Write the sorted entries
+        for (JarEntry srcEntry : entries.values()) {
+            JarEntry destEntry = new JarEntry(srcEntry.getName())
+            destEntry.setTime(0)
+            destStream.putNextEntry(destEntry)
+            InputStream srcStream = srcJarFile.getInputStream(srcEntry)
+            int read
+            byte[] buf = new byte[4096]
+            while ((read = srcStream.read(buf, 0, buf.length)) != -1) {
+                destStream.write(buf, 0, read)
+            }
+            destStream.closeEntry()
+            srcStream.close()
+        }
+        destStream.close()
+        srcJarFile.close()
+        println 'Building ' + jarArchitecture + ' version has finished'
+    }
+}
 /*
 jar {
     manifest {
