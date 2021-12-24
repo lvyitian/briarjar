@@ -21,17 +21,6 @@ allprojects {
         google()
         jcenter()
 
-
-        /*
-        maven {
-            url "https://oss.sonatype.org/service/local/repositories/releases/"
-            artifactUrls "https://oss.sonatype.org/service/local/repositories/releases/content/com/googlecode/lanterna/lanterna/3.2.0-alpha1/"
-        }
-
-        flatDir {
-            dirs 'libs'
-        }
-         */
     }
 }
 
@@ -48,9 +37,7 @@ dependencies {
     implementation project(path: ':briar:briar-core', configuration: 'default')
     implementation project(path: ':briar:bramble-java', configuration: 'default')
 
-    // FIXME - adding dependencies using .jar-files in a local libs/ dir... makes gradle pointless
-    // implementation name: "lanterna-3.1.1.jar"                // not working?!
-    implementation fileTree(dir: 'libs', include: '*.jar')      // this works!
+    implementation 'com.googlecode.lanterna:lanterna:3.0.3'
 
     // TODO create testImplementations (JUnit,...)
     /*

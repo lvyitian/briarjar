@@ -13,7 +13,6 @@ public class Main
 
 	public static void main(String[] args) {
 
-
 		if (args == null)
 			startGUI = true;
 		else
@@ -25,7 +24,7 @@ public class Main
 
 
 		// testing
-		startGUI = false;
+		startGUI = true;
 		if (startGUI) {
 			var briarJarGuiApp =
 					DaggerBriarJarGuiApp.builder().briarJarGuiModule(
