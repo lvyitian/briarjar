@@ -52,22 +52,13 @@ public class LoginViewModel {
 		return passwordStrengthEstimator.estimateStrength(password);
 	}
 
-	public void register()
-	{
-		if(!accountManager.accountExists())
-		{
-			accountManager.createAccount(username, password);
-		}
-			// TODO exception handling 'account exist' or ask for acc. deletion?
+	public void register(String username, String passphrase)
+			throws InterruptedException {
+		accountManager.createAccount(username, passphrase);
 	}
 
-	public void signIn()
-	{
-		try {
-			accountManager.signIn(password);
-		} catch (DecryptionException e) {
-			// TODO exception handling
-		}
+	public void signIn(String passphrase) throws DecryptionException {
+		accountManager.signIn(passphrase);
 	}
 
 	public Boolean isRegistered()
@@ -77,24 +68,14 @@ public class LoginViewModel {
 
 	public void deleteAccount()
 	{
-		try {
-			accountManager.deleteAccount();
-		} catch (Exception e)
-		{
-			// TODO exception handling
-		}
-
+		accountManager.deleteAccount();
 	}
 
-	public void start()
-	{
+	//todo 4k maybe startBriar or similar?
+	public void start() throws InterruptedException {
 		SecretKey dbKey = accountManager.getDatabaseKey();
 		lifecycleManager.startServices(dbKey);
-		try {
-			lifecycleManager.waitForStartup();
-		} catch (InterruptedException e) {
-			// TODO exception handling
-		}
+		lifecycleManager.waitForStartup();
 	}
 
 	public void stop() {

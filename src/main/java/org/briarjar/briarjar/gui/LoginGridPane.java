@@ -1,6 +1,7 @@
 package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.LoginViewModel;
+import org.briarproject.bramble.api.crypto.DecryptionException;
 
 import java.text.DecimalFormat;
 
@@ -43,6 +44,8 @@ public class LoginGridPane extends GridPane
 		initComponents();
 		addComponents();
 		addHandlers();
+
+		prepareSignInRegisterMask();
 	}
 	
 
@@ -106,6 +109,7 @@ public class LoginGridPane extends GridPane
 
 	// ============================ logic ============================
 
+	/*
 	public void loginOrRegister()
 	{
 		loginViewModel.setUsername(tfUsername.getText());
@@ -125,6 +129,49 @@ public class LoginGridPane extends GridPane
 			loginViewModel.start();
 		}
 		catch (Exception e)	{
+			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
+		}
+
+		rootBorderPane.switchToMainScene();
+	}*/
+
+
+	//todo 4k prüfung vorab ob acc existiert
+	private void prepareSignInRegisterMask()
+	{
+		if (loginViewModel.isRegistered())
+			;// show 1x passphrase
+		else
+			;// show 1x username, 2x passphrase
+	}
+
+	private void signIn()
+	{
+		try {
+			loginViewModel.signIn(passwordField.getText());
+
+			//todo 4k offline mode possible? // if (...
+				loginViewModel.start();
+
+		} catch (DecryptionException e) {
+			MainGUI.showAlert(AlertType.ERROR, "Could not decrypt " +
+					"database - wrong passphrase entered?\n("+ e.getMessage()+")");
+		} catch (InterruptedException e) {
+			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
+		}
+
+		rootBorderPane.switchToMainScene();
+	}
+
+	private void register()
+	{
+		try {
+			loginViewModel.register(tfUsername.getText(), passwordField.getText());
+
+			//todo 4k offline mode possible? // if (...
+				loginViewModel.start();
+
+		} catch (InterruptedException e) {
 			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
 		}
 
