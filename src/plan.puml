@@ -31,14 +31,10 @@ class Main {
     perhaps using args[0]
 }
 
-class BriarJarTuiImpl {
+class BriarJarUiImpl {
     viewModelProvider: ViewModelProvider
-    mainTUI: mainTUI
-}
-
-class BriarJarGuiImpl {
-    viewModelProvider: ViewModelProvider
-    mainGUI: mainGUI
+    mainTUI: MainTUI
+    mainGUI: MainGUI
 }
 
 class MainTUI {
@@ -55,14 +51,11 @@ class RootBorderPane {
 
 
 
-Main  -down-> BriarJarTuiImpl
-Main  -up-> BriarJarGuiImpl
-BriarJarTuiImpl -right-> ViewModelProvider
-MainGUI -> BriarJarGuiImpl
+Main  -down-> BriarJarUiImpl
+BriarJarUiImpl -right-> ViewModelProvider
+MainGUI -up-> BriarJarUiImpl
 RootBorderPane -up-> MainGUI
-
-BriarJarGuiImpl -down-> ViewModelProvider
-MainTUI -> BriarJarTuiImpl
+MainTUI -> BriarJarUiImpl
 
 ViewModelProvider -up-> LoginViewModel
 ViewModelProvider -up-> ContactViewModel
