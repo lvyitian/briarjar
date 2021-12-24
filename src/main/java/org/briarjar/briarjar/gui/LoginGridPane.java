@@ -11,7 +11,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -29,9 +28,9 @@ public class LoginGridPane extends GridPane
 
 	private Text          txtWelcome;
 	private TextField     tfUsername;
-	private PasswordField passwordField;
+	private PasswordField passphraseField;
 	private Button        btSignInRegister;
-	private Text          passwordStrength;
+	private Text          passphraseStrength;
 
 	private LoginViewModel loginViewModel;
 	private RootBorderPane rootBorderPane;
@@ -45,7 +44,7 @@ public class LoginGridPane extends GridPane
 		addComponents();
 		addHandlers();
 
-		prepareSignInRegisterMask();
+		prepareSignInSignUpMask();
 	}
 	
 
@@ -72,15 +71,15 @@ public class LoginGridPane extends GridPane
 		
 		tfUsername = new TextField();
 			tfUsername.setPromptText("Enter a Nickname");
-		passwordField = new PasswordField();
-			passwordField.setPromptText("Enter Passphrase");
+		passphraseField = new PasswordField();
+			passphraseField.setPromptText("Enter Passphrase");
 
-		passwordStrength = new Text("0.00");
+		passphraseStrength = new Text("0.00");
 
-		btSignInRegister = new Button("Register");
+		btSignInSignUp = new Button("Sign Up");
 
 		// TODO: architectural change -> split in different login / registration "scene"
-		if (loginViewModel.isRegistered()) {
+		if (loginViewModel.accountExists()) {
 			tfUsername.setVisible(false);
 			btSignInRegister.setText("Sign In");
 		}
@@ -94,8 +93,8 @@ public class LoginGridPane extends GridPane
 		//add(imgView, 0, 0);
 		add(txtWelcome,       0, 2);
 		add(tfUsername,       0, 4);
-		add(passwordField,    0, 5);
-		add(passwordStrength, 1, 5);
+		add(passphraseField,    0, 5);
+		add(passphraseStrength, 1, 5);
 		add(btSignInRegister, 0, 6);
 	}
 	
@@ -103,43 +102,16 @@ public class LoginGridPane extends GridPane
 	private void addHandlers()
 	{
 		tfUsername.setOnKeyReleased(e -> switchToPassphrase(e));
-		passwordField.setOnKeyTyped(e -> passwordStrength());
+		passphraseField.setOnKeyTyped(e -> passphraseStrength());
 		btSignInRegister.setOnAction(e -> loginOrRegister());
 	}
 
 	// ============================ logic ============================
 
-	/*
-	public void loginOrRegister()
-	{
-		loginViewModel.setUsername(tfUsername.getText());
-		loginViewModel.setPassword(passwordField.getText());
-
-		try {
-			if (loginViewModel.isRegistered())
-				loginViewModel.signIn();
-			else
-				loginViewModel.register();
-		}
-		catch (Exception e)	{
-			MainGUI.showAlert(AlertType.ERROR, "Login/SignUp Error: " + e.getMessage());
-		}
-
-		try {
-			loginViewModel.start();
-		}
-		catch (Exception e)	{
-			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
-		}
-
-		rootBorderPane.switchToMainScene();
-	}*/
-
-
 	//todo 4k prüfung vorab ob acc existiert
-	private void prepareSignInRegisterMask()
+	private void prepareSignInSignUpMask()
 	{
-		if (loginViewModel.isRegistered())
+		if (loginViewModel.accountExists())
 			;// show 1x passphrase
 		else
 			;// show 1x username, 2x passphrase
@@ -148,7 +120,7 @@ public class LoginGridPane extends GridPane
 	private void signIn()
 	{
 		try {
-			loginViewModel.signIn(passwordField.getText());
+			loginViewModel.signIn(passphraseField.getText());
 
 			//todo 4k offline mode possible? // if (...
 				loginViewModel.start();
@@ -163,10 +135,10 @@ public class LoginGridPane extends GridPane
 		rootBorderPane.switchToMainScene();
 	}
 
-	private void register()
+	private void signUp()
 	{
 		try {
-			loginViewModel.register(tfUsername.getText(), passwordField.getText());
+			loginViewModel.signUp(tfUsername.getText(), passphraseField.getText());
 
 			//todo 4k offline mode possible? // if (...
 				loginViewModel.start();
@@ -178,11 +150,11 @@ public class LoginGridPane extends GridPane
 		rootBorderPane.switchToMainScene();
 	}
 
-	private void passwordStrength()
+	private void passphraseStrength()
 	{
-		loginViewModel.setPassword(passwordField.getText());
+		loginViewModel.setPassphrase(passphraseField.getText());
 		DecimalFormat df = new DecimalFormat("#.##");
-		passwordStrength.setText(df.format(loginViewModel.getPasswordStrength()));
+		passphraseStrength.setText(df.format(loginViewModel.getPassphraseStrength()));
 	}
 
 	// ============================ others ============================
@@ -190,6 +162,6 @@ public class LoginGridPane extends GridPane
 	private void switchToPassphrase(KeyEvent e)
 	{
 		if(e.getCode() == KeyCode.ENTER)
-			passwordField.requestFocus();
+			passphraseField.requestFocus();
 	}
 }

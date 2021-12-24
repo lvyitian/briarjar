@@ -14,21 +14,21 @@ import javax.inject.Inject;
 public class LoginViewModel {
 	private AccountManager accountManager;
 	private LifecycleManager lifecycleManager;
-	private PasswordStrengthEstimator passwordStrengthEstimator;
+	private PasswordStrengthEstimator passphraseStrengthEstimator;
 
 	private String username;
-	private String password;
+	private String passphrase;
 
 	@Inject
 	public LoginViewModel(
 			AccountManager accountManager,
 			LifecycleManager lifecycleManager,
-			PasswordStrengthEstimator passwordStrengthEstimator
+			PasswordStrengthEstimator passphraseStrengthEstimator
 	)
 	{
 		this.accountManager = accountManager;
 		this.lifecycleManager = lifecycleManager;
-		this.passwordStrengthEstimator = passwordStrengthEstimator;
+		this.passphraseStrengthEstimator = passphraseStrengthEstimator;
 	}
 
 
@@ -39,20 +39,20 @@ public class LoginViewModel {
 		this.username = username;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setPassphrase(String passphrase) {
+		this.passphrase = passphrase;
 	}
 
 
 	// ============================ logic ============================
 
 
-	public float getPasswordStrength()
+	public float getPassphraseStrength()
 	{
-		return passwordStrengthEstimator.estimateStrength(password);
+		return passphraseStrengthEstimator.estimateStrength(passphrase);
 	}
 
-	public void register(String username, String passphrase)
+	public void signUp(String username, String passphrase)
 			throws InterruptedException {
 		accountManager.createAccount(username, passphrase);
 	}
@@ -61,7 +61,7 @@ public class LoginViewModel {
 		accountManager.signIn(passphrase);
 	}
 
-	public Boolean isRegistered()
+	public Boolean accountExists()
 	{
 		return accountManager.accountExists();
 	}

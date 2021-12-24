@@ -35,7 +35,7 @@ public class MainTUI {
 
 			final Label lblOutput = new Label("");
 
-			if(!loginViewModel.isRegistered()) {
+			if(!loginViewModel.accountExists()) {
 				panel.addComponent(new Label("Username: "));
 				tbUsername = new TextBox().addTo(panel);
 			}
@@ -46,13 +46,13 @@ public class MainTUI {
 
 			panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
 
-			if(!loginViewModel.isRegistered()) {
-				new Button("Register", new Runnable() {
+			if(!loginViewModel.accountExists()) {
+				new Button("Sign Up", new Runnable() {
 					@Override
 					public void run() {
 						loginViewModel.setUsername(tbUsername.getText());
-						loginViewModel.setPassword(tbPassphrase.getText());
-						loginViewModel.register();
+						loginViewModel.setPassphrase(tbPassphrase.getText());
+						loginViewModel.signUp();
 
 
 						/**
@@ -66,7 +66,7 @@ public class MainTUI {
 				new Button("Login", new Runnable() {
 					@Override
 					public void run() {
-						loginViewModel.setPassword(tbPassphrase.getText());
+						loginViewModel.setPassphrase(tbPassphrase.getText());
 						loginViewModel.signIn();
 
 						/**

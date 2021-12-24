@@ -117,7 +117,7 @@ public class RootBorderPane extends BorderPane
 		mChat.setDisable(disable);
 		miDeleteAccount.setDisable(disable);
 		/*
-		if(loginViewModel.isRegistered())
+		if(loginViewModel.accountExists())
 			miDeleteAccount.setDisable(false);
 		else
 			miDeleteAccount.setDisable(true);
