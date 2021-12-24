@@ -3,9 +3,7 @@ package org.briarjar.briarjar;
 import dagger.Component;
 import javax.inject.Singleton;
 
-import org.briarproject.bramble.BrambleCoreEagerSingletons;
 import org.briarproject.bramble.BrambleCoreModule;
-import org.briarproject.briar.BriarCoreEagerSingletons;
 import org.briarproject.briar.BriarCoreModule;
 
 import java.security.SecureRandom;
@@ -16,10 +14,10 @@ import java.security.SecureRandom;
 @Component(modules = {
 		BrambleCoreModule.class,
 		BriarCoreModule.class,
-		BriarJarGuiModule.class
+		BriarJarUiModule.class
 })
 
-public interface BriarJarGuiApp
+public interface BriarJarUiApp
 		/* Maybe not needed in this form currently, since it's for testing?
 		extends BrambleCoreEagerSingletons,
 		BriarCoreEagerSingletons

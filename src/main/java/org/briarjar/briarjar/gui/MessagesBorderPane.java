@@ -1,5 +1,6 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.model.ViewModelProvider;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactManager;
 import org.briarproject.bramble.api.db.DbException;
@@ -22,10 +23,12 @@ public class MessagesBorderPane extends BorderPane
 	private VBox contactList;
 	
 	private boolean isContactListVisible;
-	
+
+	private ViewModelProvider viewModelProvider;
 	// private Contact currentSelectedContact;
 	
-	public MessagesBorderPane() {
+	public MessagesBorderPane(ViewModelProvider viewModelProvider) {
+		this.viewModelProvider = viewModelProvider;
 		initComponents();
 		addComponents();
 		addHandlers();
@@ -78,7 +81,7 @@ public class MessagesBorderPane extends BorderPane
 	/*
 	 * This method will be used in the RootBorderPane.
 	 */
-	public void showContactList(ContactManager contactManager)
+	public void showContactList()
 
 	{
 		// TODO:
@@ -86,7 +89,7 @@ public class MessagesBorderPane extends BorderPane
 		// 2. add all contacts to contactList
 
 		try {
-			Collection<Contact> contacts = contactManager.getContacts();
+			Collection<Contact> contacts = viewModelProvider.getContactManager().getContacts();
 
 			for(Contact c : contacts)
 				contactList.getChildren().setAll(new Button(c.getAlias()));

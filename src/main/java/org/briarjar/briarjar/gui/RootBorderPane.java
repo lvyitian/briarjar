@@ -1,9 +1,6 @@
 package org.briarjar.briarjar.gui;
 
-import org.briarjar.briarjar.Main;
-import org.briarjar.briarjar.model.LoginViewModel;
-import org.briarproject.bramble.api.contact.ContactManager;
-import org.briarproject.bramble.api.lifecycle.LifecycleManager;
+import org.briarjar.briarjar.model.ViewModelProvider;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -14,8 +11,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
 public class RootBorderPane extends BorderPane
@@ -32,13 +27,11 @@ public class RootBorderPane extends BorderPane
 	private LoginGridPane loginGridPane;      // maybe the wrong place (better/right in Main via Main(login)??)
 	private MessagesBorderPane    messagesBorderPane; // same again
 
-	private LoginViewModel loginViewModel;
-	private ContactManager contactManager;
+	private ViewModelProvider viewModelProvider;
 	
-	public RootBorderPane(LoginViewModel loginViewModel, ContactManager contactManager)
+	public RootBorderPane(ViewModelProvider viewModelProvider)
 	{
-		this.loginViewModel = loginViewModel;
-		this.contactManager = contactManager;
+		this.viewModelProvider = viewModelProvider;
 
 		initComponents();
 		addComponents();
@@ -68,8 +61,8 @@ public class RootBorderPane extends BorderPane
 		
 		statusBar 			= new ToolBar();
 
-		loginGridPane      	= new LoginGridPane(loginViewModel, this);
-		messagesBorderPane = new MessagesBorderPane();
+		loginGridPane      	= new LoginGridPane(viewModelProvider, this);
+		messagesBorderPane = new MessagesBorderPane(viewModelProvider);
 
 
 	}
@@ -116,6 +109,7 @@ public class RootBorderPane extends BorderPane
 		mContact.setDisable(disable);
 		mChat.setDisable(disable);
 		miDeleteAccount.setDisable(disable);
+
 		/*
 		if(loginViewModel.accountExists())
 			miDeleteAccount.setDisable(false);
@@ -144,12 +138,12 @@ public class RootBorderPane extends BorderPane
 	{
 		// TODO check this - might be dangerous!
 		try {
-			if (loginViewModel.hasDbKey()) {
-				loginViewModel.stop();
+			if (viewModelProvider.getLoginViewModel().hasDbKey()) {
+				viewModelProvider.getLoginViewModel().stop();
 				miToggleOnline.setText("Go Online");
 			}
 			else
-				loginViewModel.start();
+				viewModelProvider.getLoginViewModel().start();
 				miToggleOnline.setText("Go Offline");
 		} catch (Exception e) {
 			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
@@ -165,9 +159,9 @@ public class RootBorderPane extends BorderPane
 		
 		if(deletionAlert.getResult() == ButtonType.YES)
 		{
-			if(loginViewModel.hasDbKey()) {
-				loginViewModel.deleteAccount();
-				loginGridPane = new LoginGridPane(loginViewModel,
+			if(viewModelProvider.getLoginViewModel().hasDbKey()) {
+				viewModelProvider.getLoginViewModel().deleteAccount();
+				loginGridPane = new LoginGridPane(viewModelProvider,
 						this); // find better way?
 				exit();
 			}
@@ -184,7 +178,7 @@ public class RootBorderPane extends BorderPane
 		// Doesn't properly exit when "Delete Account & Exit" is used!
 
 		try {
-			loginViewModel.stop();
+			viewModelProvider.getLoginViewModel().stop();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
@@ -198,7 +192,7 @@ public class RootBorderPane extends BorderPane
 	{
 		if(!messagesBorderPane.isContactListVisible())
 		{
-			messagesBorderPane.showContactList(contactManager);
+			messagesBorderPane.showContactList();
 			miShowContactList.setText("Hide Contact List");
 		}
 		else

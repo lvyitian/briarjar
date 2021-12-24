@@ -9,16 +9,19 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import org.briarjar.briarjar.model.LoginViewModel;
+import org.briarjar.briarjar.model.ViewModelProvider;
 
 import java.io.IOException;
 
 public class MainTUI {
 
-	public MainTUI()
+	private ViewModelProvider viewModelProvider;
+	public MainTUI(ViewModelProvider viewModelProvider)
 	{
+		this.viewModelProvider = viewModelProvider;
 		init();
 	}
-	public void start(LoginViewModel loginViewModel)
+	public void start()
 	{
 		// Setup terminal and screen layers
 		Terminal terminal = null;
@@ -35,7 +38,7 @@ public class MainTUI {
 
 			final Label lblOutput = new Label("");
 
-			if(!loginViewModel.accountExists()) {
+			if(!viewModelProvider.getLoginViewModel().accountExists()) {
 				panel.addComponent(new Label("Username: "));
 				tbUsername = new TextBox().addTo(panel);
 			}
@@ -46,14 +49,17 @@ public class MainTUI {
 
 			panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
 
-			if(!loginViewModel.accountExists()) {
+			if(!viewModelProvider.getLoginViewModel().accountExists()) {
 				new Button("Sign Up", new Runnable() {
 					@Override
 					public void run() {
-						loginViewModel.setUsername(tbUsername.getText());
-						loginViewModel.setPassphrase(tbPassphrase.getText());
-						loginViewModel.signUp();
+						try {
+							viewModelProvider.getLoginViewModel().signUp(tbUsername.getText(), tbPassphrase.getText());
+						}
+						catch (Exception e)
+						{
 
+						}
 
 						/**
 						loginViewModel.start();
@@ -66,9 +72,13 @@ public class MainTUI {
 				new Button("Login", new Runnable() {
 					@Override
 					public void run() {
-						loginViewModel.setPassphrase(tbPassphrase.getText());
-						loginViewModel.signIn();
+						try {
+							viewModelProvider.getLoginViewModel().signIn(tbPassphrase.getText());
+						}
+						catch (Exception e)
+						{
 
+						}
 						/**
 						loginViewModel.start();
 						lblOutput.setText("Logging in...");

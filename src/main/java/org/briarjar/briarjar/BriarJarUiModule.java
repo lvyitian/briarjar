@@ -4,7 +4,7 @@ package org.briarjar.briarjar;
 import dagger.Module;
 import dagger.Provides;
 
-import org.briarjar.briarjar.gui.BriarJarGuiImpl;
+import org.briarjar.briarjar.model.UserInterface;
 import org.briarproject.bramble.account.AccountModule;
 import org.briarproject.bramble.api.FeatureFlags;
 import org.briarproject.bramble.api.db.DatabaseConfig;
@@ -24,6 +24,7 @@ import org.briarproject.bramble.system.DefaultTaskSchedulerModule;
 import org.briarproject.bramble.system.DefaultWakefulIoExecutorModule;
 import org.briarproject.bramble.system.DesktopSecureRandomModule;
 import org.briarproject.bramble.system.JavaSystemModule;
+import org.h2.engine.User;
 
 import java.io.File;
 import java.util.*;
@@ -46,13 +47,15 @@ import javax.inject.Singleton;
 		}
 )
 
-public class BriarJarGuiModule
+public class BriarJarUiModule
 {
 	private File appDir;
+	private UserInterface ui;
 
-	public BriarJarGuiModule(File appDir)
+	public BriarJarUiModule(File appDir, UserInterface ui)
 	{
 		this.appDir = appDir;    // Kotlin interpretation
+		this.ui = ui;
 	}
 
 	@Provides
@@ -64,9 +67,16 @@ public class BriarJarGuiModule
 
 	@Provides
 	@Singleton
-	public BriarJarUi provideBriarUi(BriarJarGuiImpl briarJarUi)
+	public BriarJarUi provideBriarUi(BriarJarUiImpl briarJarUi)
 	{ // previous named ---^  : provideBriarService
 		return briarJarUi;  // Kotlin interpretation
+	}
+
+	@Provides
+	@Singleton
+	public UserInterface provideUserInterface()
+	{
+		return ui;
 	}
 
 	// TODO provideObjectMapper ?!

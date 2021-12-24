@@ -1,5 +1,6 @@
 package org.briarjar.briarjar.gui;
 import org.briarjar.briarjar.model.LoginViewModel;
+import org.briarjar.briarjar.model.ViewModelProvider;
 import org.briarproject.bramble.api.contact.ContactManager;
 
 import javafx.application.Application;
@@ -13,21 +14,19 @@ public class MainGUI extends Application
 {
 	private RootBorderPane rootBorderPane;
 
-	final private LoginViewModel loginViewModel;
-	final private ContactManager contactManager;
+	final private ViewModelProvider viewModelProvider;
 
-	public MainGUI (LoginViewModel loginViewModel, ContactManager contactManager)
+	public MainGUI (ViewModelProvider viewModelProvider)
 	{
 		super();
-		this.loginViewModel = loginViewModel;
-		this.contactManager = contactManager;
+		this.viewModelProvider = viewModelProvider;
 	}
 
 	@Override
 	public void start(Stage primaryStage) {
 		try
 		{
-			rootBorderPane = new RootBorderPane(loginViewModel, contactManager);
+			rootBorderPane = new RootBorderPane(viewModelProvider);
 			Scene sceneRoot = new Scene(rootBorderPane, 850, 560);
 			// sceneRoot.getStylesheets().add(getClass().getResource("briar.css").toExternalForm());
 			primaryStage.setScene(sceneRoot);

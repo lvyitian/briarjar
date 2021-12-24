@@ -1,0 +1,70 @@
+@startuml
+
+class ViewModelProvider {
+    loginVM: LoginViewModel
+    contactVM: ContactViewModel
+    conversationVM: ConversationViewModel
+}
+
+class LoginViewModel implements ViewModel {
+    username: String
+    passphrase: String
+    login()
+    register()
+    passwordStrength()
+}
+
+class ContactViewModel implements ViewModel {
+
+}
+class ConversationViewModel implements ViewModel {
+
+}
+
+
+interface ViewModel {
+    empty interface
+}
+
+class Main {
+    determines if TUI or GUI starts
+    perhaps using args[0]
+}
+
+class BriarJarTuiImpl {
+    viewModelProvider: ViewModelProvider
+    mainTUI: mainTUI
+}
+
+class BriarJarGuiImpl {
+    viewModelProvider: ViewModelProvider
+    mainGUI: mainGUI
+}
+
+class MainTUI {
+    viewModelProvider: ViewModelProvider
+}
+
+class MainGUI {
+    viewModelProvider: ViewModelProvider
+}
+
+class RootBorderPane {
+
+}
+
+
+
+Main  -down-> BriarJarTuiImpl
+Main  -up-> BriarJarGuiImpl
+BriarJarTuiImpl -right-> ViewModelProvider
+MainGUI -> BriarJarGuiImpl
+RootBorderPane -up-> MainGUI
+
+BriarJarGuiImpl -down-> ViewModelProvider
+MainTUI -> BriarJarTuiImpl
+
+ViewModelProvider -up-> LoginViewModel
+ViewModelProvider -up-> ContactViewModel
+ViewModelProvider -up-> ConversationViewModel
+@enduml

@@ -1,6 +1,7 @@
 package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.LoginViewModel;
+import org.briarjar.briarjar.model.ViewModelProvider;
 import org.briarproject.bramble.api.crypto.DecryptionException;
 
 import java.text.DecimalFormat;
@@ -32,12 +33,12 @@ public class LoginGridPane extends GridPane
 	private Button        btSignInRegister;
 	private Text          passphraseStrength;
 
-	private LoginViewModel loginViewModel;
+	private ViewModelProvider viewModelProvider;
 	private RootBorderPane rootBorderPane;
 
-	public LoginGridPane(LoginViewModel loginViewModel, RootBorderPane rootBorderPane)
+	public LoginGridPane(ViewModelProvider viewModelProvider, RootBorderPane rootBorderPane)
 	{
-		this.loginViewModel = loginViewModel;
+		this.viewModelProvider = viewModelProvider;
 		this.rootBorderPane = rootBorderPane;
 
 		initComponents();
@@ -76,10 +77,10 @@ public class LoginGridPane extends GridPane
 
 		passphraseStrength = new Text("0.00");
 
-		btSignInSignUp = new Button("Sign Up");
+		btSignInRegister = new Button("Sign Up");
 
 		// TODO: architectural change -> split in different login / registration "scene"
-		if (loginViewModel.accountExists()) {
+		if (viewModelProvider.getLoginViewModel().accountExists()) {
 			tfUsername.setVisible(false);
 			btSignInRegister.setText("Sign In");
 		}
@@ -103,7 +104,7 @@ public class LoginGridPane extends GridPane
 	{
 		tfUsername.setOnKeyReleased(e -> switchToPassphrase(e));
 		passphraseField.setOnKeyTyped(e -> passphraseStrength());
-		btSignInRegister.setOnAction(e -> loginOrRegister());
+		//btSignInRegister.setOnAction(e -> btSignInRegister());
 	}
 
 	// ============================ logic ============================
@@ -111,7 +112,7 @@ public class LoginGridPane extends GridPane
 	//todo 4k prüfung vorab ob acc existiert
 	private void prepareSignInSignUpMask()
 	{
-		if (loginViewModel.accountExists())
+		if (viewModelProvider.getLoginViewModel().accountExists())
 			;// show 1x passphrase
 		else
 			;// show 1x username, 2x passphrase
@@ -120,10 +121,10 @@ public class LoginGridPane extends GridPane
 	private void signIn()
 	{
 		try {
-			loginViewModel.signIn(passphraseField.getText());
+			viewModelProvider.getLoginViewModel().signIn(passphraseField.getText());
 
 			//todo 4k offline mode possible? // if (...
-				loginViewModel.start();
+				viewModelProvider.getLoginViewModel().start();
 
 		} catch (DecryptionException e) {
 			MainGUI.showAlert(AlertType.ERROR, "Could not decrypt " +
@@ -138,10 +139,10 @@ public class LoginGridPane extends GridPane
 	private void signUp()
 	{
 		try {
-			loginViewModel.signUp(tfUsername.getText(), passphraseField.getText());
+			viewModelProvider.getLoginViewModel().signUp(tfUsername.getText(), passphraseField.getText());
 
 			//todo 4k offline mode possible? // if (...
-				loginViewModel.start();
+			viewModelProvider.getLoginViewModel().start();
 
 		} catch (InterruptedException e) {
 			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
@@ -152,9 +153,9 @@ public class LoginGridPane extends GridPane
 
 	private void passphraseStrength()
 	{
-		loginViewModel.setPassphrase(passphraseField.getText());
+		viewModelProvider.getLoginViewModel().setPassphrase(passphraseField.getText());
 		DecimalFormat df = new DecimalFormat("#.##");
-		passphraseStrength.setText(df.format(loginViewModel.getPassphraseStrength()));
+		passphraseStrength.setText(df.format(viewModelProvider.getLoginViewModel().getPassphraseStrength()));
 	}
 
 	// ============================ others ============================
