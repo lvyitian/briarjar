@@ -1,6 +1,5 @@
 package org.briarjar.briarjar.gui;
 
-import org.briarjar.briarjar.model.LoginViewModel;
 import org.briarjar.briarjar.model.ViewModelProvider;
 import org.briarproject.bramble.api.crypto.DecryptionException;
 
@@ -60,6 +59,7 @@ public class LoginGridPane extends GridPane
 		
 		try 
 		{
+			imgWelcome = null;
 			// imgWelcome = new ImageView(new Image(getClass().getResource("briar-logo.png").toExternalForm()));
 		} catch (Exception e) {
 			MainGUI.showAlert(AlertType.ERROR, "Configured welcome image not found.");

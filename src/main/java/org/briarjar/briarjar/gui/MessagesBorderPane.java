@@ -2,10 +2,8 @@ package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.ViewModelProvider;
 import org.briarproject.bramble.api.contact.Contact;
-import org.briarproject.bramble.api.contact.ContactManager;
 import org.briarproject.bramble.api.db.DbException;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javafx.scene.control.Button;
@@ -25,7 +23,6 @@ public class MessagesBorderPane extends BorderPane
 	private boolean isContactListVisible;
 
 	private ViewModelProvider viewModelProvider;
-	// private Contact currentSelectedContact;
 	
 	public MessagesBorderPane(ViewModelProvider viewModelProvider) {
 		this.viewModelProvider = viewModelProvider;

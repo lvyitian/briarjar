@@ -24,7 +24,6 @@ import org.briarproject.bramble.system.DefaultTaskSchedulerModule;
 import org.briarproject.bramble.system.DefaultWakefulIoExecutorModule;
 import org.briarproject.bramble.system.DesktopSecureRandomModule;
 import org.briarproject.bramble.system.JavaSystemModule;
-import org.h2.engine.User;
 
 import java.io.File;
 import java.util.*;
@@ -85,7 +84,7 @@ public class BriarJarUiModule
 	@Singleton
 	public PluginConfig providePluginConfig(UnixTorPluginFactory tor)
 	{
-		List<DuplexPluginFactory> duplex = Arrays.asList(tor);
+		List<DuplexPluginFactory> duplex = List.of(tor);
 		return new PluginConfig() {
 			@Override
 			public Collection<DuplexPluginFactory> getDuplexFactories() {

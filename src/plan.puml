@@ -27,8 +27,7 @@ interface ViewModel {
 }
 
 class Main {
-    determines if TUI or GUI starts
-    perhaps using args[0]
+    ui: UserInterface
 }
 
 class BriarJarUiImpl {
@@ -49,7 +48,10 @@ class RootBorderPane {
 
 }
 
-
+enum UserInterface {
+    GRAPHICAL,
+    TERMINAL
+}
 
 Main  -down-> BriarJarUiImpl
 BriarJarUiImpl -right-> ViewModelProvider

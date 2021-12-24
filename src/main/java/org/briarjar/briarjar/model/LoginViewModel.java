@@ -35,9 +35,6 @@ public class LoginViewModel {
 	// ============================ setters ============================
 
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
 
 	public void setPassphrase(String passphrase) {
 		this.passphrase = passphrase;
@@ -74,6 +71,7 @@ public class LoginViewModel {
 	//todo 4k maybe startBriar or similar?
 	public void start() throws InterruptedException {
 		SecretKey dbKey = accountManager.getDatabaseKey();
+		assert dbKey != null;
 		lifecycleManager.startServices(dbKey);
 		lifecycleManager.waitForStartup();
 	}

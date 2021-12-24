@@ -1,7 +1,5 @@
 package org.briarjar.briarjar.gui;
-import org.briarjar.briarjar.model.LoginViewModel;
 import org.briarjar.briarjar.model.ViewModelProvider;
-import org.briarproject.bramble.api.contact.ContactManager;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

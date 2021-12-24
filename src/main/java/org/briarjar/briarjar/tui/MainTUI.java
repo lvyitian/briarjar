@@ -8,7 +8,6 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import org.briarjar.briarjar.model.LoginViewModel;
 import org.briarjar.briarjar.model.ViewModelProvider;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ public class MainTUI {
 	public void start()
 	{
 		// Setup terminal and screen layers
-		Terminal terminal = null;
+		Terminal terminal;
 		final TextBox tbUsername;
 		try {
 			terminal = new DefaultTerminalFactory().createTerminal();
@@ -50,40 +49,36 @@ public class MainTUI {
 			panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
 
 			if(!viewModelProvider.getLoginViewModel().accountExists()) {
-				new Button("Sign Up", new Runnable() {
-					@Override
-					public void run() {
-						try {
-							viewModelProvider.getLoginViewModel().signUp(tbUsername.getText(), tbPassphrase.getText());
-						}
-						catch (Exception e)
-						{
-
-						}
-
-						/**
-						loginViewModel.start();
-						lblOutput.setText("Logging in...");
-						 */
+				new Button("Sign Up", () -> {
+					try {
+						viewModelProvider.getLoginViewModel().signUp(tbUsername.getText(), tbPassphrase.getText());
 					}
+					catch (Exception e)
+					{
+						// TODO implement
+						System.out.println(e);
+					}
+
+					/*
+					loginViewModel.start();
+					lblOutput.setText("Logging in...");
+					 */
 				}).addTo(panel);
 			} else
 			{
-				new Button("Login", new Runnable() {
-					@Override
-					public void run() {
-						try {
-							viewModelProvider.getLoginViewModel().signIn(tbPassphrase.getText());
-						}
-						catch (Exception e)
-						{
-
-						}
-						/**
-						loginViewModel.start();
-						lblOutput.setText("Logging in...");
-						 */
+				new Button("Login", () -> {
+					try {
+						viewModelProvider.getLoginViewModel().signIn(tbPassphrase.getText());
 					}
+					catch (Exception e)
+					{
+						// TODO implement
+						System.out.println(e);
+					}
+					/*
+					loginViewModel.start();
+					lblOutput.setText("Logging in...");
+					 */
 				}).addTo(panel);
 			}
 			panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
@@ -115,6 +110,6 @@ public class MainTUI {
 
 	public void stop()
 	{
-
+		viewModelProvider.getLoginViewModel().stop();
 	}
 }

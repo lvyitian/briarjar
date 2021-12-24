@@ -1,7 +1,6 @@
 package org.briarjar.briarjar;
 
 import org.briarjar.briarjar.gui.MainGUI;
-import org.briarjar.briarjar.model.LoginViewModel;
 import org.briarjar.briarjar.model.UserInterface;
 import org.briarjar.briarjar.model.ViewModelProvider;
 import org.briarjar.briarjar.tui.MainTUI;
@@ -29,7 +28,6 @@ import java.util.logging.Logger;
 public class BriarJarUiImpl implements BriarJarUi
 {
 	private ViewModelProvider viewModelProvider;
-	private LoginViewModel loginViewModel;
 	private UserInterface userInterface;
 
 	@Inject
@@ -89,6 +87,6 @@ public class BriarJarUiImpl implements BriarJarUi
 
 	@Override
 	public void stop() {
-		loginViewModel.stop();
+		viewModelProvider.getLoginViewModel().stop();
 	}
 }
