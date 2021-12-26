@@ -9,7 +9,7 @@ class ViewModelProvider {
 class LoginViewModel implements ViewModel {
     username: String
     passphrase: String
-    login()
+    signIn()
     register()
     passwordStrength()
 }

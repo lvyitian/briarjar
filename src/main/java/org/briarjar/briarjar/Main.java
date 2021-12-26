@@ -6,24 +6,22 @@ package org.briarjar.briarjar;
 import org.briarjar.briarjar.model.UserInterface;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class Main
 {
-	private static UserInterface ui;
 
 	public static void main(String[] args) {
+		UserInterface ui;
 
-		if (args == null)
-			ui = UserInterface.GRAPHICAL;
+		if (Arrays.stream(args).anyMatch(s -> s.equals("--tui") || s.equals("tui")))
+			ui = UserInterface.TERMINAL;
 		else
-			if(args.length == 1 && args[0].equals("gui"))
-				ui = UserInterface.GRAPHICAL;
-			else
-				if(args.length == 1 && args[0].equals("tui"))
-					ui = UserInterface.TERMINAL;
+			ui = UserInterface.GRAPHICAL;
+
 
 		// testing
-		ui = UserInterface.GRAPHICAL;
+		//ui = UserInterface.TERMINAL;
 		var briarJarUiApp =
 				DaggerBriarJarUiApp.builder().briarJarUiModule(
 						new BriarJarUiModule(getDataDir(), ui)).build();

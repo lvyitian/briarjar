@@ -84,7 +84,6 @@ public class LoginGridPane extends GridPane
 			tfUsername.setVisible(false);
 			btSignInRegister.setText("Sign In");
 		}
-		
 	}
 	
 	
@@ -155,7 +154,7 @@ public class LoginGridPane extends GridPane
 	{
 		viewModelProvider.getLoginViewModel().setPassphrase(passphraseField.getText());
 		DecimalFormat df = new DecimalFormat("#.##");
-		passphraseStrength.setText(df.format(viewModelProvider.getLoginViewModel().getPassphraseStrength()));
+		passphraseStrength.setText(df.format(viewModelProvider.getLoginViewModel().calcPassphraseStrength(passphraseField.getText())));
 	}
 
 	// ============================ others ============================

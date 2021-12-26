@@ -44,7 +44,7 @@ public class LoginViewModel {
 	// ============================ logic ============================
 
 
-	public float getPassphraseStrength()
+	public float calcPassphraseStrength(String passphrase)
 	{
 		return passphraseStrengthEstimator.estimateStrength(passphrase);
 	}
