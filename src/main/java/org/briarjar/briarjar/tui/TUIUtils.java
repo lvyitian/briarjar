@@ -2,7 +2,6 @@ package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.screen.Screen;
 
 import javax.inject.Inject;
 
