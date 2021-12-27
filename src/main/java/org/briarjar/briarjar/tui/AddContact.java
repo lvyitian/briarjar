@@ -17,7 +17,6 @@ public class AddContact {
 	private MultiWindowTextGUI textGUI;
 	private final ContactViewModel cvm;
 	private TUIUtils tuiUtils;
-	private Label errors;
 
 	private String handshakeLinkOfFriend;
 
@@ -25,7 +24,6 @@ public class AddContact {
 	public AddContact(ContactViewModel cvm)
 	{
 		this.cvm = cvm;
-		this.errors = new Label("");
 		contentPanel = new Panel(new GridLayout(1));
 		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
 		gridLayout.setHorizontalSpacing(2);
@@ -38,7 +36,7 @@ public class AddContact {
 		TUIUtils.addTitle("Add a new Contact", contentPanel);
 
 		try {
-		String link = "TODO"; // cvm.getLink();         // FIXME exception w/ dagger @Injection of cvm
+		String link = cvm.getLink();         // FIXME causes exception w/ dagger @Injection of cvm
 		contentPanel.addComponent(
 				new Button("Get your own Handshake-Link", () ->
 						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", link, MessageDialogButton.OK)
@@ -65,8 +63,6 @@ public class AddContact {
 					// viewModelProvider.getContactManager().addContact();
 					tuiUtils.switchWindow(window,TUIWindow.CONTACTLIST);
 				}));
-
-		contentPanel.addComponent(errors);
 	}
 
 	public void render()

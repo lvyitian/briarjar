@@ -17,7 +17,6 @@ public class ContactList {
 	private final LoginViewModel lvm;
 	private TUIUtils tuiUtils;
 	private final ContactViewModel cvm;
-	private Label errors;
 
 	private final ComboBox<String> contactAliasComboBox;
 
@@ -26,7 +25,6 @@ public class ContactList {
 	{
 		this.lvm = lvm;
 		this.cvm = cvm;
-		this.errors = new Label("");
 		this.contactAliasComboBox = new ComboBox<>();
 
 		contentPanel = new Panel(new GridLayout(1));
@@ -67,8 +65,6 @@ public class ContactList {
 					lvm.stop();
 					tuiUtils.switchWindow(window, TUIWindow.SIGNIN);
 				}));
-
-		contentPanel.addComponent(errors);
 	}
 
 	public void render()

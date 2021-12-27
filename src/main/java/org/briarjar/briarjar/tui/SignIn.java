@@ -1,9 +1,12 @@
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.crypto.DecryptionException;
+import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import javax.inject.Inject;
 
@@ -14,7 +17,6 @@ public class SignIn {
 	private MultiWindowTextGUI textGUI;
 	private final LoginViewModel lvm;
 	private TUIUtils tuiUtils;
-	private Label errors;
 
 	private String passphrase;
 
@@ -22,7 +24,6 @@ public class SignIn {
 	public SignIn(LoginViewModel lvm)
 	{
 		this.lvm = lvm;
-		this.errors = new Label("");
 		contentPanel = new Panel(new GridLayout(1));
 		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
 		gridLayout.setHorizontalSpacing(2);
@@ -43,15 +44,14 @@ public class SignIn {
 
 					try {
 						lvm.signIn(passphrase);
-					} catch (DecryptionException e) {
-						errors = new Label(e.getMessage());
-					}
-					try {
 						lvm.start();
+					} catch (DecryptionException e) {
+						MessageDialog.showMessageDialog(textGUI, "DecryptionException occurred", e.getDecryptionResult().toString(), MessageDialogButton.OK);
 					} catch (InterruptedException e) {
-						errors = new Label(e.getMessage());
+						MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 					}
-					tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
+					if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
+						tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
 				}));
 
 		TUIUtils.addHorizontalSeparator(contentPanel);
@@ -62,8 +62,6 @@ public class SignIn {
 					tuiUtils.switchWindow(window, TUIWindow.SIGNUP);
 				})
 		);
-
-		contentPanel.addComponent(errors);
 	}
 
 	public void render()

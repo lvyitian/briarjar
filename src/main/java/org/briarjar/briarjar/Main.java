@@ -32,7 +32,7 @@ public class Main {
 
 		// testing
 		//ui = UserInterface.GRAPHICAL;
-		// ui = UserInterface.TERMINAL;
+		 ui = UserInterface.TERMINAL;
 
 		// legacy/reminder
 		/* Maybe not needed in this form currently, since it's for testing?

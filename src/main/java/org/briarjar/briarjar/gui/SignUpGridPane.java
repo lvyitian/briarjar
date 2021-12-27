@@ -144,8 +144,7 @@ public class SignUpGridPane extends GridPane {
 	{
 		if (e.getCode() == KeyCode.ENTER)
 		{
-			btSignUp.setDisable(true);
-			guiUtils.switchToMain();
+			signUp();
 		}
 	}
 

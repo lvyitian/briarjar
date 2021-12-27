@@ -1,9 +1,12 @@
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
+import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import javax.inject.Inject;
 
@@ -12,7 +15,6 @@ public class SignUp {
 	private final Panel contentPanel;
 	private TUIUtils tuiUtils;
 	private BasicWindow window;
-	private Label errors;
 	private MultiWindowTextGUI textGUI;
 	private final LoginViewModel lvm;
 	private String username;
@@ -22,7 +24,6 @@ public class SignUp {
 	public SignUp(LoginViewModel lvm)
 	{
 		this.lvm = lvm;
-		this.errors = new Label("");
 		contentPanel = new Panel(new GridLayout(1));
 		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
 		gridLayout.setHorizontalSpacing(2);
@@ -51,17 +52,17 @@ public class SignUp {
 					try {
 						lvm.signUp(username, passphrase);}
 					catch (InterruptedException e) {
-						errors = new Label(e.getMessage());
+						MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 					}
 					try {
 						lvm.start();
 					} catch (InterruptedException e) {
-						errors = new Label(e.getMessage());
+						MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 					}
-					tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
+					if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
+						tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
 				}));
 		TUIUtils.addHorizontalSeparator(contentPanel);
-		contentPanel.addComponent(errors);
 	}
 
 	public void render()

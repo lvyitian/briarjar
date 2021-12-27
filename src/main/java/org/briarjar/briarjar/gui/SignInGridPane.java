@@ -102,26 +102,26 @@ public class SignInGridPane extends GridPane {
 		{
 			lvm.signIn(passphraseField.getText());
 			lvm.start();
+
+			btSignIn.setDisable(true);
+			guiUtils.switchToMain();
 		} catch (DecryptionException e)
 		{
 			showAlert(Alert.AlertType.ERROR, "Could not decrypt " +
-					"database - wrong passphrase entered?\n(" + e.getMessage() +
+					"database - wrong passphrase entered?\n(" + e.getDecryptionResult() +
 					")");
 		} catch (InterruptedException e)
 		{
 			showAlert(Alert.AlertType.ERROR,
 					"Startup Error: " + e.getMessage());
 		}
-		btSignIn.setDisable(true);
-		guiUtils.switchToMain();
 	}
 
 	private void switchToMain(KeyEvent e)
 	{
 		if (e.getCode() == KeyCode.ENTER)
 		{
-			btSignIn.setDisable(true);
-			guiUtils.switchToMain();
+			signIn();
 		}
 	}
 
