@@ -1,72 +1,127 @@
 package org.briarjar.briarjar.tui;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
 
-import org.briarjar.briarjar.model.ViewModelProvider;
+import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
-import java.io.Closeable;
 import java.io.IOException;
 
-public class MainTUI implements Closeable {
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-	private Screen screen;
+@Singleton
+public class MainTUI {
 
-	private final ViewModelProvider viewModelProvider;
+	private final LoginViewModel lvm;
 
-	public MainTUI(ViewModelProvider viewModelProvider) {
+	@Inject
+	public MainTUI(LoginViewModel lvm)
+	{
+		this.lvm = lvm;
 		init();
-		this.viewModelProvider = viewModelProvider;
 	}
 
-	public void start() {
-		DefaultTerminalFactory defaultTerminalFactory =
-				new DefaultTerminalFactory();
-		try {
-			Screen screen = defaultTerminalFactory.createScreen();
+	public void start()
+	{
+		// Setup terminal and screen layers
+		Terminal terminal;
+		final TextBox tbUsername;
+		try
+		{
+			terminal = new DefaultTerminalFactory().createTerminal();
+			Screen screen = new TerminalScreen(terminal);
 			screen.startScreen();
-		this.screen = screen;
 
-		final MultiWindowTextGUI textGUI =
-				new MultiWindowTextGUI(this.screen, new DefaultWindowManager(),
-						new EmptySpace(
-								TextColor.ANSI.GREEN_BRIGHT));
+			// Create panel to hold components
+			Panel panel = new Panel();
+			panel.setLayoutManager(new GridLayout(2));
 
-		// login or register
-		if (viewModelProvider.getLoginViewModel().accountExists()) {
-			SignIn signIn = new SignIn(viewModelProvider, textGUI);
-			signIn.render();
-		} else {
-			SignUp signUp = new SignUp(viewModelProvider, textGUI);
-			signUp.render();
-		}
 
-		} catch (IOException e) {
+			final Label lblOutput = new Label("");
+
+			if (!lvm.accountExists())
+			{
+				panel.addComponent(new Label("Username: "));
+				tbUsername = new TextBox().addTo(panel);
+			} else
+				tbUsername = null;
+			panel.addComponent(new Label("Passphrase: "));
+			final TextBox tbPassphrase = new TextBox().addTo(panel);
+
+			panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
+
+			if (!lvm.accountExists())
+			{
+				new Button("Sign Up", () -> {
+					try
+					{
+						lvm.signUp(tbUsername.getText(),tbPassphrase.getText());
+					} catch (Exception e)
+					{
+						// TODO implement, check getText() for NULL
+						System.out.println(e.getMessage());
+					}
+
+					/*
+					loginViewModel.start();
+					lblOutput.setText("Logging in...");
+					 */
+				}).addTo(panel);
+			} else
+			{
+				new Button("Login", () -> {
+					try
+					{
+						lvm.signIn(tbPassphrase.getText());
+					} catch (Exception e)
+					{
+						// TODO implement, check getText() for NULL
+						System.out.println(e.getMessage());
+					}
+					/*
+					loginViewModel.start();
+					lblOutput.setText("Logging in...");
+					 */
+				}).addTo(panel);
+			}
+			panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
+			panel.addComponent(lblOutput);
+
+			// Create window to hold the panel
+			BasicWindow window = new BasicWindow();
+			window.setTitle("BriarJar TUI");
+			window.setComponent(panel);
+
+			// Create "gui" with tui and start
+			MultiWindowTextGUI gui =
+					new MultiWindowTextGUI(screen,
+					                       new DefaultWindowManager(),
+					                       new EmptySpace(TextColor.ANSI.GREEN));
+			gui.addWindowAndWait(window);
+
+		} catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
 
-	public void init() {
-		System.out.println(
-				"===== BriarJar TUI Mode (development version) =====");
-		System.out.println("JDK Version (java.version): " +
-				System.getProperty("java.version"));
-		System.out.println("JRE Version (java.runtime.version): " +
-				System.getProperty("java.runtime.version"));
-		System.out.println(
-				"Operating System (os.name): " + System.getProperty("os.name"));
+	public void init()
+	{
+		System.out.println("===== BriarJar TUI Mode (development version) =====");
+		System.out.println("JDK Version (java.version): "+System.getProperty("java.version"));
+		System.out.println("JRE Version (java.runtime.version): "+System.getProperty("java.runtime.version"));
+		System.out.println("Operating System (os.name): " + System.getProperty("os.name"));
 		System.out.println("==========================================");
 	}
 
-	public void stop() {
-		viewModelProvider.getLoginViewModel().stop();
-	}
-
-	@Override
-	public void close() throws IOException {
-		stop();
-		screen.stopScreen();
+	public void stop()
+	{
+		lvm.stop();
 	}
 }

@@ -1,7 +1,10 @@
 package org.briarjar.briarjar.gui;
 
-import org.briarjar.briarjar.model.ViewModelProvider;
-import org.briarproject.bramble.api.lifecycle.LifecycleManager;
+//import org.briarjar.briarjar.DaggerBriarJarApp;
+import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -14,8 +17,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 
-import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
-
+@Singleton
 public class RootBorderPane extends BorderPane
 {
 
@@ -30,11 +32,15 @@ public class RootBorderPane extends BorderPane
 	private LoginGridPane loginGridPane;      // maybe the wrong place (better/right in Main via Main(login)??)
 	private MessagesBorderPane    messagesBorderPane; // same again
 
-	private ViewModelProvider viewModelProvider;
-	
-	public RootBorderPane(ViewModelProvider viewModelProvider)
+	private final LoginViewModel lvm;
+
+	@Inject
+	public RootBorderPane(
+			LoginViewModel lvm,
+			MessagesBorderPane messagesBorderPane)
 	{
-		this.viewModelProvider = viewModelProvider;
+		this.lvm = lvm;
+		this.messagesBorderPane = messagesBorderPane;
 
 		initComponents();
 		addComponents();
@@ -64,8 +70,8 @@ public class RootBorderPane extends BorderPane
 		
 		statusBar 			= new ToolBar();
 
-		loginGridPane      	= new LoginGridPane(viewModelProvider, this);
-		messagesBorderPane = new MessagesBorderPane(viewModelProvider);
+		//loginGridPane      	= new LoginGridPane(this);
+		//messagesBorderPane = new MessagesBorderPane();
 
 
 	}
@@ -125,7 +131,7 @@ public class RootBorderPane extends BorderPane
 	
 	private void unimplemented()
 	{
-		showAlert(AlertType.INFORMATION, "This feature is not part of the prototype and unimplemented!");
+		MainGUI.showAlert(AlertType.INFORMATION, "This feature is not part of the prototype and unimplemented!");
 	}
 
 	public void switchToMainScene()
@@ -141,15 +147,15 @@ public class RootBorderPane extends BorderPane
 	{
 		// TODO check this - might be dangerous!
 		try {
-			if (viewModelProvider.getLoginViewModel().hasDbKey()) {
-				viewModelProvider.getLoginViewModel().stop();
+			if (lvm.hasDbKey()) {
+				lvm.stop();
 				miToggleOnline.setText("Go Online");
 			}
 			else
-				viewModelProvider.getLoginViewModel().start();
+				lvm.start();
 				miToggleOnline.setText("Go Offline");
 		} catch (Exception e) {
-			showAlert(AlertType.ERROR, e.getMessage());
+			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
 		}
 	}
 
@@ -162,31 +168,29 @@ public class RootBorderPane extends BorderPane
 		
 		if(deletionAlert.getResult() == ButtonType.YES)
 		{
-			if(viewModelProvider.getLoginViewModel().hasDbKey()) {
-				viewModelProvider.getLoginViewModel().deleteAccount();
-				loginGridPane = new LoginGridPane(viewModelProvider,
-						this); // find better way?
+			if(lvm.hasDbKey()) {
+				lvm.deleteAccount();
+				//loginGridPane = new LoginGridPane(this); // find better way?
+
 				exit();
 			}
 			else
-				showAlert(AlertType.ERROR, "No DbKey");
+				MainGUI.showAlert(AlertType.ERROR, "No DbKey");
 			// TODO architectural changes... maybe remove the delete feat. completely?
 		}
 	}
-	
+
 	public void exit()
 	{
 		// FIXME
 		// Doesn't work without account (on registration screen)
 		// Doesn't properly exit when "Delete Account & Exit" is used!
 
-		if(viewModelProvider.getLoginViewModel().getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING) {
-			try {
-				viewModelProvider.getLoginViewModel().stop();
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				showAlert(AlertType.ERROR, e.getMessage());
-			}
+		try {
+			lvm.stop();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
 		}
 		Platform.exit();
 	}

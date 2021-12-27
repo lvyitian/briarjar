@@ -1,6 +1,6 @@
-package org.briarjar.briarjar.model.conversation;
+package org.briarjar.briarjar.model.viewmodels;
 
-import org.briarjar.briarjar.Experimental;
+import org.briarjar.briarjar.model.utils.Experimental;
 import org.briarproject.bramble.api.FormatException;
 import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.db.DbException;
@@ -17,8 +17,10 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 
+@Singleton
 @NotNullByDefault
 public class ConversationViewModel {
 
@@ -33,7 +35,8 @@ public class ConversationViewModel {
 			ConversationManager conversationManager,
 			MessagingManager messagingManager,
 			PrivateMessageFactory privateMessageFactory
-	) {
+	)
+	{
 		this.conversationManager = conversationManager;
 		this.messagingManager = messagingManager;
 		this.pmFactory = privateMessageFactory;
@@ -42,41 +45,43 @@ public class ConversationViewModel {
 	}
 
 
-
-
-
-	public Collection<ConversationMessageHeader> getMessageHeaders(
-			ContactId contactId) throws DbException
+	public Collection<ConversationMessageHeader> getMessageHeaders(ContactId contactId)
+			throws DbException
 	{
-		 return conversationManager.getMessageHeaders(contactId);
+		return conversationManager.getMessageHeaders(contactId);
 	}
 
 	@Experimental
-	public Stream<ConversationMessageHeader>
-			getMoreMessages(ContactId contactId) throws DbException {
+	public Stream<ConversationMessageHeader> getMoreMessages(ContactId contactId)
+			throws DbException
+	{
 		// todo a: implement further messages loading; sorting?
 		return getMessageHeaders(contactId).stream().limit(messagesQueryAmount);
 	}
 
-	public void setMessagesQueryAmount(int amount) throws Exception {
+	public void setMessagesQueryAmount(int amount)
+			throws Exception
+	{
 		int min = 4;
 		int max = 50;
 		if (amount >= min && amount <= max)
 			this.messagesQueryAmount = amount;
 		else
-			throw new Exception("setAmountOfMessagesPerGet must be between "+
-					min+" and "+max+"!");
+			throw new Exception("setAmountOfMessagesPerGet must be between " +
+					min + " and " + max + "!");
 	}
 
 	public void write(ContactId contactId, String text)
-			throws DbException, FormatException, InvalidMessageException {
-		if (!text.isBlank()) {
+			throws DbException, FormatException, InvalidMessageException
+	{
+		if (!text.isBlank())
+		{
 			GroupId groupId = messagingManager.getConversationId(contactId);
 
-			PrivateMessage pm =	pmFactory.createLegacyPrivateMessage(
-									groupId,
-									System.currentTimeMillis(),
-									text);
+			PrivateMessage pm = pmFactory.createLegacyPrivateMessage(
+					groupId,
+					System.currentTimeMillis(),
+					text);
 			messagingManager.addLocalMessage(pm);
 			// todo how to get/implement its status for displaying it in the messages area?
 		} else

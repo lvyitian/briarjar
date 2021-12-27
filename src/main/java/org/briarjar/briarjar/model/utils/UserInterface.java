@@ -1,4 +1,4 @@
-package org.briarjar.briarjar.model;
+package org.briarjar.briarjar.model.utils;
 
 public enum UserInterface {
 	GRAPHICAL,
