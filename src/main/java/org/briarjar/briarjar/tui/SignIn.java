@@ -2,27 +2,27 @@ package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
-
-import org.briarjar.briarjar.model.ViewModelProvider;
+import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.crypto.DecryptionException;
+
+import javax.inject.Inject;
 
 public class SignIn {
 
-	private final ViewModelProvider viewModelProvider;
 	private final Panel contentPanel;
-	private final BasicWindow window;
-	private final MultiWindowTextGUI textGUI;
+	private BasicWindow window;
+	private MultiWindowTextGUI textGUI;
+	private final LoginViewModel lvm;
+	private TUIUtils tuiUtils;
 	private Label errors;
 
 	private String passphrase;
 
-	public SignIn(ViewModelProvider viewModelProvider, MultiWindowTextGUI textGUI)
+	@Inject
+	public SignIn(LoginViewModel lvm)
 	{
-		this.viewModelProvider = viewModelProvider;
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		this.lvm = lvm;
 		this.errors = new Label("");
-		this.textGUI = textGUI;
-
 		contentPanel = new Panel(new GridLayout(1));
 		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
 		gridLayout.setHorizontalSpacing(2);
@@ -44,16 +44,16 @@ public class SignIn {
 				new Button("Sign In", () -> {
 
 					try {
-						viewModelProvider.getLoginViewModel().signIn(passphrase);
+						lvm.signIn(passphrase);
 					} catch (DecryptionException e) {
 						errors = new Label(e.getMessage());
 					}
 					try {
-						viewModelProvider.getLoginViewModel().start();
+						lvm.start();
 					} catch (InterruptedException e) {
 						errors = new Label(e.getMessage());
 					}
-					TUIUtils.switchWindow(window, viewModelProvider, TUIWindow.CONTACTLIST);
+					tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
 				}));
 
 		TUIUtils.addHorizontalSeparator(contentPanel);
@@ -61,17 +61,28 @@ public class SignIn {
 		contentPanel.addComponent(
 				new Button("Delete Account", () -> {
 					// TODO delete account !!
-					TUIUtils.switchWindow(window, viewModelProvider, TUIWindow.SIGNUP);
+					tuiUtils.switchWindow(window, TUIWindow.SIGNUP);
 				})
 		);
 
 		contentPanel.addComponent(errors);
-		window.setComponent(contentPanel);
 	}
 
 	public void render()
 	{
+		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		window.setComponent(contentPanel);
 		// render the window
 		textGUI.addWindowAndWait(window);
+	}
+
+	public void setTextGUI(MultiWindowTextGUI textGUI)
+	{
+		this.textGUI = textGUI;
+	}
+
+	public void setTuiUtils(TUIUtils tuiUtils)
+	{
+		this.tuiUtils = tuiUtils;
 	}
 }

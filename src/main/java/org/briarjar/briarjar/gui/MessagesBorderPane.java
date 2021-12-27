@@ -1,7 +1,5 @@
 package org.briarjar.briarjar.gui;
 
-//import org.briarjar.briarjar.DaggerBriarJarApp;
-
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.db.DbException;
@@ -12,7 +10,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -23,15 +20,18 @@ public class MessagesBorderPane extends BorderPane {
 	private final ContactViewModel cvm;
 	private TextArea messageBox;
 	private MessageListView messageListView;
-	private Label statusText;        // statusBarText
 	private VBox contactList;
 	private boolean isContactListVisible;
+	private GUIUtils guiUtils;
 
 	@Inject
 	public MessagesBorderPane(ContactViewModel cvm)
 	{
 		this.cvm = cvm;
+	}
 
+	public void create()
+	{
 		initComponents();
 		addComponents();
 		addHandlers();
@@ -52,7 +52,7 @@ public class MessagesBorderPane extends BorderPane {
 
 		messageListView = new MessageListView();
 
-		statusText = new Label("Select a contact to show status.");
+		// statusText = new Label("Select a contact to show status.");
 	}
 
 
@@ -69,11 +69,6 @@ public class MessagesBorderPane extends BorderPane {
 	}
 
 	// ============================ getters/setters ============================
-
-	public Label getStatusText()
-	{
-		return statusText;
-	}
 
 	public boolean isContactListVisible()
 	{
@@ -116,5 +111,10 @@ public class MessagesBorderPane extends BorderPane {
 	{
 		setLeft(null);
 		isContactListVisible = false;
+	}
+
+	public void setGUIUtils(GUIUtils guiUtils)
+	{
+		this.guiUtils = guiUtils;
 	}
 }

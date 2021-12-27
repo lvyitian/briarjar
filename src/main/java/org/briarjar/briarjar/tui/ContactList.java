@@ -2,25 +2,30 @@ package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
 
-import org.briarjar.briarjar.model.ViewModelProvider;
+import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
+import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.db.DbException;
 
+import javax.inject.Inject;
+
 public class ContactList {
 
-	private final ViewModelProvider viewModelProvider;
 	private final Panel contentPanel;
-	private final BasicWindow window;
-	private final WindowBasedTextGUI textGUI;
+	private BasicWindow window;
+	private WindowBasedTextGUI textGUI;
+	private final LoginViewModel lvm;
+	private TUIUtils tuiUtils;
+	private final ContactViewModel cvm;
 	private Label errors;
 
 	private final ComboBox<String> contactAliasComboBox;
 
-	public ContactList(ViewModelProvider viewModelProvider, MultiWindowTextGUI textGUI)
+	@Inject
+	public ContactList(LoginViewModel lvm, ContactViewModel cvm)
 	{
-		this.viewModelProvider = viewModelProvider;
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
-		this.textGUI = textGUI;
+		this.lvm = lvm;
+		this.cvm = cvm;
 		this.errors = new Label("");
 		this.contactAliasComboBox = new ComboBox<>();
 
@@ -37,14 +42,14 @@ public class ContactList {
 
 		contentPanel.addComponent(
 				new Button("Add a new Contact", () ->
-						TUIUtils.switchWindow(window, viewModelProvider, TUIWindow.ADDCONTACT)));
+						tuiUtils.switchWindow(window, TUIWindow.ADDCONTACT)));
 
 		TUIUtils.addHorizontalSeparator(contentPanel);
 
 		try {
-			if(viewModelProvider.getContactManager().getContacts().size() != 0) {
-				for (Contact c : viewModelProvider.getContactManager()
-						.getContacts()) {
+			if(cvm.getAcceptedContacts().size() != 0) {
+				for (Contact c : cvm.getAcceptedContacts()
+						) {
 					contactAliasComboBox.addItem(c.getAlias());
 				}
 				contentPanel.addComponent(contactAliasComboBox);
@@ -59,17 +64,29 @@ public class ContactList {
 
 		contentPanel.addComponent(
 				new Button("Log Out", () -> {
-					viewModelProvider.getLoginViewModel().stop();
-					TUIUtils.switchWindow(window, viewModelProvider, TUIWindow.SIGNIN);
+					lvm.stop();
+					tuiUtils.switchWindow(window, TUIWindow.SIGNIN);
 				}));
 
 		contentPanel.addComponent(errors);
-		window.setComponent(contentPanel);
 	}
 
 	public void render()
 	{
+		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		window.setComponent(contentPanel);
 		// render the window
 		textGUI.addWindowAndWait(window);
 	}
+
+	public void setTextGUI(MultiWindowTextGUI textGUI)
+	{
+		this.textGUI = textGUI;
+	}
+
+	public void setTuiUtils(TUIUtils tuiUtils)
+	{
+		this.tuiUtils = tuiUtils;
+	}
+
 }

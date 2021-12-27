@@ -2,6 +2,7 @@ package org.briarjar.briarjar.gui;
 
 //import org.briarjar.briarjar.DaggerBriarJarApp;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
+import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,6 +17,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+
+import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 
 @Singleton
 public class RootBorderPane extends BorderPane
@@ -33,15 +36,17 @@ public class RootBorderPane extends BorderPane
 	private MessagesBorderPane    messagesBorderPane; // same again
 
 	private final LoginViewModel lvm;
+	private GUIUtils guiUtils;
 
 	@Inject
 	public RootBorderPane(
-			LoginViewModel lvm,
-			MessagesBorderPane messagesBorderPane)
+			LoginViewModel lvm)
 	{
 		this.lvm = lvm;
-		this.messagesBorderPane = messagesBorderPane;
+	}
 
+	public void create()
+	{
 		initComponents();
 		addComponents();
 		addHandlers();
@@ -70,12 +75,10 @@ public class RootBorderPane extends BorderPane
 		
 		statusBar 			= new ToolBar();
 
-		//loginGridPane      	= new LoginGridPane(this);
-		//messagesBorderPane = new MessagesBorderPane();
-
-
+		loginGridPane      	= guiUtils.getLoginGridPane();
+		messagesBorderPane = guiUtils.getMessagesBorderPane();
 	}
-	
+
 	private void addComponents()
 	{
 		menuBar.getMenus().addAll(mBriar, mChat, mContact, mInfo);
@@ -111,8 +114,8 @@ public class RootBorderPane extends BorderPane
 		miAbout.setOnAction(e -> about());
 
 	}
-	
-	private void disableComponents(boolean disable)
+
+	public void disableComponents(boolean disable)
 	{
 		miToggleOnline.setDisable(disable);
 		mContact.setDisable(disable);
@@ -131,14 +134,9 @@ public class RootBorderPane extends BorderPane
 	
 	private void unimplemented()
 	{
-		MainGUI.showAlert(AlertType.INFORMATION, "This feature is not part of the prototype and unimplemented!");
+		showAlert(AlertType.INFORMATION, "This feature is not part of the prototype and unimplemented!");
 	}
 
-	public void switchToMainScene()
-	{
-		disableComponents(false);
-		setCenter(messagesBorderPane);
-	}
 
 	// ============================ menu: mBriar ============================
 
@@ -155,7 +153,7 @@ public class RootBorderPane extends BorderPane
 				lvm.start();
 				miToggleOnline.setText("Go Offline");
 		} catch (Exception e) {
-			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
+			showAlert(AlertType.ERROR, e.getMessage());
 		}
 	}
 
@@ -175,22 +173,22 @@ public class RootBorderPane extends BorderPane
 				exit();
 			}
 			else
-				MainGUI.showAlert(AlertType.ERROR, "No DbKey");
+				showAlert(AlertType.ERROR, "No DbKey");
 			// TODO architectural changes... maybe remove the delete feat. completely?
 		}
 	}
 
 	public void exit()
 	{
-		// FIXME
-		// Doesn't work without account (on registration screen)
-		// Doesn't properly exit when "Delete Account & Exit" is used!
-
-		try {
-			lvm.stop();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
+		// TODO extensive testing
+		if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
+		{
+			try {
+				lvm.stop();
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				showAlert(AlertType.ERROR, e.getMessage());
+			}
 		}
 		Platform.exit();
 	}
@@ -233,5 +231,11 @@ public class RootBorderPane extends BorderPane
 	private void about()
 	{
 		// showAlert(AlertType.INFORMATION, "Briar Desktop. This development build is a GUI prototype. Functionality is highly experimental.");
+	}
+
+	
+	public void setGUIUtils(GUIUtils guiUtils)
+	{
+		this.guiUtils = guiUtils;
 	}
 }

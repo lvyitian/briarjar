@@ -46,7 +46,6 @@ run   {
                 '--add-modules', 'javafx.fxml',
                 '--add-modules', 'javafx.graphics',
                 '--add-modules', 'javafx.base',
-                '--add-modules', 'javafx.swing',
         ]
     }
 }

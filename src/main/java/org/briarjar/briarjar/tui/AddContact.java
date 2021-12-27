@@ -5,25 +5,27 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
-import org.briarjar.briarjar.model.ViewModelProvider;
+import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarproject.bramble.api.db.DbException;
+
+import javax.inject.Inject;
 
 public class AddContact {
 
-	private final ViewModelProvider viewModelProvider;
 	private final Panel contentPanel;
-	private final BasicWindow window;
-	private final MultiWindowTextGUI textGUI;
+	private BasicWindow window;
+	private MultiWindowTextGUI textGUI;
+	private final ContactViewModel cvm;
+	private TUIUtils tuiUtils;
 	private Label errors;
 
 	private String handshakeLinkOfFriend;
 
-	public AddContact(ViewModelProvider viewModelProvider, MultiWindowTextGUI textGUI)
+	@Inject
+	public AddContact(ContactViewModel cvm)
 	{
-		this.viewModelProvider = viewModelProvider;
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		this.cvm = cvm;
 		this.errors = new Label("");
-		this.textGUI = textGUI;
 		contentPanel = new Panel(new GridLayout(1));
 		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
 		gridLayout.setHorizontalSpacing(2);
@@ -36,12 +38,12 @@ public class AddContact {
 		TUIUtils.addTitle("Add a new Contact", contentPanel);
 
 		try {
-		String link = viewModelProvider.getContactManager().getHandshakeLink();
+		String link = "TODO"; // cvm.getLink();         // FIXME exception w/ dagger @Injection of cvm
 		contentPanel.addComponent(
 				new Button("Get your own Handshake-Link", () ->
 						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", link, MessageDialogButton.OK)
 				));
-		} catch (DbException e) {
+		} catch (/*Db*/Exception e) {
 			e.printStackTrace();
 		}
 
@@ -53,7 +55,7 @@ public class AddContact {
 		contentPanel.addComponent(
 				new Button("Start Handshake Process", () -> {
 					// viewModelProvider.getContactManager().addContact();
-					TUIUtils.switchWindow(window,viewModelProvider,TUIWindow.CONTACTLIST);
+					tuiUtils.switchWindow(window,TUIWindow.CONTACTLIST);
 				}));
 
 		TUIUtils.addHorizontalSeparator(contentPanel);
@@ -61,17 +63,28 @@ public class AddContact {
 		contentPanel.addComponent(
 				new Button("Cancel", () -> {
 					// viewModelProvider.getContactManager().addContact();
-					TUIUtils.switchWindow(window,viewModelProvider,TUIWindow.CONTACTLIST);
+					tuiUtils.switchWindow(window,TUIWindow.CONTACTLIST);
 				}));
 
 		contentPanel.addComponent(errors);
-		window.setComponent(contentPanel);
 	}
 
 	public void render()
 	{
+		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		window.setComponent(contentPanel);
 		// render the window
 		textGUI.addWindowAndWait(window);
+	}
+
+	public void setTextGUI(MultiWindowTextGUI textGUI)
+	{
+		this.textGUI = textGUI;
+	}
+
+	public void setTuiUtils(TUIUtils tuiUtils)
+	{
+		this.tuiUtils = tuiUtils;
 	}
 
 }

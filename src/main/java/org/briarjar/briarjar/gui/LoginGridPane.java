@@ -25,26 +25,30 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
+
 @Singleton
 public class LoginGridPane extends GridPane {
 
 	private final LoginViewModel lvm;
-	private final RootBorderPane rootBorderPane;
 	private ImageView imgWelcome;
 	private Text txtWelcome;
 	private TextField tfUsername;
 	private PasswordField passphraseField;
 	private Button btSignInRegister;
 	private Text passphraseStrength;
+	private GUIUtils guiUtils;
 
 	@Inject
 	public LoginGridPane(
-			RootBorderPane rootBorderPane,
 			LoginViewModel lvm)
 	{
 		this.lvm = lvm;
-		this.rootBorderPane = rootBorderPane;
 
+	}
+
+	public void create()
+	{
 		initComponents();
 		addComponents();
 		addHandlers();
@@ -68,7 +72,7 @@ public class LoginGridPane extends GridPane {
 			// imgWelcome = new ImageView(new Image(getClass().getResource("briar-logo.png").toExternalForm()));
 		} catch (Exception e)
 		{
-			MainGUI.showAlert(AlertType.ERROR,
+			showAlert(AlertType.ERROR,
 					"Configured welcome image not found.");
 		}
 
@@ -78,7 +82,7 @@ public class LoginGridPane extends GridPane {
 
 
 		tfUsername = new TextField();
-		tfUsername.setPromptText("Enter a Nickname");
+		tfUsername.setPromptText("Enter a Username");
 		passphraseField = new PasswordField();
 		passphraseField.setPromptText("Enter Passphrase");
 
@@ -110,7 +114,7 @@ public class LoginGridPane extends GridPane {
 
 	private void addHandlers()
 	{
-		tfUsername.setOnKeyReleased(e -> switchToPassphrase(e));
+		tfUsername.setOnKeyReleased(this::switchToPassphrase);
 		passphraseField.setOnKeyTyped(e -> passphraseStrength());
 		//btSignInRegister.setOnAction(e -> btSignInRegister());
 	}
@@ -137,16 +141,16 @@ public class LoginGridPane extends GridPane {
 
 		} catch (DecryptionException e)
 		{
-			MainGUI.showAlert(AlertType.ERROR, "Could not decrypt " +
+			showAlert(AlertType.ERROR, "Could not decrypt " +
 					"database - wrong passphrase entered?\n(" + e.getMessage() +
 					")");
 		} catch (InterruptedException e)
 		{
-			MainGUI.showAlert(AlertType.ERROR,
+			showAlert(AlertType.ERROR,
 					"Startup Error: " + e.getMessage());
 		}
 
-		rootBorderPane.switchToMainScene();
+		guiUtils.switchToMainScene();
 	}
 
 	private void signUp()
@@ -160,11 +164,11 @@ public class LoginGridPane extends GridPane {
 
 		} catch (InterruptedException e)
 		{
-			MainGUI.showAlert(AlertType.ERROR,
+			showAlert(AlertType.ERROR,
 					"Startup Error: " + e.getMessage());
 		}
 
-		rootBorderPane.switchToMainScene();
+		guiUtils.switchToMainScene();
 	}
 
 	private void passphraseStrength()
@@ -180,5 +184,10 @@ public class LoginGridPane extends GridPane {
 	{
 		if (e.getCode() == KeyCode.ENTER)
 			passphraseField.requestFocus();
+	}
+
+	public void setGUIUtils(GUIUtils guiUtils)
+	{
+		this.guiUtils = guiUtils;
 	}
 }

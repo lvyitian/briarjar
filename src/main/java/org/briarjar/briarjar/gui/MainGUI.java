@@ -5,31 +5,23 @@ import javax.inject.Singleton;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+
+import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 
 @Singleton
 public class MainGUI extends Application {
 
 	private final RootBorderPane rootBorderPane;
+	private final GUIUtils guiUtils;
 
 	@Inject
-	public MainGUI(RootBorderPane rootBorderPane)
+	public MainGUI(GUIUtils guiUtils)
 	{
 		super();
-		this.rootBorderPane = rootBorderPane;
-	}
-
-	public static void showAlert(AlertType alertType, String message)
-	{
-		System.out.println(message);
-		Alert alert = new Alert(alertType, message, ButtonType.OK);
-		alert.setHeaderText(null);
-		alert.setHeight(350);
-		alert.setTitle("BriarJar Message");
-		alert.showAndWait();
+		this.guiUtils = guiUtils;
+		this.rootBorderPane = guiUtils.getRootBorderPane();
 	}
 
 	@Override
@@ -37,10 +29,11 @@ public class MainGUI extends Application {
 	{
 		try
 		{
+
 			Scene sceneRoot = new Scene(rootBorderPane, 850, 560);
 			// sceneRoot.getStylesheets().add(getClass().getResource("briar.css").toExternalForm());
 			primaryStage.setScene(sceneRoot);
-			primaryStage.setTitle("BriarJar (development version)");
+			primaryStage.setTitle("BriarJar GUI Mode (development version)");
 			// primaryStage.getIcons().add(new Image(getClass().getResource("briar-logo.png").toExternalForm()));
 			primaryStage.show();
 		} catch (Exception e)
@@ -51,7 +44,7 @@ public class MainGUI extends Application {
 
 	public void init()
 	{
-		System.out.println("===== BriarJar (development version) =====");
+		System.out.println("===== BriarJar GUI Mode (development version) GUI mode =====");
 		System.out.println("JDK Version (java.version): "+System.getProperty("java.version"));
 		System.out.println("JRE Version (java.runtime.version): "+System.getProperty("java.runtime.version"));
 		System.out.println("Operating System (os.name): "+System.getProperty("os.name"));

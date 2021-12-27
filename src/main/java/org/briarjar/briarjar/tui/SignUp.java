@@ -3,25 +3,26 @@ package org.briarjar.briarjar.tui;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
-import org.briarjar.briarjar.model.ViewModelProvider;
+import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
+
+import javax.inject.Inject;
 
 public class SignUp {
 
-	private final ViewModelProvider viewModelProvider;
 	private final Panel contentPanel;
-	private final BasicWindow window;
+	private TUIUtils tuiUtils;
+	private BasicWindow window;
 	private Label errors;
-	private final MultiWindowTextGUI textGUI;
-
+	private MultiWindowTextGUI textGUI;
+	private final LoginViewModel lvm;
 	private String username;
 	private String passphrase;
 
-	public SignUp(ViewModelProvider viewModelProvider, MultiWindowTextGUI textGUI)
+	@Inject
+	public SignUp(LoginViewModel lvm)
 	{
-		this.viewModelProvider = viewModelProvider;
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		this.lvm = lvm;
 		this.errors = new Label("");
-		this.textGUI = textGUI;
 		contentPanel = new Panel(new GridLayout(1));
 		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
 		gridLayout.setHorizontalSpacing(2);
@@ -43,30 +44,41 @@ public class SignUp {
 						passphrase = TextInputDialog.showPasswordDialog(textGUI, "Enter Passphrase", "Choose a strong passphrase, which will be used to decrypt your account", "")
 		));
 
-		// passphraseStrength = viewModelProvider.getLoginViewModel().calcPassphraseStrength(passphrase);
+		// passphraseStrength = lvm.calcPassphraseStrength(passphrase);
 
 		contentPanel.addComponent(
 				new Button("Sign Up", () -> {
 					try {
-						viewModelProvider.getLoginViewModel().signUp(username, passphrase);}
+						lvm.signUp(username, passphrase);}
 					catch (InterruptedException e) {
 						errors = new Label(e.getMessage());
 					}
 					try {
-						viewModelProvider.getLoginViewModel().start();
+						lvm.start();
 					} catch (InterruptedException e) {
 						errors = new Label(e.getMessage());
 					}
-					TUIUtils.switchWindow(window, viewModelProvider, TUIWindow.CONTACTLIST);
+					tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
 				}));
 		TUIUtils.addHorizontalSeparator(contentPanel);
 		contentPanel.addComponent(errors);
-		window.setComponent(contentPanel);
 	}
 
 	public void render()
 	{
+		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		window.setComponent(contentPanel);
 		// render the window
 		textGUI.addWindowAndWait(window);
+	}
+
+	public void setTextGUI(MultiWindowTextGUI textGUI)
+	{
+		this.textGUI = textGUI;
+	}
+
+	public void setTuiUtils(TUIUtils tuiUtils)
+	{
+		this.tuiUtils = tuiUtils;
 	}
 }
