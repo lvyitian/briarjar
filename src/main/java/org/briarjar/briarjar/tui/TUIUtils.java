@@ -2,8 +2,7 @@ package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.gui2.*;
-
-import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
+import com.googlecode.lanterna.screen.Screen;
 
 import javax.inject.Inject;
 
@@ -42,9 +41,9 @@ public class TUIUtils {
 
 	}
 
-	public static void clearScreen()
+	public static void clearScreen(Window window)
 	{
-
+		window.getTextGUI().getScreen().clear();
 	}
 
 	/**
@@ -53,6 +52,7 @@ public class TUIUtils {
 	public void switchWindow(Window currentWindow, TUIWindow tw)
 	{
 		// MultiWindowTextGUI textGUI = (MultiWindowTextGUI) window.getTextGUI();
+		clearScreen(currentWindow);
 		currentWindow.close();
 		switch (tw)
 		{
