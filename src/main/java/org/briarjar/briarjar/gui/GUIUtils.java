@@ -8,18 +8,22 @@ import javafx.scene.control.ButtonType;
 public class GUIUtils {
 
 	private RootBorderPane rootBorderPane;
-	private LoginGridPane loginGridPane;
 	private MessagesBorderPane messagesBorderPane;
+	private SignInGridPane signInGridPane;
+	private SignUpGridPane signUpGridPane;
 
 	@Inject
-	public GUIUtils(RootBorderPane rootBorderPane, LoginGridPane loginGridPane, MessagesBorderPane messagesBorderPane)
+	public GUIUtils(RootBorderPane rootBorderPane, SignInGridPane signInGridPane, SignUpGridPane signUpGridPane, MessagesBorderPane messagesBorderPane)
 	{
 		this.messagesBorderPane = messagesBorderPane;
 			messagesBorderPane.setGUIUtils(this);
 			messagesBorderPane.create();
-		this.loginGridPane = loginGridPane;
-			loginGridPane.setGUIUtils(this);
-			loginGridPane.create();
+		this.signInGridPane = signInGridPane;
+			signInGridPane.setGUIUtils(this);
+			signInGridPane.create();
+		this.signUpGridPane = signUpGridPane;
+			signUpGridPane.setGUIUtils(this);
+			signUpGridPane.create();
 		this.rootBorderPane = rootBorderPane;
 			rootBorderPane.setGUIUtils(this);
 			rootBorderPane.create();
@@ -42,9 +46,14 @@ public class GUIUtils {
 		return rootBorderPane;
 	}
 
-	public LoginGridPane getLoginGridPane()
+	public SignInGridPane getSignInGridPane()
 	{
-		return loginGridPane;
+		return signInGridPane;
+	}
+
+	public SignUpGridPane getSignUpGridPane()
+	{
+		return signUpGridPane;
 	}
 
 	public MessagesBorderPane getMessagesBorderPane()
@@ -52,9 +61,21 @@ public class GUIUtils {
 		return messagesBorderPane;
 	}
 
-	public void switchToMainScene()
+	public void switchToMain()
 	{
 		rootBorderPane.disableComponents(false);
 		rootBorderPane.setCenter(messagesBorderPane);
+	}
+
+	public void switchToSignUp()
+	{
+		rootBorderPane.disableComponents(false);
+		rootBorderPane.setCenter(signUpGridPane);
+	}
+
+	public void switchToSignIn()
+	{
+		rootBorderPane.disableComponents(false);
+		rootBorderPane.setCenter(signInGridPane);
 	}
 }

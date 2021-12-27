@@ -38,8 +38,6 @@ public class SignIn {
 						passphrase = TextInputDialog.showPasswordDialog(textGUI, "Enter Passphrase", "Enter your account passphrase", ""))
 		);
 
-		TUIUtils.addHorizontalSeparator(contentPanel);
-
 		contentPanel.addComponent(
 				new Button("Sign In", () -> {
 

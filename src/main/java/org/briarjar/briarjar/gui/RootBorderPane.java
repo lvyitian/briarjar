@@ -32,10 +32,12 @@ public class RootBorderPane extends BorderPane
 				miCheckForUpdates, miAbout;				// miInfo
 	private ToolBar statusBar; 		// the bar at the bottom
 	
-	private LoginGridPane loginGridPane;      // maybe the wrong place (better/right in Main via Main(login)??)
+	private SignInGridPane signInGridPane;
+	private SignUpGridPane signUpGridPane;
 	private MessagesBorderPane    messagesBorderPane; // same again
 
 	private final LoginViewModel lvm;
+
 	private GUIUtils guiUtils;
 
 	@Inject
@@ -57,12 +59,10 @@ public class RootBorderPane extends BorderPane
 	{
 		menuBar 			= new MenuBar();
 
-
 		mBriar 				= new Menu("Briar");
 		mChat 				= new Menu("Chat");
 		mContact 			= new Menu("Contact");
 		mInfo 				= new Menu("Info");
-
 
 		miToggleOnline 		= new MenuItem("Go Offline");
 		miDeleteAccount		= new MenuItem("Delete Account & Exit");
@@ -75,8 +75,9 @@ public class RootBorderPane extends BorderPane
 		
 		statusBar 			= new ToolBar();
 
-		loginGridPane      	= guiUtils.getLoginGridPane();
-		messagesBorderPane = guiUtils.getMessagesBorderPane();
+		signInGridPane      	= guiUtils.getSignInGridPane();
+		signUpGridPane          = guiUtils.getSignUpGridPane();
+		messagesBorderPane      = guiUtils.getMessagesBorderPane();
 	}
 
 	private void addComponents()
@@ -91,7 +92,12 @@ public class RootBorderPane extends BorderPane
 		statusBar.getItems().setAll(new Label("Ready to chat!"));
 		
 		setTop(menuBar);
-		setCenter(loginGridPane);
+
+		if (lvm.accountExists())
+			setCenter(signInGridPane);
+		 else
+			 setCenter(signUpGridPane);
+
 		setBottom(statusBar);
 	}
 	
@@ -123,7 +129,7 @@ public class RootBorderPane extends BorderPane
 		miDeleteAccount.setDisable(disable);
 
 		/*
-		if(loginViewModel.accountExists())
+		if(lvm.accountExists())
 			miDeleteAccount.setDisable(false);
 		else
 			miDeleteAccount.setDisable(true);
@@ -168,8 +174,7 @@ public class RootBorderPane extends BorderPane
 		{
 			if(lvm.hasDbKey()) {
 				lvm.deleteAccount();
-				//loginGridPane = new LoginGridPane(this); // find better way?
-
+				guiUtils.switchToSignUp();
 				exit();
 			}
 			else
@@ -180,7 +185,7 @@ public class RootBorderPane extends BorderPane
 
 	public void exit()
 	{
-		// TODO extensive testing
+		// TODO test this
 		if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
 		{
 			try {
@@ -230,9 +235,8 @@ public class RootBorderPane extends BorderPane
 	
 	private void about()
 	{
-		// showAlert(AlertType.INFORMATION, "Briar Desktop. This development build is a GUI prototype. Functionality is highly experimental.");
+		// showAlert(AlertType.INFORMATION, "BriarJar GUI Mode. This development build is a GUI prototype. Try out the TUI Mode with --tui or tui option");
 	}
-
 	
 	public void setGUIUtils(GUIUtils guiUtils)
 	{
