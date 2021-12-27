@@ -1,9 +1,12 @@
 package org.briarjar.briarjar.gui;
 
-import org.briarjar.briarjar.model.ViewModelProvider;
+import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.crypto.DecryptionException;
 
 import java.text.DecimalFormat;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -22,22 +25,24 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class LoginGridPane extends GridPane
-{
+@Singleton
+public class LoginGridPane extends GridPane {
+
+	private final LoginViewModel lvm;
+	private final RootBorderPane rootBorderPane;
 	private ImageView imgWelcome;
-
-	private Text          txtWelcome;
-	private TextField     tfUsername;
+	private Text txtWelcome;
+	private TextField tfUsername;
 	private PasswordField passphraseField;
-	private Button        btSignInRegister;
-	private Text          passphraseStrength;
+	private Button btSignInRegister;
+	private Text passphraseStrength;
 
-	private ViewModelProvider viewModelProvider;
-	private RootBorderPane rootBorderPane;
-
-	public LoginGridPane(ViewModelProvider viewModelProvider, RootBorderPane rootBorderPane)
+	@Inject
+	public LoginGridPane(
+			RootBorderPane rootBorderPane,
+			LoginViewModel lvm)
 	{
-		this.viewModelProvider = viewModelProvider;
+		this.lvm = lvm;
 		this.rootBorderPane = rootBorderPane;
 
 		initComponents();
@@ -46,60 +51,63 @@ public class LoginGridPane extends GridPane
 
 		prepareSignInSignUpMask();
 	}
-	
+
 
 	private void initComponents()
 	{
 		setBackground(new Background(new BackgroundFill(
-		                             Paint.valueOf("#ffffff"), null, getInsets())));
-		
+				Paint.valueOf("#ffffff"), null, getInsets())));
+
 		setHgap(10);
 		setVgap(10);
 		setAlignment(Pos.CENTER);
-		
-		try 
+
+		try
 		{
 			imgWelcome = null;
 			// imgWelcome = new ImageView(new Image(getClass().getResource("briar-logo.png").toExternalForm()));
-		} catch (Exception e) {
-			MainGUI.showAlert(AlertType.ERROR, "Configured welcome image not found.");
+		} catch (Exception e)
+		{
+			MainGUI.showAlert(AlertType.ERROR,
+					"Configured welcome image not found.");
 		}
-		
+
 		txtWelcome = new Text("Welcome to Briar");
-			txtWelcome.setFont(Font.font("System", FontWeight.LIGHT, 20));
+		txtWelcome.setFont(Font.font("System", FontWeight.LIGHT, 20));
 		setHalignment(txtWelcome, HPos.CENTER);
-		
-		
+
+
 		tfUsername = new TextField();
-			tfUsername.setPromptText("Enter a Nickname");
+		tfUsername.setPromptText("Enter a Nickname");
 		passphraseField = new PasswordField();
-			passphraseField.setPromptText("Enter Passphrase");
+		passphraseField.setPromptText("Enter Passphrase");
 
 		passphraseStrength = new Text("0.00");
 
 		btSignInRegister = new Button("Sign Up");
 
 		// TODO: architectural change -> split in different login / registration "scene"
-		if (viewModelProvider.getLoginViewModel().accountExists()) {
+		if (lvm.accountExists())
+		{
 			tfUsername.setVisible(false);
 			btSignInRegister.setText("Sign In");
 		}
-		
+
 	}
-	
-	
+
+
 	private void addComponents()
 	{
 		// TODO: don't skip rows, instead correct the heights!
 		//add(imgView, 0, 0);
-		add(txtWelcome,       0, 2);
-		add(tfUsername,       0, 4);
-		add(passphraseField,    0, 5);
+		add(txtWelcome, 0, 2);
+		add(tfUsername, 0, 4);
+		add(passphraseField, 0, 5);
 		add(passphraseStrength, 1, 5);
 		add(btSignInRegister, 0, 6);
 	}
-	
-	
+
+
 	private void addHandlers()
 	{
 		tfUsername.setOnKeyReleased(e -> switchToPassphrase(e));
@@ -112,7 +120,7 @@ public class LoginGridPane extends GridPane
 	//todo 4k prüfung vorab ob acc existiert
 	private void prepareSignInSignUpMask()
 	{
-		if (viewModelProvider.getLoginViewModel().accountExists())
+		if (lvm.accountExists())
 			;// show 1x passphrase
 		else
 			;// show 1x username, 2x passphrase
@@ -120,17 +128,22 @@ public class LoginGridPane extends GridPane
 
 	private void signIn()
 	{
-		try {
-			viewModelProvider.getLoginViewModel().signIn(passphraseField.getText());
+		try
+		{
+			lvm.signIn(passphraseField.getText());
 
 			//todo 4k offline mode possible? // if (...
-				viewModelProvider.getLoginViewModel().start();
+			lvm.start();
 
-		} catch (DecryptionException e) {
+		} catch (DecryptionException e)
+		{
 			MainGUI.showAlert(AlertType.ERROR, "Could not decrypt " +
-					"database - wrong passphrase entered?\n("+ e.getMessage()+")");
-		} catch (InterruptedException e) {
-			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
+					"database - wrong passphrase entered?\n(" + e.getMessage() +
+					")");
+		} catch (InterruptedException e)
+		{
+			MainGUI.showAlert(AlertType.ERROR,
+					"Startup Error: " + e.getMessage());
 		}
 
 		rootBorderPane.switchToMainScene();
@@ -138,14 +151,17 @@ public class LoginGridPane extends GridPane
 
 	private void signUp()
 	{
-		try {
-			viewModelProvider.getLoginViewModel().signUp(tfUsername.getText(), passphraseField.getText());
+		try
+		{
+			lvm.signUp(tfUsername.getText(), passphraseField.getText());
 
 			//todo 4k offline mode possible? // if (...
-			viewModelProvider.getLoginViewModel().start();
+			lvm.start();
 
-		} catch (InterruptedException e) {
-			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
+		} catch (InterruptedException e)
+		{
+			MainGUI.showAlert(AlertType.ERROR,
+					"Startup Error: " + e.getMessage());
 		}
 
 		rootBorderPane.switchToMainScene();
@@ -153,16 +169,16 @@ public class LoginGridPane extends GridPane
 
 	private void passphraseStrength()
 	{
-		viewModelProvider.getLoginViewModel().setPassphrase(passphraseField.getText());
+		lvm.setPassphrase(passphraseField.getText());
 		DecimalFormat df = new DecimalFormat("#.##");
-		passphraseStrength.setText(df.format(viewModelProvider.getLoginViewModel().getPassphraseStrength()));
+		passphraseStrength.setText(df.format(lvm.getPassphraseStrength()));
 	}
 
 	// ============================ others ============================
-	
+
 	private void switchToPassphrase(KeyEvent e)
 	{
-		if(e.getCode() == KeyCode.ENTER)
+		if (e.getCode() == KeyCode.ENTER)
 			passphraseField.requestFocus();
 	}
 }

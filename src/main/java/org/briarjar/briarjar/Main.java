@@ -3,41 +3,68 @@ package org.briarjar.briarjar;
 //import org.briarproject.bramble.BrambleCoreEagerSingletons;
 //import org.briarproject.briar.BriarCoreEagerSingletons;
 
-import org.briarjar.briarjar.model.UserInterface;
+import org.briarjar.briarjar.gui.MainGUI;
+import org.briarjar.briarjar.model.utils.UserInterface;
+import org.briarjar.briarjar.tui.MainTUI;
 
 import java.io.File;
+import java.util.Arrays;
 
-public class Main
-{
+import javafx.application.Platform;
+import javafx.stage.Stage;
+
+public class Main {
+
 	private static UserInterface ui;
 
-	public static void main(String[] args) {
+	private static MainGUI mainGUI;
+	private static MainTUI mainTUI;
 
-		if (args == null)
-			ui = UserInterface.GRAPHICAL;
+	public static void main(String[] args)
+	{
+
+		if (Arrays.stream(args)
+		          .anyMatch(s -> s.equals("--tui") || s.equals("tui")))
+			ui = UserInterface.TERMINAL;
 		else
-			if(args.length == 1 && args[0].equals("gui"))
-				ui = UserInterface.GRAPHICAL;
-			else
-				if(args.length == 1 && args[0].equals("tui"))
-					ui = UserInterface.TERMINAL;
+			ui = UserInterface.GRAPHICAL;
+
 
 		// testing
-		ui = UserInterface.GRAPHICAL;
-		var briarJarUiApp =
-				DaggerBriarJarUiApp.builder().briarJarUiModule(
-						new BriarJarUiModule(getDataDir(), ui)).build();
+		//ui = UserInterface.GRAPHICAL;
+		//ui = UserInterface.TERMINAL;
 
-			/* Maybe not needed in this form currently, since it's for testing?
-			BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarGuiApp);
-			BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarGuiApp);
-			*/
-			System.out.println("Starting briarJarGuiApp.getBriarJarUi().start()");
-			briarJarUiApp.getBriarJarUi().start();
+		// legacy/reminder
+		/* Maybe not needed in this form currently, since it's for testing?
+		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
+		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
+		*/
+		//System.out.println("Starting briarJarGuiApp.getBriarJarUi().start()");
+		//briarJarApp.getBriarJarUi().start();
+
+
+		if (ui.equals(UserInterface.GRAPHICAL))
+		{
+			Platform.startup(() -> {
+				mainGUI = DaggerBriarJarApp.builder().build().getMainGUI();
+				mainGUI.init();
+
+				Stage stage = new Stage();
+				mainGUI.start(stage);
+			});
+		} else if (ui.equals(UserInterface.TERMINAL))
+		{
+			mainTUI = DaggerBriarJarApp.builder().build().getMainTUI();
+			mainTUI.start();
+		}
+
+		// todo 4k: stop is deprecated
+		Runtime.getRuntime()
+		       .addShutdownHook(new Thread(Thread.currentThread()::stop));
 	}
 
-	private static File getDataDir()
-	{
+	public static File getDataDir()
+	{//todo
 		return new File(System.getProperty("user.home") + "/.briar");
 	}
 

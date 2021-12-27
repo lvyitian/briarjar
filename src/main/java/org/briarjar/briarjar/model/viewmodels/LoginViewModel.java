@@ -1,4 +1,4 @@
-package org.briarjar.briarjar.model;
+package org.briarjar.briarjar.model.viewmodels;
 
 import org.briarproject.bramble.api.account.AccountManager;
 import org.briarproject.bramble.api.crypto.DecryptionException;
@@ -7,16 +7,18 @@ import org.briarproject.bramble.api.crypto.SecretKey;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /*
 	This Class is for Login and Registration Logic.
  */
+@Singleton
 public class LoginViewModel {
-	private AccountManager accountManager;
-	private LifecycleManager lifecycleManager;
-	private PasswordStrengthEstimator passphraseStrengthEstimator;
 
-	private String username;
+	private final AccountManager accountManager;
+	private final LifecycleManager lifecycleManager;
+	private final PasswordStrengthEstimator passphraseStrengthEstimator;
+
 	private String passphrase;
 
 	@Inject
@@ -35,8 +37,8 @@ public class LoginViewModel {
 	// ============================ setters ============================
 
 
-
-	public void setPassphrase(String passphrase) {
+	public void setPassphrase(String passphrase)
+	{
 		this.passphrase = passphrase;
 	}
 
@@ -50,11 +52,14 @@ public class LoginViewModel {
 	}
 
 	public void signUp(String username, String passphrase)
-			throws InterruptedException {
+			throws InterruptedException
+	{
 		accountManager.createAccount(username, passphrase);
 	}
 
-	public void signIn(String passphrase) throws DecryptionException {
+	public void signIn(String passphrase)
+			throws DecryptionException
+	{
 		accountManager.signIn(passphrase);
 	}
 
@@ -69,20 +74,25 @@ public class LoginViewModel {
 	}
 
 	//todo 4k maybe startBriar or similar?
-	public void start() throws InterruptedException {
+	public void start()
+			throws InterruptedException
+	{
 		SecretKey dbKey = accountManager.getDatabaseKey();
 		assert dbKey != null;
 		lifecycleManager.startServices(dbKey);
 		lifecycleManager.waitForStartup();
 	}
 
-	public void stop() {
+	public void stop()
+	{
 		System.out.println("Stopping LifecycleManager Services...");
 
 		lifecycleManager.stopServices();
-		try {
+		try
+		{
 			lifecycleManager.waitForShutdown();
-		} catch (InterruptedException e) {
+		} catch (InterruptedException e)
+		{
 			e.printStackTrace();
 		}
 		System.out.println("Stopped LifecycleManager Services.");

@@ -2,15 +2,17 @@ package org.briarjar.briarjar;
 
 import org.briarproject.bramble.api.crypto.KeyStrengthener;
 import org.briarproject.bramble.api.db.DatabaseConfig;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 
 import java.io.File;
 
 import javax.annotation.Nullable;
 
-public class BriarJarDatabaseConfig implements DatabaseConfig
-{
-	private File dbDir;
-	private File keyDir;
+@NotNullByDefault
+public class BriarJarDatabaseConfig implements DatabaseConfig {
+
+	private final File dbDir;
+	private final File keyDir;
 
 	public BriarJarDatabaseConfig(File dbDir, File keyDir)
 	{
@@ -19,18 +21,21 @@ public class BriarJarDatabaseConfig implements DatabaseConfig
 	}
 
 	@Override
-	public File getDatabaseDirectory() {
+	public File getDatabaseDirectory()
+	{
 		return dbDir;
 	}
 
 	@Override
-	public File getDatabaseKeyDirectory() {
+	public File getDatabaseKeyDirectory()
+	{
 		return keyDir;
 	}
 
 	@Override
 	@Nullable
-	public KeyStrengthener getKeyStrengthener() {
+	public KeyStrengthener getKeyStrengthener()
+	{
 		return null;
 	}
 

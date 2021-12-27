@@ -8,24 +8,32 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import org.briarjar.briarjar.model.ViewModelProvider;
+import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class MainTUI {
 
-	private ViewModelProvider viewModelProvider;
-	public MainTUI(ViewModelProvider viewModelProvider)
+	private final LoginViewModel lvm;
+
+	@Inject
+	public MainTUI(LoginViewModel lvm)
 	{
-		this.viewModelProvider = viewModelProvider;
+		this.lvm = lvm;
 		init();
 	}
+
 	public void start()
 	{
 		// Setup terminal and screen layers
 		Terminal terminal;
 		final TextBox tbUsername;
-		try {
+		try
+		{
 			terminal = new DefaultTerminalFactory().createTerminal();
 			Screen screen = new TerminalScreen(terminal);
 			screen.startScreen();
@@ -37,26 +45,27 @@ public class MainTUI {
 
 			final Label lblOutput = new Label("");
 
-			if(!viewModelProvider.getLoginViewModel().accountExists()) {
+			if (!lvm.accountExists())
+			{
 				panel.addComponent(new Label("Username: "));
 				tbUsername = new TextBox().addTo(panel);
-			}
-			else
+			} else
 				tbUsername = null;
 			panel.addComponent(new Label("Passphrase: "));
 			final TextBox tbPassphrase = new TextBox().addTo(panel);
 
 			panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
 
-			if(!viewModelProvider.getLoginViewModel().accountExists()) {
+			if (!lvm.accountExists())
+			{
 				new Button("Sign Up", () -> {
-					try {
-						viewModelProvider.getLoginViewModel().signUp(tbUsername.getText(), tbPassphrase.getText());
-					}
-					catch (Exception e)
+					try
 					{
-						// TODO implement
-						System.out.println(e);
+						lvm.signUp(tbUsername.getText(),tbPassphrase.getText());
+					} catch (Exception e)
+					{
+						// TODO implement, check getText() for NULL
+						System.out.println(e.getMessage());
 					}
 
 					/*
@@ -67,13 +76,13 @@ public class MainTUI {
 			} else
 			{
 				new Button("Login", () -> {
-					try {
-						viewModelProvider.getLoginViewModel().signIn(tbPassphrase.getText());
-					}
-					catch (Exception e)
+					try
 					{
-						// TODO implement
-						System.out.println(e);
+						lvm.signIn(tbPassphrase.getText());
+					} catch (Exception e)
+					{
+						// TODO implement, check getText() for NULL
+						System.out.println(e.getMessage());
 					}
 					/*
 					loginViewModel.start();
@@ -90,11 +99,14 @@ public class MainTUI {
 			window.setComponent(panel);
 
 			// Create "gui" with tui and start
-			MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(
-					TextColor.ANSI.GREEN));
+			MultiWindowTextGUI gui =
+					new MultiWindowTextGUI(screen,
+					                       new DefaultWindowManager(),
+					                       new EmptySpace(TextColor.ANSI.GREEN));
 			gui.addWindowAndWait(window);
 
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
@@ -102,14 +114,14 @@ public class MainTUI {
 	public void init()
 	{
 		System.out.println("===== BriarJar TUI Mode (development version) =====");
-		System.out.println("JDK Version (java.version): " + System.getProperty("java.version"));
-		System.out.println("JRE Version (java.runtime.version): " + System.getProperty("java.runtime.version"));
+		System.out.println("JDK Version (java.version): "+System.getProperty("java.version"));
+		System.out.println("JRE Version (java.runtime.version): "+System.getProperty("java.runtime.version"));
 		System.out.println("Operating System (os.name): " + System.getProperty("os.name"));
 		System.out.println("==========================================");
 	}
 
 	public void stop()
 	{
-		viewModelProvider.getLoginViewModel().stop();
+		lvm.stop();
 	}
 }

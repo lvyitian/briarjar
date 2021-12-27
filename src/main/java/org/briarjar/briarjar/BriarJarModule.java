@@ -1,13 +1,9 @@
 package org.briarjar.briarjar;
 
 
-import dagger.Module;
-import dagger.Provides;
-
-import org.briarjar.briarjar.model.UserInterface;
 import org.briarproject.bramble.account.AccountModule;
-import org.briarproject.bramble.api.FeatureFlags;
 import org.briarproject.bramble.api.db.DatabaseConfig;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.plugin.PluginConfig;
 import org.briarproject.bramble.api.plugin.TorDirectory;
 import org.briarproject.bramble.api.plugin.TransportId;
@@ -19,94 +15,83 @@ import org.briarproject.bramble.network.JavaNetworkModule;
 import org.briarproject.bramble.plugin.tor.CircumventionModule;
 import org.briarproject.bramble.plugin.tor.UnixTorPluginFactory;
 import org.briarproject.bramble.socks.SocksModule;
-import org.briarproject.bramble.system.ClockModule;
-import org.briarproject.bramble.system.DefaultTaskSchedulerModule;
-import org.briarproject.bramble.system.DefaultWakefulIoExecutorModule;
-import org.briarproject.bramble.system.DesktopSecureRandomModule;
-import org.briarproject.bramble.system.JavaSystemModule;
+import org.briarproject.bramble.system.*;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Singleton;
 
+import dagger.Module;
+import dagger.Provides;
+
+
 @Module(
 		includes = {
-			AccountModule.class,
-			CircumventionModule.class,
-			ClockModule.class,
-			DefaultBatteryManagerModule.class,
-			DefaultEventExecutorModule.class,
-			DefaultTaskSchedulerModule.class,
-			DefaultWakefulIoExecutorModule.class,
-			DesktopSecureRandomModule.class,
-			JavaNetworkModule.class,
-			JavaSystemModule.class,
-			SocksModule.class
-		}
-)
+				AccountModule.class,
+				CircumventionModule.class,
+				ClockModule.class,
+				DefaultBatteryManagerModule.class,
+				DefaultEventExecutorModule.class,
+				DefaultTaskSchedulerModule.class,
+				DefaultWakefulIoExecutorModule.class,
+				DesktopSecureRandomModule.class,
+				JavaNetworkModule.class,
+				JavaSystemModule.class,
+				SocksModule.class
+		})
+public class BriarJarModule {
 
-public class BriarJarUiModule
-{
-	private File appDir;
-	private UserInterface ui;
-
-	public BriarJarUiModule(File appDir, UserInterface ui)
-	{
-		this.appDir = appDir;    // Kotlin interpretation
-		this.ui = ui;
-	}
+	private final File appDir = new File(System.getProperty("user.home") + "/.briar");
 
 	@Provides
 	@Singleton
 	@TorDirectory
-	public File provideTorDirectory() {
+	public File provideTorDirectory()
+	{
 		return new File(appDir, "tor");
 	}
 
-	@Provides
-	@Singleton
-	public BriarJarUi provideBriarUi(BriarJarUiImpl briarJarUi)
-	{ // previous named ---^  : provideBriarService
-		return briarJarUi;  // Kotlin interpretation
-	}
-
-	@Provides
-	@Singleton
-	public UserInterface provideUserInterface()
-	{
-		return ui;
-	}
 
 	// TODO provideObjectMapper ?!
 
+	@NotNullByDefault
 	@Provides
 	@Singleton
 	public PluginConfig providePluginConfig(UnixTorPluginFactory tor)
 	{
 		List<DuplexPluginFactory> duplex = List.of(tor);
 		return new PluginConfig() {
+
 			@Override
-			public Collection<DuplexPluginFactory> getDuplexFactories() {
+			public Collection<DuplexPluginFactory> getDuplexFactories()
+			{
 				return duplex;
 			}
 
 			@Override
-			public Collection<SimplexPluginFactory> getSimplexFactories() {
+			public Collection<SimplexPluginFactory> getSimplexFactories()
+			{
 				return Collections.emptyList();
 			}
 
 			@Override
-			public boolean shouldPoll() {
+			public boolean shouldPoll()
+			{
 				return true;
 			}
 
 			@Override
-			public Map<TransportId, List<TransportId>> getTransportPreferences() {
+			public Map<TransportId, List<TransportId>> getTransportPreferences()
+			{
 				return Collections.emptyMap();
 			}
 		};
 	}
+
 
 	@Provides
 	@Singleton
@@ -117,7 +102,7 @@ public class BriarJarUiModule
 		return new BriarJarDatabaseConfig(dbDir, keyDir);
 	}
 
-
+/*
 	@Provides
 	public FeatureFlags provideFeatureFlags() {
 		return new FeatureFlags() {
@@ -147,6 +132,7 @@ public class BriarJarUiModule
 				return false;
 			}
 		};
-	}
+	}*/
+
 
 }

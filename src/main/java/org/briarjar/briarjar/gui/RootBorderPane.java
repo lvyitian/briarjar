@@ -1,6 +1,10 @@
 package org.briarjar.briarjar.gui;
 
-import org.briarjar.briarjar.model.ViewModelProvider;
+//import org.briarjar.briarjar.DaggerBriarJarApp;
+import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -13,6 +17,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 
+@Singleton
 public class RootBorderPane extends BorderPane
 {
 
@@ -27,11 +32,15 @@ public class RootBorderPane extends BorderPane
 	private LoginGridPane loginGridPane;      // maybe the wrong place (better/right in Main via Main(login)??)
 	private MessagesBorderPane    messagesBorderPane; // same again
 
-	private ViewModelProvider viewModelProvider;
-	
-	public RootBorderPane(ViewModelProvider viewModelProvider)
+	private final LoginViewModel lvm;
+
+	@Inject
+	public RootBorderPane(
+			LoginViewModel lvm,
+			MessagesBorderPane messagesBorderPane)
 	{
-		this.viewModelProvider = viewModelProvider;
+		this.lvm = lvm;
+		this.messagesBorderPane = messagesBorderPane;
 
 		initComponents();
 		addComponents();
@@ -61,8 +70,8 @@ public class RootBorderPane extends BorderPane
 		
 		statusBar 			= new ToolBar();
 
-		loginGridPane      	= new LoginGridPane(viewModelProvider, this);
-		messagesBorderPane = new MessagesBorderPane(viewModelProvider);
+		//loginGridPane      	= new LoginGridPane(this);
+		//messagesBorderPane = new MessagesBorderPane();
 
 
 	}
@@ -138,12 +147,12 @@ public class RootBorderPane extends BorderPane
 	{
 		// TODO check this - might be dangerous!
 		try {
-			if (viewModelProvider.getLoginViewModel().hasDbKey()) {
-				viewModelProvider.getLoginViewModel().stop();
+			if (lvm.hasDbKey()) {
+				lvm.stop();
 				miToggleOnline.setText("Go Online");
 			}
 			else
-				viewModelProvider.getLoginViewModel().start();
+				lvm.start();
 				miToggleOnline.setText("Go Offline");
 		} catch (Exception e) {
 			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
@@ -159,10 +168,10 @@ public class RootBorderPane extends BorderPane
 		
 		if(deletionAlert.getResult() == ButtonType.YES)
 		{
-			if(viewModelProvider.getLoginViewModel().hasDbKey()) {
-				viewModelProvider.getLoginViewModel().deleteAccount();
-				loginGridPane = new LoginGridPane(viewModelProvider,
-						this); // find better way?
+			if(lvm.hasDbKey()) {
+				lvm.deleteAccount();
+				//loginGridPane = new LoginGridPane(this); // find better way?
+
 				exit();
 			}
 			else
@@ -170,7 +179,7 @@ public class RootBorderPane extends BorderPane
 			// TODO architectural changes... maybe remove the delete feat. completely?
 		}
 	}
-	
+
 	public void exit()
 	{
 		// FIXME
@@ -178,7 +187,7 @@ public class RootBorderPane extends BorderPane
 		// Doesn't properly exit when "Delete Account & Exit" is used!
 
 		try {
-			viewModelProvider.getLoginViewModel().stop();
+			lvm.stop();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
