@@ -49,6 +49,5 @@ public class TUIUtils {
 				addContact.render();
 			}
 		}
-
 	}
 }

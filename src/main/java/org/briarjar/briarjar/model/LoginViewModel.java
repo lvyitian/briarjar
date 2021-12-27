@@ -78,9 +78,9 @@ public class LoginViewModel {
 
 	public void stop() {
 		System.out.println("Stopping LifecycleManager Services...");
-
-		lifecycleManager.stopServices();
+		
 		try {
+			lifecycleManager.stopServices();
 			lifecycleManager.waitForShutdown();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

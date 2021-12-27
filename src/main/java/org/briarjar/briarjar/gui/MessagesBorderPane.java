@@ -7,7 +7,6 @@ import org.briarproject.bramble.api.db.DbException;
 import java.util.Collection;
 
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -17,12 +16,11 @@ public class MessagesBorderPane extends BorderPane
 
 	private TextArea messageBox;
 	private MessageListView messageListView;
-	private Label statusText;		// statusBarText
 	private VBox contactList;
 	
 	private boolean isContactListVisible;
 
-	private ViewModelProvider viewModelProvider;
+	private final ViewModelProvider viewModelProvider;
 	
 	public MessagesBorderPane(ViewModelProvider viewModelProvider) {
 		this.viewModelProvider = viewModelProvider;
@@ -45,7 +43,7 @@ public class MessagesBorderPane extends BorderPane
 		
 		messageListView = new MessageListView();
 		
-		statusText = new Label("Select a contact to show status.");
+		// statusText = new Label("Select a contact to show status.");
 	}
 	
 	
@@ -63,10 +61,6 @@ public class MessagesBorderPane extends BorderPane
 	
 	// ============================ getters/setters ============================
 
-	public Label getStatusText()
-	{
-		return statusText;
-	}
 	
 	public boolean isContactListVisible()
 	{

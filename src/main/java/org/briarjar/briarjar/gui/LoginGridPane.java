@@ -22,6 +22,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
+
 public class LoginGridPane extends GridPane
 {
 	private ImageView imgWelcome;
@@ -32,8 +34,8 @@ public class LoginGridPane extends GridPane
 	private Button        btSignInRegister;
 	private Text          passphraseStrength;
 
-	private ViewModelProvider viewModelProvider;
-	private RootBorderPane rootBorderPane;
+	private final ViewModelProvider viewModelProvider;
+	private final  RootBorderPane rootBorderPane;
 
 	public LoginGridPane(ViewModelProvider viewModelProvider, RootBorderPane rootBorderPane)
 	{
@@ -62,7 +64,7 @@ public class LoginGridPane extends GridPane
 			imgWelcome = null;
 			// imgWelcome = new ImageView(new Image(getClass().getResource("briar-logo.png").toExternalForm()));
 		} catch (Exception e) {
-			MainGUI.showAlert(AlertType.ERROR, "Configured welcome image not found.");
+			showAlert(AlertType.ERROR, "Configured welcome image not found.");
 		}
 		
 		txtWelcome = new Text("Welcome to Briar");
@@ -101,7 +103,7 @@ public class LoginGridPane extends GridPane
 	
 	private void addHandlers()
 	{
-		tfUsername.setOnKeyReleased(e -> switchToPassphrase(e));
+		tfUsername.setOnKeyReleased(this::switchToPassphrase);
 		passphraseField.setOnKeyTyped(e -> passphraseStrength());
 		//btSignInRegister.setOnAction(e -> btSignInRegister());
 	}
@@ -126,10 +128,10 @@ public class LoginGridPane extends GridPane
 				viewModelProvider.getLoginViewModel().start();
 
 		} catch (DecryptionException e) {
-			MainGUI.showAlert(AlertType.ERROR, "Could not decrypt " +
+			showAlert(AlertType.ERROR, "Could not decrypt " +
 					"database - wrong passphrase entered?\n("+ e.getMessage()+")");
 		} catch (InterruptedException e) {
-			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
+			showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
 		}
 
 		rootBorderPane.switchToMainScene();
@@ -144,7 +146,7 @@ public class LoginGridPane extends GridPane
 			viewModelProvider.getLoginViewModel().start();
 
 		} catch (InterruptedException e) {
-			MainGUI.showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
+			showAlert(AlertType.ERROR, "Startup Error: " + e.getMessage());
 		}
 
 		rootBorderPane.switchToMainScene();

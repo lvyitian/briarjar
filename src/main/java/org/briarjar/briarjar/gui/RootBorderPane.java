@@ -1,6 +1,7 @@
 package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.ViewModelProvider;
+import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -12,6 +13,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+
+import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 
 public class RootBorderPane extends BorderPane
 {
@@ -122,7 +125,7 @@ public class RootBorderPane extends BorderPane
 	
 	private void unimplemented()
 	{
-		MainGUI.showAlert(AlertType.INFORMATION, "This feature is not part of the prototype and unimplemented!");
+		showAlert(AlertType.INFORMATION, "This feature is not part of the prototype and unimplemented!");
 	}
 
 	public void switchToMainScene()
@@ -146,7 +149,7 @@ public class RootBorderPane extends BorderPane
 				viewModelProvider.getLoginViewModel().start();
 				miToggleOnline.setText("Go Offline");
 		} catch (Exception e) {
-			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
+			showAlert(AlertType.ERROR, e.getMessage());
 		}
 	}
 
@@ -166,7 +169,7 @@ public class RootBorderPane extends BorderPane
 				exit();
 			}
 			else
-				MainGUI.showAlert(AlertType.ERROR, "No DbKey");
+				showAlert(AlertType.ERROR, "No DbKey");
 			// TODO architectural changes... maybe remove the delete feat. completely?
 		}
 	}
@@ -177,11 +180,13 @@ public class RootBorderPane extends BorderPane
 		// Doesn't work without account (on registration screen)
 		// Doesn't properly exit when "Delete Account & Exit" is used!
 
-		try {
-			viewModelProvider.getLoginViewModel().stop();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			MainGUI.showAlert(AlertType.ERROR, e.getMessage());
+		if(viewModelProvider.getLoginViewModel().getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING) {
+			try {
+				viewModelProvider.getLoginViewModel().stop();
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				showAlert(AlertType.ERROR, e.getMessage());
+			}
 		}
 		Platform.exit();
 	}

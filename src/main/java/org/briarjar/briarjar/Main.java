@@ -21,7 +21,7 @@ public class Main
 
 
 		// testing
-		//ui = UserInterface.TERMINAL;
+		// ui = UserInterface.TERMINAL;
 		var briarJarUiApp =
 				DaggerBriarJarUiApp.builder().briarJarUiModule(
 						new BriarJarUiModule(getDataDir(), ui)).build();

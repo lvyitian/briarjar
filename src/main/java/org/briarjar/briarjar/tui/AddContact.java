@@ -13,8 +13,8 @@ public class AddContact {
 	private final ViewModelProvider viewModelProvider;
 	private final Panel contentPanel;
 	private final BasicWindow window;
-	private Label errors;
 	private final MultiWindowTextGUI textGUI;
+	private Label errors;
 
 	private String handshakeLinkOfFriend;
 
@@ -23,7 +23,6 @@ public class AddContact {
 		this.viewModelProvider = viewModelProvider;
 		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
 		this.errors = new Label("");
-		this.handshakeLinkOfFriend = "";
 		this.textGUI = textGUI;
 		contentPanel = new Panel(new GridLayout(1));
 		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
@@ -37,26 +36,34 @@ public class AddContact {
 		TUIUtils.addTitle("Add a new Contact", contentPanel);
 
 		try {
-		String	link = viewModelProvider.getContactManager().getHandshakeLink();
+		String link = viewModelProvider.getContactManager().getHandshakeLink();
 		contentPanel.addComponent(
 				new Button("Get your own Handshake-Link", () ->
-						MessageDialog.showMessageDialog(textGUI, "Share your Handshanke-Link", link, MessageDialogButton.OK)
+						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", link, MessageDialogButton.OK)
 				));
 		} catch (DbException e) {
 			e.printStackTrace();
 		}
+
 		contentPanel.addComponent(
 				new Button("Enter your friends Handshake-Link", () ->
 						handshakeLinkOfFriend = TextInputDialog.showDialog(textGUI, "Enter Handshake-Link", "The Handshake-Link starts with briar://...", "")
 		));
 
-		TUIUtils.addHorizontalSeparator(contentPanel);
 		contentPanel.addComponent(
-				new Button("Add Contact", () -> {
-					//viewModelProvider.getContactManager().addContact();
+				new Button("Start Handshake Process", () -> {
+					// viewModelProvider.getContactManager().addContact();
 					TUIUtils.switchWindow(window,viewModelProvider,TUIWindow.CONTACTLIST);
 				}));
+
 		TUIUtils.addHorizontalSeparator(contentPanel);
+
+		contentPanel.addComponent(
+				new Button("Cancel", () -> {
+					// viewModelProvider.getContactManager().addContact();
+					TUIUtils.switchWindow(window,viewModelProvider,TUIWindow.CONTACTLIST);
+				}));
+
 		contentPanel.addComponent(errors);
 		window.setComponent(contentPanel);
 	}

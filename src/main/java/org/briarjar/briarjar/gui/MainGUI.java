@@ -3,10 +3,10 @@ import org.briarjar.briarjar.model.ViewModelProvider;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+
+import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 
 public class MainGUI extends Application
 {
@@ -38,14 +38,7 @@ public class MainGUI extends Application
 		}
 	}
 
-	public static void showAlert(AlertType alertType, String message) {
-		System.out.println(message);
-		Alert alert = new  Alert(alertType, message, ButtonType.OK);
-		alert.setHeaderText(null);
-		alert.setHeight(350);
-		alert.setTitle("BriarJar Message");
-		alert.showAndWait();
-	}
+
 
 	public void init()
 	{

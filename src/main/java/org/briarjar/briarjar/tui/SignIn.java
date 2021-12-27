@@ -59,7 +59,7 @@ public class SignIn {
 		TUIUtils.addHorizontalSeparator(contentPanel);
 
 		contentPanel.addComponent(
-				new Button("Delete account", () -> {
+				new Button("Delete Account", () -> {
 					// TODO delete account !!
 					TUIUtils.switchWindow(window, viewModelProvider, TUIWindow.SIGNUP);
 				})
@@ -74,5 +74,4 @@ public class SignIn {
 		// render the window
 		textGUI.addWindowAndWait(window);
 	}
-
 }

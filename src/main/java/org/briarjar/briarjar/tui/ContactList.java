@@ -50,7 +50,7 @@ public class ContactList {
 				contentPanel.addComponent(contactAliasComboBox);
 			}
 			else
-				contentPanel.addComponent(new Label("No contacts!"));
+				contentPanel.addComponent(new Label("No Contacts found!"));
 		} catch (DbException e) {
 			e.printStackTrace();
 		}
@@ -62,8 +62,6 @@ public class ContactList {
 					viewModelProvider.getLoginViewModel().stop();
 					TUIUtils.switchWindow(window, viewModelProvider, TUIWindow.SIGNIN);
 				}));
-
-		TUIUtils.addHorizontalSeparator(contentPanel);
 
 		contentPanel.addComponent(errors);
 		window.setComponent(contentPanel);
