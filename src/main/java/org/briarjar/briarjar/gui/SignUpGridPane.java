@@ -3,6 +3,7 @@ package org.briarjar.briarjar.gui;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -12,6 +13,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -62,8 +64,9 @@ public class SignUpGridPane extends GridPane {
 
 		try
 		{
-			imgWelcome = null;
-			// imgWelcome = new ImageView(new Image(getClass().getResource("briar-logo.png").toExternalForm()));
+			String obj = Objects.requireNonNull(
+					getClass().getResource("/briar-icon.png")).toExternalForm();
+			imgWelcome = new ImageView(new Image(obj));
 		} catch (Exception e)
 		{
 			showAlert(Alert.AlertType.ERROR,
@@ -89,7 +92,7 @@ public class SignUpGridPane extends GridPane {
 	private void addComponents()
 	{
 		// TODO: don't skip rows, instead correct the heights!
-		//add(imgView, 0, 0);
+		add(imgWelcome, 0, 0);
 		add(txtWelcome, 0, 2);
 		add(txtSubtext, 0, 3);
 		add(tfUsername, 0, 4);

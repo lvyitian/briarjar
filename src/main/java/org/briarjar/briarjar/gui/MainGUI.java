@@ -1,11 +1,14 @@
 package org.briarjar.briarjar.gui;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
@@ -34,7 +37,9 @@ public class MainGUI extends Application {
 			// sceneRoot.getStylesheets().add(getClass().getResource("briar.css").toExternalForm());
 			primaryStage.setScene(sceneRoot);
 			primaryStage.setTitle("BriarJar GUI Mode (development version)");
-			// primaryStage.getIcons().add(new Image(getClass().getResource("briar-logo.png").toExternalForm()));
+			String obj = Objects.requireNonNull(
+					getClass().getResource("/briar-icon.png")).toExternalForm();
+			primaryStage.getIcons().add(new Image(obj));
 			primaryStage.show();
 		} catch (Exception e)
 		{
