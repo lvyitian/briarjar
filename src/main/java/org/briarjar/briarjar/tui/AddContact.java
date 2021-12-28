@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 public class AddContact {
 
-	private final Panel contentPanel;
+	private Panel contentPanel;
 	private BasicWindow window;
 	private MultiWindowTextGUI textGUI;
 	private final ContactViewModel cvm;
@@ -24,19 +24,13 @@ public class AddContact {
 	public AddContact(ContactViewModel cvm)
 	{
 		this.cvm = cvm;
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
-
-		// init instance
-		createWindow();
 	}
 
 	private void createWindow() {
 		TUIUtils.addTitle("Add a new Contact", contentPanel);
 
 		try {
-		String link = cvm.getLink();         // FIXME causes exception w/ dagger @Injection of cvm
+		String link = cvm.getLink();
 		contentPanel.addComponent(
 				new Button("Get your own Handshake-Link", () ->
 						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", link, MessageDialogButton.OK)
@@ -67,7 +61,14 @@ public class AddContact {
 
 	public void render()
 	{
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		contentPanel = new Panel(new GridLayout(1));
+		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+		gridLayout.setHorizontalSpacing(2);
+
+		// init instance
+		createWindow();
+
+		this.window = new BasicWindow("Add a new Contact");
 		window.setComponent(contentPanel);
 		// render the window
 		textGUI.addWindowAndWait(window);

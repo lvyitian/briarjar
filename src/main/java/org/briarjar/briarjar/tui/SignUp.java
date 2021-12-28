@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 public class SignUp {
 
-	private final Panel contentPanel;
+	private Panel contentPanel;
 	private TUIUtils tuiUtils;
 	private BasicWindow window;
 	private MultiWindowTextGUI textGUI;
@@ -24,12 +24,6 @@ public class SignUp {
 	public SignUp(LoginViewModel lvm)
 	{
 		this.lvm = lvm;
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
-
-		// init instance
-		createWindow();
 	}
 
 	private void createWindow() {
@@ -67,6 +61,13 @@ public class SignUp {
 
 	public void render()
 	{
+		contentPanel = new Panel(new GridLayout(1));
+		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+		gridLayout.setHorizontalSpacing(2);
+
+		// init instance
+		createWindow();
+
 		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
 		window.setComponent(contentPanel);
 		// render the window

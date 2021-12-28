@@ -11,28 +11,20 @@ import javax.inject.Inject;
 
 public class ContactList {
 
-	private final Panel contentPanel;
+	private Panel contentPanel;
 	private BasicWindow window;
 	private WindowBasedTextGUI textGUI;
 	private final LoginViewModel lvm;
 	private TUIUtils tuiUtils;
 	private final ContactViewModel cvm;
 
-	private final ComboBox<String> contactAliasComboBox;
+	private ComboBox<String> contactAliasComboBox;
 
 	@Inject
 	public ContactList(LoginViewModel lvm, ContactViewModel cvm)
 	{
 		this.lvm = lvm;
 		this.cvm = cvm;
-		this.contactAliasComboBox = new ComboBox<>();
-
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
-
-		// init instance
-		createWindow();
 	}
 
 	private void createWindow() {
@@ -62,14 +54,24 @@ public class ContactList {
 
 		contentPanel.addComponent(
 				new Button("Log Out", () -> {
+					System.out.println("pre stop: "+ lvm.getLifeCycleState());
 					lvm.stop();
+					System.out.println("post stop: " +lvm.getLifeCycleState());
 					tuiUtils.switchWindow(window, TUIWindow.SIGNIN);
 				}));
 	}
 
 	public void render()
 	{
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		this.contactAliasComboBox = new ComboBox<>();
+		contentPanel = new Panel(new GridLayout(1));
+		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+		gridLayout.setHorizontalSpacing(2);
+
+		// init instance
+		createWindow();
+
+		this.window = new BasicWindow("Select or Add a Contact");
 		window.setComponent(contentPanel);
 		// render the window
 		textGUI.addWindowAndWait(window);

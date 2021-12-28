@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 public class SignIn {
 
-	private final Panel contentPanel;
+	private Panel contentPanel;
 	private BasicWindow window;
 	private MultiWindowTextGUI textGUI;
 	private final LoginViewModel lvm;
@@ -24,12 +24,6 @@ public class SignIn {
 	public SignIn(LoginViewModel lvm)
 	{
 		this.lvm = lvm;
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
-
-		// init instance
-		createWindow();
 	}
 
 	private void createWindow() {
@@ -44,7 +38,10 @@ public class SignIn {
 
 					try {
 						lvm.signIn(passphrase);
+
+						System.out.println("pre start: " +lvm.getLifeCycleState());
 						lvm.start();
+						System.out.println("post start: " +lvm.getLifeCycleState());
 					} catch (DecryptionException e) {
 						MessageDialog.showMessageDialog(textGUI, "DecryptionException occurred", e.getDecryptionResult().toString(), MessageDialogButton.OK);
 					} catch (InterruptedException e) {
@@ -66,7 +63,14 @@ public class SignIn {
 
 	public void render()
 	{
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		contentPanel = new Panel(new GridLayout(1));
+		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+		gridLayout.setHorizontalSpacing(2);
+
+		// init instance
+		createWindow();
+
+		this.window = new BasicWindow("Welcome back to BriarJar TUI (development mode)");
 		window.setComponent(contentPanel);
 		// render the window
 		textGUI.addWindowAndWait(window);

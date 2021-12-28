@@ -35,8 +35,11 @@ public class MainTUI implements Closeable  {
 	public void start() {
 		DefaultTerminalFactory defaultTerminalFactory =
 				new DefaultTerminalFactory();
+
 		try {
 			Screen screen = defaultTerminalFactory.createScreen();
+
+
 			screen.startScreen();
 			this.screen = screen;
 
