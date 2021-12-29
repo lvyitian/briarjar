@@ -7,22 +7,12 @@ import javafx.scene.control.ButtonType;
 
 public class GUIUtils {
 
-	private RootBorderPane rootBorderPane;
-	private MessagesBorderPane messagesBorderPane;
-	private SignInGridPane signInGridPane;
-	private SignUpGridPane signUpGridPane;
-	private AddContactDialog addContactDialog;
-	private MessageListView messageListView;
-
-	public static void showAlert(Alert.AlertType alertType, String message)
-	{
-		System.out.println(message);
-		Alert alert = new Alert(alertType, message, ButtonType.OK);
-		alert.setHeaderText(null);
-		alert.setHeight(350);
-		alert.setTitle("BriarJar Message");
-		alert.showAndWait();
-	}
+	private final RootBorderPane rootBorderPane;
+	private final MessagesBorderPane messagesBorderPane;
+	private final SignInGridPane signInGridPane;
+	private final SignUpGridPane signUpGridPane;
+	private final AddContactDialog addContactDialog;
+	private final MessageListView messageListView;
 
 	@Inject
 	public GUIUtils(RootBorderPane rootBorderPane, SignInGridPane signInGridPane,
@@ -90,5 +80,15 @@ public class GUIUtils {
 	{
 		rootBorderPane.disableComponents(false);
 		rootBorderPane.setCenter(signInGridPane);
+	}
+
+	public static void showAlert(Alert.AlertType alertType, String message)
+	{
+		System.out.println(message);
+		Alert alert = new Alert(alertType, message, ButtonType.OK);
+		alert.setHeaderText(null);
+		alert.setHeight(350);
+		alert.setTitle("BriarJar Message");
+		alert.showAndWait();
 	}
 }

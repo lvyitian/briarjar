@@ -27,7 +27,7 @@ public class Main {
 			ui = UserInterface.GRAPHICAL;
 		// testing
 		//ui = UserInterface.GRAPHICAL;
-		ui = UserInterface.TERMINAL;
+		//ui = UserInterface.TERMINAL;
 
 
 		var briarJarApp = DaggerBriarJarApp.builder().

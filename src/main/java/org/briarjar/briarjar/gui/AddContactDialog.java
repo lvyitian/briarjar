@@ -48,7 +48,6 @@ public class AddContactDialog extends Stage {
 
 	public void create()
 	{
-		// initModality(Modality.APPLICATION_MODAL);
 		initComponents();
 		addComponents();
 		addHandlers();
