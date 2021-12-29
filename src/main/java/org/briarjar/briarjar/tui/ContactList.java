@@ -56,7 +56,7 @@ public class ContactList {
 				new Button("Log Out", () -> {
 					System.out.println("pre stop: "+ lvm.getLifeCycleState());
 					lvm.stop();
-					System.out.println("post stop: " +lvm.getLifeCycleState());
+					System.out.println("post stop: " + lvm.getLifeCycleState());
 					tuiUtils.switchWindow(window, TUIWindow.SIGNIN);
 				}));
 	}

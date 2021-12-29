@@ -53,12 +53,14 @@ public class SignIn {
 
 		TUIUtils.addHorizontalSeparator(contentPanel);
 
+		/*
 		contentPanel.addComponent(
 				new Button("Delete Account", () -> {
-					// TODO delete account !!
+					lvm.deleteAccount();
 					tuiUtils.switchWindow(window, TUIWindow.SIGNUP);
 				})
 		);
+		 */
 	}
 
 	public void render()

@@ -2,6 +2,7 @@ package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarproject.bramble.api.contact.Contact;
+import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.db.DbException;
 
 import java.util.Collection;
@@ -18,6 +19,7 @@ import javafx.scene.layout.VBox;
 public class MessagesBorderPane extends BorderPane {
 
 	private final ContactViewModel cvm;
+
 	private TextArea messageBox;
 	private MessageListView messageListView;
 	private VBox contactList;
@@ -47,10 +49,7 @@ public class MessagesBorderPane extends BorderPane {
 
 		contactList = new VBox();
 		contactList.setPrefWidth(110);
-		// TODO: Get this property from a (possibly JSON) settings file!
 		isContactListVisible = false;
-
-		messageListView = new MessageListView();
 
 		// statusText = new Label("Select a contact to show status.");
 	}
@@ -90,21 +89,34 @@ public class MessagesBorderPane extends BorderPane {
 		try
 		{
 			Collection<Contact> contacts =
-					// todo 4k: it also exists getPendingContacts()
+					// todo 4k: getPendingContacts()
 					cvm.getAcceptedContacts(); //.getContacts();
 
 			for (Contact c : contacts)
+			{
+				Button b = new Button(c.getAlias());
+				b.setPrefWidth(contactList.getPrefWidth());
+				b.setOnAction(e -> loadMessages(c.getId()));
 				contactList.getChildren().setAll(new Button(c.getAlias()));
-
+			}
 		} catch (DbException e)
 		{
 			e.printStackTrace();
 		}
-		//contactList.getChildren().setAll(new Button("<alice>")); // for testing only...
 
-		// contactList.getChildren().addAll(...)
+		// test
+		Button alice = new Button("<alice>");
+		alice.setPrefWidth(contactList.getPrefWidth());
+		contactList.getChildren().setAll(alice); // for testing only...
+
 		setLeft(contactList);
 		isContactListVisible = true;
+	}
+
+	private void loadMessages(ContactId id)
+	{
+		messageListView = guiUtils.getMessageListView();
+		messageListView.update(id);
 	}
 
 	public void hideContactList()

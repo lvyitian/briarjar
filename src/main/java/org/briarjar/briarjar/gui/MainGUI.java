@@ -16,7 +16,6 @@ import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 @Singleton
 public class MainGUI extends Application {
 
-	private final RootBorderPane rootBorderPane;
 	private final GUIUtils guiUtils;
 
 	@Inject
@@ -24,7 +23,6 @@ public class MainGUI extends Application {
 	{
 		super();
 		this.guiUtils = guiUtils;
-		this.rootBorderPane = guiUtils.getRootBorderPane();
 	}
 
 	@Override
@@ -33,7 +31,7 @@ public class MainGUI extends Application {
 		try
 		{
 
-			Scene sceneRoot = new Scene(rootBorderPane, 850, 560);
+			Scene sceneRoot = new Scene(guiUtils.getRootBorderPane(), 850, 560);
 			// sceneRoot.getStylesheets().add(getClass().getResource("briar.css").toExternalForm());
 			primaryStage.setScene(sceneRoot);
 			primaryStage.setTitle("BriarJar GUI Mode (development version)");
@@ -59,7 +57,7 @@ public class MainGUI extends Application {
 	@Override
 	public void stop()
 	{
-		rootBorderPane.exit();
+		guiUtils.getRootBorderPane().exit();
 	}
 
 }

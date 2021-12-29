@@ -6,6 +6,8 @@ package org.briarjar.briarjar;
 import org.briarjar.briarjar.gui.MainGUI;
 import org.briarjar.briarjar.model.utils.UserInterface;
 import org.briarjar.briarjar.tui.MainTUI;
+import org.briarproject.bramble.BrambleCoreEagerSingletons;
+import org.briarproject.briar.BriarCoreEagerSingletons;
 
 import java.io.File;
 import java.util.Arrays;
@@ -34,15 +36,6 @@ public class Main {
 		//ui = UserInterface.GRAPHICAL;
 		ui = UserInterface.TERMINAL;
 
-		// legacy/reminder
-		/* Maybe not needed in this form currently, since it's for testing?
-		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
-		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
-		*/
-		//System.out.println("Starting briarJarGuiApp.getBriarJarUi().start()");
-		//briarJarApp.getBriarJarUi().start();
-
-
 		if (ui.equals(UserInterface.GRAPHICAL))
 		{
 			Platform.startup(() -> {
@@ -57,6 +50,16 @@ public class Main {
 			mainTUI = DaggerBriarJarApp.builder().build().getMainTUI();
 			mainTUI.start();
 		}
+
+		// legacy/reminder
+		/* Maybe not needed in this form currently, since it's for testing?
+		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(
+				(BrambleCoreEagerSingletons) mainTUI);
+		BriarCoreEagerSingletons.Helper.injectEagerSingletons(
+				(BriarCoreEagerSingletons) mainTUI);
+		*/
+		//System.out.println("Starting briarJarGuiApp.getBriarJarUi().start()");
+		//briarJarApp.getBriarJarUi().start();
 
 		// todo 4k: stop is deprecated
 		Runtime.getRuntime()

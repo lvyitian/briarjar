@@ -1,6 +1,5 @@
 package org.briarjar.briarjar.gui;
 
-//import org.briarjar.briarjar.DaggerBriarJarApp;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
@@ -28,7 +27,7 @@ public class RootBorderPane extends BorderPane
 	private Menu    mBriar, mChat, mContact, mInfo;
 	private MenuItem 	miToggleOnline, miDeleteAccount, miExit, 		// mBriar
 				miShowContactList, 						// mChat
-				miRemoveContact, miChangeContactDisplayName, 	//mContact
+				miAddContact, miRemoveContact, miChangeContactDisplayName, 	//mContact
 				miCheckForUpdates, miAbout;				// miInfo
 	private ToolBar statusBar; 		// the bar at the bottom
 	
@@ -54,7 +53,7 @@ public class RootBorderPane extends BorderPane
 		addHandlers();
 		disableComponents(true);
 	}
-	
+
 	private void initComponents()
 	{
 		menuBar 			= new MenuBar();
@@ -68,6 +67,7 @@ public class RootBorderPane extends BorderPane
 		miDeleteAccount		= new MenuItem("Delete Account & Exit");
 		miExit 				= new MenuItem("Exit");
 		miShowContactList 	= new MenuItem("Show Contact List");
+		miAddContact        = new MenuItem("Add a new Contact");
 		miRemoveContact 	= new MenuItem("Remove this Contact");
 		miChangeContactDisplayName = new MenuItem("Change Contact Display-Name");
 		miCheckForUpdates 	= new MenuItem("Check for Updates");
@@ -86,7 +86,7 @@ public class RootBorderPane extends BorderPane
 		
 		mBriar.getItems().addAll(miToggleOnline, miDeleteAccount, miExit);
 		mChat.getItems().addAll(miShowContactList);
-		mContact.getItems().addAll(miRemoveContact, miChangeContactDisplayName);
+		mContact.getItems().addAll(miAddContact, miRemoveContact, miChangeContactDisplayName);
 		mInfo.getItems().addAll(miCheckForUpdates, miAbout);
 		
 		statusBar.getItems().setAll(new Label("Ready to chat!"));
@@ -112,6 +112,7 @@ public class RootBorderPane extends BorderPane
 		miShowContactList.setOnAction(e -> showContactList());
 		
 		// menu: mContact
+		miAddContact.setOnAction(e -> addContact());
 		miRemoveContact.setOnAction(e -> removeContact());
 		miChangeContactDisplayName.setOnAction(e -> changeContactDisplayName());
 		
@@ -121,19 +122,13 @@ public class RootBorderPane extends BorderPane
 
 	}
 
+
 	public void disableComponents(boolean disable)
 	{
 		miToggleOnline.setDisable(disable);
 		mContact.setDisable(disable);
 		mChat.setDisable(disable);
 		miDeleteAccount.setDisable(disable);
-
-		/*
-		if(lvm.accountExists())
-			miDeleteAccount.setDisable(false);
-		else
-			miDeleteAccount.setDisable(true);
-		 */
 	}
 	
 	// ============================ logic ============================
@@ -185,9 +180,10 @@ public class RootBorderPane extends BorderPane
 
 	public void exit()
 	{
-		// TODO test this
+		// FIXME: closing with "x" or Alt-F4 doesn't trigger exit() method!
 		if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
 		{
+			System.out.println(lvm.getLifeCycleState());
 			try {
 				lvm.stop();
 			} catch (Exception e) {
@@ -199,7 +195,15 @@ public class RootBorderPane extends BorderPane
 	}
 	
 	// ============================ menu: mChat ============================
-	
+
+
+	private void addContact()
+	{
+		AddContactDialog addContactDialog = guiUtils.getAddContactDialog();
+		addContactDialog.create();      // !!
+		addContactDialog.showAndWait();
+	}
+
 	private void showContactList()
 	{
 		if(!messagesBorderPane.isContactListVisible())

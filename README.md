@@ -33,7 +33,7 @@ java -jar briarjar-0.1-all.jar --tui
 
 The briar-as-subproject submodule has to be cloned too, when cloning BriarJar. 
 ```
-git clone --recurse-submodules git@code.briarproject.org/briar/briarjar 
+git clone --recurse-submodules git@code.briarproject.org:briar/briarjar 
 ```
 
 Simply run the ShadowJAR Gradle Task to compile the FatJAR.

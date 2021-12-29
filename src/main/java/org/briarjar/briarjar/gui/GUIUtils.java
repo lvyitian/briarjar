@@ -11,23 +11,8 @@ public class GUIUtils {
 	private MessagesBorderPane messagesBorderPane;
 	private SignInGridPane signInGridPane;
 	private SignUpGridPane signUpGridPane;
-
-	@Inject
-	public GUIUtils(RootBorderPane rootBorderPane, SignInGridPane signInGridPane, SignUpGridPane signUpGridPane, MessagesBorderPane messagesBorderPane)
-	{
-		this.messagesBorderPane = messagesBorderPane;
-			messagesBorderPane.setGUIUtils(this);
-			messagesBorderPane.create();
-		this.signInGridPane = signInGridPane;
-			signInGridPane.setGUIUtils(this);
-			signInGridPane.create();
-		this.signUpGridPane = signUpGridPane;
-			signUpGridPane.setGUIUtils(this);
-			signUpGridPane.create();
-		this.rootBorderPane = rootBorderPane;
-			rootBorderPane.setGUIUtils(this);
-			rootBorderPane.create();
-	}
+	private AddContactDialog addContactDialog;
+	private MessageListView messageListView;
 
 	public static void showAlert(Alert.AlertType alertType, String message)
 	{
@@ -37,6 +22,32 @@ public class GUIUtils {
 		alert.setHeight(350);
 		alert.setTitle("BriarJar Message");
 		alert.showAndWait();
+	}
+
+	@Inject
+	public GUIUtils(RootBorderPane rootBorderPane, SignInGridPane signInGridPane,
+	                SignUpGridPane signUpGridPane,
+	                MessagesBorderPane messagesBorderPane,
+	                AddContactDialog addContactDialog,
+					MessageListView messageListView)
+	{
+
+		// no create() call
+		this.messageListView = messageListView;
+		this.addContactDialog = addContactDialog;
+		this.messagesBorderPane = messagesBorderPane;
+		messagesBorderPane.setGUIUtils(this);
+
+		// create() call needed!
+		this.signInGridPane = signInGridPane;
+		signInGridPane.setGUIUtils(this);
+		signInGridPane.create();
+		this.signUpGridPane = signUpGridPane;
+		signUpGridPane.setGUIUtils(this);
+		signUpGridPane.create();
+		this.rootBorderPane = rootBorderPane;
+		rootBorderPane.setGUIUtils(this);
+		rootBorderPane.create();
 	}
 
 	// Getters
@@ -56,14 +67,16 @@ public class GUIUtils {
 		return signUpGridPane;
 	}
 
-	public MessagesBorderPane getMessagesBorderPane()
-	{
-		return messagesBorderPane;
-	}
+	public AddContactDialog getAddContactDialog() { return addContactDialog; }
+
+	public MessagesBorderPane getMessagesBorderPane() { return messagesBorderPane; }
+
+	public MessageListView getMessageListView() { return messageListView; }
 
 	public void switchToMain()
 	{
 		rootBorderPane.disableComponents(false);
+		messagesBorderPane.create();
 		rootBorderPane.setCenter(messagesBorderPane);
 	}
 
