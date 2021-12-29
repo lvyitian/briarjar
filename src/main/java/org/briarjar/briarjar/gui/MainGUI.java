@@ -24,6 +24,7 @@ public class MainGUI extends Application {
 	{
 		super();
 		this.guiUtils = guiUtils;
+		// todo 4k: maybe injecting  rootBorderPane  with Dagger2?
 		this.rootBorderPane = guiUtils.getRootBorderPane();
 	}
 

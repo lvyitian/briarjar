@@ -1,8 +1,5 @@
 package org.briarjar.briarjar;
 
-//import org.briarproject.bramble.BrambleCoreEagerSingletons;
-//import org.briarproject.briar.BriarCoreEagerSingletons;
-
 import org.briarjar.briarjar.gui.MainGUI;
 import org.briarjar.briarjar.model.utils.UserInterface;
 import org.briarjar.briarjar.tui.MainTUI;

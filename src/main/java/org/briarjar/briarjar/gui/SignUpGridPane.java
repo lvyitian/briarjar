@@ -40,8 +40,7 @@ public class SignUpGridPane extends GridPane {
 	private GUIUtils guiUtils;
 
 	@Inject
-	public SignUpGridPane(
-			LoginViewModel lvm)
+	public SignUpGridPane(LoginViewModel lvm)
 	{
 		this.lvm = lvm;
 	}

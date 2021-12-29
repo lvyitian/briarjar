@@ -5,17 +5,22 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
+import org.briarproject.bramble.api.FormatException;
 import org.briarproject.bramble.api.db.DbException;
+
+import java.security.GeneralSecurityException;
 
 import javax.inject.Inject;
 
 public class AddContact {
 
+	private final ContactViewModel cvm;
+
 	private Panel contentPanel;
 	private BasicWindow window;
 	private MultiWindowTextGUI textGUI;
-	private final ContactViewModel cvm;
 	private TUIUtils tuiUtils;
 
 	private String handshakeLinkOfFriend;
@@ -30,11 +35,19 @@ public class AddContact {
 		TUIUtils.addTitle("Add a new Contact", contentPanel);
 
 		try {
-		String link = cvm.getLink();
-		contentPanel.addComponent(
-				new Button("Get your own Handshake-Link", () ->
-						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", link, MessageDialogButton.OK)
-				));
+			String link = cvm.getLink();
+			contentPanel.addComponent(
+					new Button("Get your own Handshake-Link", () ->
+							MessageDialog.
+									showMessageDialog(
+											textGUI,
+											"Share your Handshake-Link",
+											link,
+											MessageDialogButton.OK)
+					));
+
+			System.out.println("\nOwn Handshake Link: "+link+"\n");
+
 		} catch (/*Db*/Exception e) {
 			e.printStackTrace();
 		}
@@ -46,7 +59,22 @@ public class AddContact {
 
 		contentPanel.addComponent(
 				new Button("Start Handshake Process", () -> {
-					// viewModelProvider.getContactManager().addContact();
+					try
+					{
+						cvm.addPendingContact(handshakeLinkOfFriend, "Bob-Test");
+					} catch (GeneralSecurityException e)
+					{
+						e.printStackTrace();
+					} catch (FormatException e)
+					{
+						e.printStackTrace();
+					} catch (DbException e)
+					{
+						e.printStackTrace();
+					} catch (GeneralException e)
+					{
+						e.printStackTrace();
+					}
 					tuiUtils.switchWindow(window,TUIWindow.CONTACTLIST);
 				}));
 
@@ -83,5 +111,4 @@ public class AddContact {
 	{
 		this.tuiUtils = tuiUtils;
 	}
-
 }

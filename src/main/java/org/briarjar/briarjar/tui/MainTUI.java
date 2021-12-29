@@ -25,7 +25,8 @@ public class MainTUI implements Closeable  {
 	private Screen screen;
 
 	@Inject
-	public MainTUI(LoginViewModel lvm, TUIUtils tuiUtils)
+	public MainTUI(LoginViewModel lvm,
+	               TUIUtils tuiUtils)
 	{
 		this.lvm = lvm;
 		this.tuiUtils = tuiUtils;
@@ -70,14 +71,10 @@ public class MainTUI implements Closeable  {
 	}
 
 	public void init() {
-		System.out.println(
-				"===== BriarJar TUI Mode (development version) =====");
-		System.out.println("JDK Version (java.version): " +
-				System.getProperty("java.version"));
-		System.out.println("JRE Version (java.runtime.version): " +
-				System.getProperty("java.runtime.version"));
-		System.out.println(
-				"Operating System (os.name): " + System.getProperty("os.name"));
+		System.out.println("===== BriarJar TUI Mode (development version) =====");
+		System.out.println("JDK Version (java.version): "+System.getProperty("java.version"));
+		System.out.println("JRE Version (java.runtime.version): "+System.getProperty("java.runtime.version"));
+		System.out.println("Operating System (os.name): "+System.getProperty("os.name"));
 		System.out.println("==========================================");
 	}
 

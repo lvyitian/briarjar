@@ -11,17 +11,19 @@ import javax.inject.Inject;
 
 public class ContactList {
 
+	private final ContactViewModel cvm;
+	private final LoginViewModel lvm;
+
 	private Panel contentPanel;
 	private BasicWindow window;
 	private WindowBasedTextGUI textGUI;
-	private final LoginViewModel lvm;
 	private TUIUtils tuiUtils;
-	private final ContactViewModel cvm;
 
 	private ComboBox<String> contactAliasComboBox;
 
 	@Inject
-	public ContactList(LoginViewModel lvm, ContactViewModel cvm)
+	public ContactList(LoginViewModel lvm,
+	                   ContactViewModel cvm)
 	{
 		this.lvm = lvm;
 		this.cvm = cvm;

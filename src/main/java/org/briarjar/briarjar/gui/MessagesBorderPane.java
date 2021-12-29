@@ -22,7 +22,7 @@ public class MessagesBorderPane extends BorderPane {
 	private MessageListView messageListView;
 	private VBox contactList;
 	private boolean isContactListVisible;
-	private GUIUtils guiUtils;
+	private GUIUtils guiUtils; // todo 4k: not used currently
 
 	@Inject
 	public MessagesBorderPane(ContactViewModel cvm)

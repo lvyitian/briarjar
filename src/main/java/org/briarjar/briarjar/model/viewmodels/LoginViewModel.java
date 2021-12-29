@@ -4,7 +4,10 @@ import org.briarproject.bramble.api.account.AccountManager;
 import org.briarproject.bramble.api.crypto.DecryptionException;
 import org.briarproject.bramble.api.crypto.PasswordStrengthEstimator;
 import org.briarproject.bramble.api.crypto.SecretKey;
+import org.briarproject.bramble.api.event.Event;
+import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
+import org.briarproject.bramble.api.lifecycle.event.LifecycleEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,7 +16,7 @@ import javax.inject.Singleton;
 	This Class is for Login and Registration Logic.
  */
 @Singleton
-public class LoginViewModel {
+public class LoginViewModel extends EventListenerViewModel {
 
 	private final AccountManager accountManager;
 	private final LifecycleManager lifecycleManager;
@@ -25,9 +28,13 @@ public class LoginViewModel {
 	public LoginViewModel(
 			AccountManager accountManager,
 			LifecycleManager lifecycleManager,
-			PasswordStrengthEstimator passphraseStrengthEstimator
+			PasswordStrengthEstimator passphraseStrengthEstimator,
+			EventBus eventBus
 	)
 	{
+		super(eventBus);
+		super.onInit();
+
 		this.accountManager = accountManager;
 		this.lifecycleManager = lifecycleManager;
 		this.passphraseStrengthEstimator = passphraseStrengthEstimator;
@@ -106,5 +113,15 @@ public class LoginViewModel {
 	public Boolean hasDbKey()
 	{
 		return accountManager.hasDatabaseKey();
+	}
+
+	@Override
+	public void eventOccurred(Event e)
+	{
+		System.out.println("Temp. output of ALL EVENTS (configured in LoginViewModel):  "+e.getClass().getSimpleName());
+		// todo: are there appropriate events?
+		if (e instanceof LifecycleEvent)
+		System.out.println("LiveCycleEvent... new LifeCycleState:  "+
+				lifecycleManager.getLifecycleState()+".");
 	}
 }

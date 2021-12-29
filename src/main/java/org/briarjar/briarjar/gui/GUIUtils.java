@@ -7,13 +7,16 @@ import javafx.scene.control.ButtonType;
 
 public class GUIUtils {
 
-	private RootBorderPane rootBorderPane;
-	private MessagesBorderPane messagesBorderPane;
-	private SignInGridPane signInGridPane;
-	private SignUpGridPane signUpGridPane;
+	private final RootBorderPane rootBorderPane;
+	private final MessagesBorderPane messagesBorderPane;
+	private final SignInGridPane signInGridPane;
+	private final SignUpGridPane signUpGridPane;
 
 	@Inject
-	public GUIUtils(RootBorderPane rootBorderPane, SignInGridPane signInGridPane, SignUpGridPane signUpGridPane, MessagesBorderPane messagesBorderPane)
+	public GUIUtils(RootBorderPane rootBorderPane,
+	                SignInGridPane signInGridPane,
+	                SignUpGridPane signUpGridPane,
+	                MessagesBorderPane messagesBorderPane)
 	{
 		this.messagesBorderPane = messagesBorderPane;
 			messagesBorderPane.setGUIUtils(this);

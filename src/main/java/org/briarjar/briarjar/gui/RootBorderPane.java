@@ -1,6 +1,5 @@
 package org.briarjar.briarjar.gui;
 
-//import org.briarjar.briarjar.DaggerBriarJarApp;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
@@ -41,8 +40,7 @@ public class RootBorderPane extends BorderPane
 	private GUIUtils guiUtils;
 
 	@Inject
-	public RootBorderPane(
-			LoginViewModel lvm)
+	public RootBorderPane(LoginViewModel lvm)
 	{
 		this.lvm = lvm;
 	}
