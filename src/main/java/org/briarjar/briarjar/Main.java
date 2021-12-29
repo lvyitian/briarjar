@@ -6,6 +6,8 @@ package org.briarjar.briarjar;
 import org.briarjar.briarjar.gui.MainGUI;
 import org.briarjar.briarjar.model.utils.UserInterface;
 import org.briarjar.briarjar.tui.MainTUI;
+import org.briarproject.bramble.BrambleCoreEagerSingletons;
+import org.briarproject.briar.BriarCoreEagerSingletons;
 
 import java.io.File;
 import java.util.Arrays;
@@ -22,25 +24,19 @@ public class Main {
 
 	public static void main(String[] args)
 	{
-
-		if (Arrays.stream(args)
-		          .anyMatch(s -> s.equals("--tui") || s.equals("tui")))
+		if (Arrays.stream(args).anyMatch(s -> s.equals("--tui") || s.equals("tui")))
 			ui = UserInterface.TERMINAL;
 		else
 			ui = UserInterface.GRAPHICAL;
-
-
 		// testing
 		//ui = UserInterface.GRAPHICAL;
 		ui = UserInterface.TERMINAL;
 
-		// legacy/reminder
-		/* Maybe not needed in this form currently, since it's for testing?
+
+		var briarJarApp = DaggerBriarJarApp.builder().
+		                                   briarJarModule(new BriarJarModule()).build();
 		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
 		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
-		*/
-		//System.out.println("Starting briarJarGuiApp.getBriarJarUi().start()");
-		//briarJarApp.getBriarJarUi().start();
 
 
 		if (ui.equals(UserInterface.GRAPHICAL))

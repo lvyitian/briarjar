@@ -1,8 +1,9 @@
 package org.briarjar.briarjar;
 
-
 import org.briarproject.bramble.account.AccountModule;
+import org.briarproject.bramble.api.FeatureFlags;
 import org.briarproject.bramble.api.db.DatabaseConfig;
+import org.briarproject.bramble.api.event.EventListener;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.plugin.PluginConfig;
 import org.briarproject.bramble.api.plugin.TorDirectory;
@@ -27,7 +28,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-
 
 @Module(
 		includes = {
@@ -60,7 +60,6 @@ public class BriarJarModule {
 
 	@NotNullByDefault
 	@Provides
-	@Singleton
 	public PluginConfig providePluginConfig(UnixTorPluginFactory tor)
 	{
 		List<DuplexPluginFactory> duplex = List.of(tor);
@@ -102,7 +101,7 @@ public class BriarJarModule {
 		return new BriarJarDatabaseConfig(dbDir, keyDir);
 	}
 
-/*
+
 	@Provides
 	public FeatureFlags provideFeatureFlags() {
 		return new FeatureFlags() {
@@ -132,7 +131,5 @@ public class BriarJarModule {
 				return false;
 			}
 		};
-	}*/
-
-
+	}
 }
