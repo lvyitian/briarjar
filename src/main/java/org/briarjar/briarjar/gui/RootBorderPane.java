@@ -40,8 +40,7 @@ public class RootBorderPane extends BorderPane
 	private GUIUtils guiUtils;
 
 	@Inject
-	public RootBorderPane(
-			LoginViewModel lvm)
+	public RootBorderPane(LoginViewModel lvm)
 	{
 		this.lvm = lvm;
 	}

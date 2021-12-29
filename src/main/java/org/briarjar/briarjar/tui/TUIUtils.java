@@ -7,10 +7,10 @@ import javax.inject.Inject;
 
 public class TUIUtils {
 
-	private SignIn signIn;
-	private SignUp signUp;
-	private ContactList contactList;
-	private AddContact addContact;
+	private final SignIn signIn;
+	private final SignUp signUp;
+	private final ContactList contactList;
+	private final AddContact addContact;
 
 	@Inject
 	public TUIUtils(SignIn signIn, SignUp signUp, ContactList contactList, AddContact addContact)

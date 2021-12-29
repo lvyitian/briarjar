@@ -5,8 +5,10 @@ import org.briarproject.bramble.api.FormatException;
 import org.briarproject.bramble.api.Pair;
 import org.briarproject.bramble.api.contact.*;
 import org.briarproject.bramble.api.db.DbException;
+import org.briarproject.bramble.api.event.Event;
+import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
-
+import org.briarproject.bramble.api.contact.event.*;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 
@@ -18,13 +20,17 @@ import static org.briarproject.bramble.api.identity.AuthorConstants.MAX_AUTHOR_N
 
 @Singleton
 @NotNullByDefault
-public class ContactViewModel {
+public class ContactViewModel extends EventListenerViewModel {
 
 	private final ContactManager contactManager;
 
 	@Inject
-	public ContactViewModel(ContactManager contactManager)
+	public ContactViewModel(EventBus eventBus,
+	                        ContactManager contactManager)
 	{
+		super(eventBus);
+		super.onInit();
+
 		this.contactManager = contactManager;
 	}
 
@@ -68,6 +74,28 @@ public class ContactViewModel {
 		return contactManager.getPendingContacts();
 	}
 
+	// todo
+	public void loadContacts(){
+		try
+		{
+			var acceptedContacts = getAcceptedContacts();
+			var pendingContacts = getPendingContacts();
+
+			System.out.println("accepted contacts:");
+			for (Contact c : acceptedContacts) {
+				System.out.println(c);
+			}
+
+			System.out.println("pending contacts:");
+			for (Pair p : pendingContacts) {
+				System.out.println(p.getFirst()+" / "+p.getSecond());
+			}
+		} catch (DbException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	public void removeAcceptedContact(ContactId c)
 			throws DbException
 	{
@@ -87,5 +115,24 @@ public class ContactViewModel {
 		contactManager.setContactAlias(contactId, alias);
 	}
 
-	// todo a: events
+	// todo
+	@Override
+	public void eventOccurred(Event e)
+	{
+		if (e instanceof ContactRemovedEvent)
+		{
+			System.out.println("ContactRemovedEvent... load contacts...");
+			loadContacts();
+		}
+		else if (e instanceof ContactAddedEvent)
+		{
+			System.out.println("ContactAddedEvent... load contacts...");
+			loadContacts();
+		}
+		else if (e instanceof PendingContactAddedEvent)
+		{
+			System.out.println("PendingContactAddedEvent... load contacts...");
+			loadContacts();
+		}
+	}
 }

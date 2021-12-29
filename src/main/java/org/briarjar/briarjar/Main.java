@@ -1,8 +1,5 @@
 package org.briarjar.briarjar;
 
-//import org.briarproject.bramble.BrambleCoreEagerSingletons;
-//import org.briarproject.briar.BriarCoreEagerSingletons;
-
 import org.briarjar.briarjar.gui.MainGUI;
 import org.briarjar.briarjar.model.utils.UserInterface;
 import org.briarjar.briarjar.tui.MainTUI;
@@ -24,17 +21,20 @@ public class Main {
 
 	public static void main(String[] args)
 	{
-
-		if (Arrays.stream(args)
-		          .anyMatch(s -> s.equals("--tui") || s.equals("tui")))
+		if (Arrays.stream(args).anyMatch(s -> s.equals("--tui") || s.equals("tui")))
 			ui = UserInterface.TERMINAL;
 		else
 			ui = UserInterface.GRAPHICAL;
-
-
 		// testing
 		//ui = UserInterface.GRAPHICAL;
 		ui = UserInterface.TERMINAL;
+
+
+		var briarJarApp = DaggerBriarJarApp.builder().
+		                                   briarJarModule(new BriarJarModule()).build();
+		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
+		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
+
 
 		if (ui.equals(UserInterface.GRAPHICAL))
 		{
@@ -50,16 +50,6 @@ public class Main {
 			mainTUI = DaggerBriarJarApp.builder().build().getMainTUI();
 			mainTUI.start();
 		}
-
-		// legacy/reminder
-		/* Maybe not needed in this form currently, since it's for testing?
-		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(
-				(BrambleCoreEagerSingletons) mainTUI);
-		BriarCoreEagerSingletons.Helper.injectEagerSingletons(
-				(BriarCoreEagerSingletons) mainTUI);
-		*/
-		//System.out.println("Starting briarJarGuiApp.getBriarJarUi().start()");
-		//briarJarApp.getBriarJarUi().start();
 
 		// todo 4k: stop is deprecated
 		Runtime.getRuntime()

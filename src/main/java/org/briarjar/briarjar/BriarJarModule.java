@@ -1,6 +1,5 @@
 package org.briarjar.briarjar;
 
-
 import org.briarproject.bramble.account.AccountModule;
 import org.briarproject.bramble.api.FeatureFlags;
 import org.briarproject.bramble.api.db.DatabaseConfig;
@@ -28,7 +27,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-
 
 @Module(
 		includes = {
@@ -61,7 +59,6 @@ public class BriarJarModule {
 
 	@NotNullByDefault
 	@Provides
-	@Singleton
 	public PluginConfig providePluginConfig(UnixTorPluginFactory tor)
 	{
 		List<DuplexPluginFactory> duplex = List.of(tor);
