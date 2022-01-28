@@ -1,0 +1,149 @@
+
+@startuml
+
+<style>
+activityDiagram {
+  BackgroundColor #e9fdcc
+
+  activity {
+    BackgroundColor #cefd8c
+  }
+  diamond {
+    BackgroundColor #e8ece2
+  }
+  arrow {
+  }
+  partition {
+  }
+  note {
+    BackgroundColor fdfdcc
+  }
+  …
+}
+document {
+}
+</style>
+
+
+
+
+
+(.)
+note: =Version: DRAFT (2022-01-27)\n\n===Further needs/possibilities:\n\
+*Show/Accept Contact Request\n\
+*Sign-Out/Quit\n\
+*Set/Change Contact's Nickname\n\
+*Recognise own Online/Offline Status\n\
+*Handle Notifications (new Contact/Message)\n\n\
+*Split Diagram into multiple ones?\n\
+*...\n
+detach
+
+
+
+start
+:User starts\n   BriarJar;
+:         Start\nBriar Process (BP);
+
+fork
+    :      Running\nBriar Process (BP);
+
+fork again
+    if (Account exists?) then ([Yes])
+        :Show Screen\n   'Sign-In';
+        repeat :Ask User for Passphrase;
+            backward :Show Error;
+            :Validation\n   via BP>
+            :Result\nvia BP<
+        repeat while (Passphrase valid?) is ([No]) not ([Yes])
+    else ([No])
+        repeat :Show Screen\n   'Sign-Up';
+            fork
+                :Ask User for new\n     Username;
+            fork again
+                : Ask User for new\nstrong Passphrase;
+            end fork;
+            :Validation\n   via BP>
+            :Result\nvia BP<
+            backward :Show Error;
+        repeat while (Valid Credentials?) is ([No]) not ([Yes])
+    endif
+
+
+(M)
+detach
+(M)
+
+
+
+
+
+    #a5fd29 :=**Show Main Screen**;
+        switch (User selects?)
+            case ([Add Contact])
+                :Show Screen\n'Add Contact';
+                fork
+                    :Show User's\nContact Link;
+                fork again
+                    repeat :      Ask User for\nforeign Contact Link;
+                        backward :Show Error;
+                    repeat while (Link valid?) is ([No]) not ([Yes])
+                    :        Send\nContact Request\n        via BP>
+                    :   Update\nContact List;
+                end fork
+                (M)
+                detach
+
+            case ([Remove Contact])
+                repeat :Show Screen\n'Contact List';
+                    if (Contacts existing?) then ([Yes])
+                    else ([No])
+                        :  Show Info\n'No Contact';
+                        detach
+                    endif
+                    :User selects Contact;
+                    :Show Screen\n'Confirmation';
+                repeat while (User confirmed Removal?) is ([No]) not ([Yes])
+                :Remove Contact\n        via BP>
+                :    Update\nMessage List;
+                :       Update\nConversation List;
+                :   Update\nContact List;
+                (M)
+                detach
+
+            case ([Conversations])
+                repeat :    Show Screen\n'Conversation List';
+                    if (User selects?) then ([Existing Conversation])
+                    else ([New Conversation])
+                        :Show Screen\n'Contact List';
+                        if (Contacts existing?) then ([Yes])
+                        else ([No])
+                            :  Show Info\n'No Contact';
+                            detach
+                        endif
+                        :User selects Contact;
+                    endif
+                    :Show Screen\n'Conversation';
+                    fork
+                        :        User\nreads Messages;
+                    fork again
+                        repeat
+                            repeat
+                                :       User\nedits Message;
+                            repeat while (Message Format is valid) is ([No]) not ([Yes])
+                            :      User\npost Message;
+                            :Send Message\n      via BP>
+                            :Message Status\n       via BP<
+                            backward :Show Info;
+                        repeat while (Message is sent?) is ([No]) not ([Yes])
+                        :    Update\nMessage List;
+                    end fork {and/or}
+                repeat while () is ([User goes back])
+                detach
+        endswitch
+    detach
+end fork;
+
+
+stop
+@enduml
