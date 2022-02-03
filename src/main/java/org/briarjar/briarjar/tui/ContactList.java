@@ -3,16 +3,19 @@ package org.briarjar.briarjar.tui;
 import com.googlecode.lanterna.gui2.*;
 
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
-import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
-import org.briarproject.bramble.api.contact.Contact;
+import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
+import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;import org.briarproject.bramble.api.contact.Contact;
+import org.briarproject.bramble.api.contact.event.*;
 import org.briarproject.bramble.api.db.DbException;
+import org.briarproject.bramble.api.event.Event;
+import org.briarproject.bramble.api.event.EventBus;
 
 import javax.inject.Inject;
 
-public class ContactList {
+public class ContactList extends EventListenerViewModel {
 
 	private final ContactViewModel cvm;
-	private final LoginViewModel lvm;
+	private final LifeCycleViewModel lifeCycleViewModel;
 
 	private Panel contentPanel;
 	private BasicWindow window;
@@ -22,11 +25,15 @@ public class ContactList {
 	private ComboBox<String> contactAliasComboBox;
 
 	@Inject
-	public ContactList(LoginViewModel lvm,
-	                   ContactViewModel cvm)
+	public ContactList( EventBus           eventBus,
+	                    ContactViewModel   cvm,
+                        LifeCycleViewModel lifeCycleViewModel )
 	{
-		this.lvm = lvm;
+		super(eventBus);
+		super.onInit();
+
 		this.cvm = cvm;
+		this.lifeCycleViewModel = lifeCycleViewModel;
 	}
 
 	private void createWindow() {
@@ -55,10 +62,15 @@ public class ContactList {
 		TUIUtils.addHorizontalSeparator(contentPanel);
 
 		contentPanel.addComponent(
-				new Button("Log Out", () -> {
-					System.out.println("pre stop: "+ lvm.getLifeCycleState());
-					lvm.stop();
-					System.out.println("post stop: " + lvm.getLifeCycleState());
+				new Button("Sign Out", () -> {
+					try
+					{
+						lifeCycleViewModel.stop();
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace(); //TODO
+					}
 					tuiUtils.switchWindow(window, TUIWindow.SIGNIN);
 				}));
 	}
@@ -89,4 +101,80 @@ public class ContactList {
 		this.tuiUtils = tuiUtils;
 	}
 
+
+	@Override
+	public void
+	       eventOccurred( Event e )
+	{
+		/*
+		BRAMBLE-API -------------------------
+
+		ContactAddedEvent
+		ContactAliasChangedEvent
+		ContactRemovedEvent
+		ContactVerifiedEvent
+		PendingContactAddedEvent
+		PendingContactRemovedEvent
+		PendingContactStateChangedEvent
+
+		IdentityAddedEvent
+		IdentityRemovedEvent
+
+		KeyAgreementAbortedEvent
+		KeyAgreementFailedEvent
+		KeyAgreementFinishedEvent
+		KeyAgreementListeningEvent
+		KeyAgreementStartedEvent
+		KeyAgreementStoppedListeningEvent
+		KeyAgreementWaitingEvent
+
+		NetworkStatusEvent
+
+		ConnectionClosedEvent
+		ConnectionOpenedEvent
+		ContactConnectedEvent
+		ContactDisconnectedEvent
+
+		RendezvousConnectionClosedEvent
+		RendezvousConnectionOpenedEvent
+		RendezvousPollEvent
+
+		SettingsUpdatedEvent
+
+		MessageAddedEvent
+		MessageRequestedEvent
+		MessagesAckedEvent
+		MessageSharedEvent
+		MessagesSentEvent
+		MessageStateChangedEvent
+		MessageToAckEvent
+		MessageToRequestEvent
+
+
+		BRIAR-API ---------------------------
+
+		ConversationMessagesDeletedEvent
+
+		ConversationMessageReceivedEvent
+
+		IntroductionAbortedEvent
+		IntroductionRequestReceivedEvent
+		IntroductionResponseReceivedEvent
+
+		AttachmentReceivedEvent
+		PrivateMessageReceivedEvent
+		*/
+        if (e instanceof ContactAddedEvent)
+        {
+            System.out.println("ContactAddedEvent...");
+        }
+		else if (e instanceof ContactRemovedEvent)
+        {
+            System.out.println("ContactRemovedEvent...");
+        }
+        else if (e instanceof PendingContactAddedEvent)
+        {
+            System.out.println("PendingContactAddedEvent...");
+        }
+	}
 }

@@ -70,7 +70,7 @@ public class AddContactDialog extends Stage {
 
 		try
 		{
-			lbOwnLink = new Label(cvm.getLink());
+			lbOwnLink = new Label(cvm.getHandshakeLink());
 			lbOwnLink.setFont(Font.font("System", FontWeight.LIGHT, 14));
 		} catch (DbException e)
 		{

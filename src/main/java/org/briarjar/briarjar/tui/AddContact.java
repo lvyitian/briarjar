@@ -35,7 +35,7 @@ public class AddContact {
 		TUIUtils.addTitle("Add a new Contact", contentPanel);
 
 		try {
-		String ownLink = cvm.getLink();
+		String ownLink = cvm.getHandshakeLink();
 		contentPanel.addComponent(
 				new Button("Get your own Handshake-Link", () ->
 						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", ownLink, MessageDialogButton.OK)

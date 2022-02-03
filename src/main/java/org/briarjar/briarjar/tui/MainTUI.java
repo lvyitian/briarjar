@@ -7,7 +7,9 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
+import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
+import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -19,16 +21,19 @@ import javax.inject.Singleton;
 public class MainTUI implements Closeable  {
 
 	private final LoginViewModel lvm;
+	private final LifeCycleViewModel lifeCycleViewModel;
 	private MultiWindowTextGUI textGUI;
 	private final TUIUtils tuiUtils;
 
 	private Screen screen;
 
 	@Inject
-	public MainTUI(LoginViewModel lvm,
-	               TUIUtils tuiUtils)
+	public MainTUI( LoginViewModel     lvm,
+					LifeCycleViewModel lifeCycleViewModel,
+	                TUIUtils           tuiUtils            )
 	{
 		this.lvm = lvm;
+		this.lifeCycleViewModel = lifeCycleViewModel;
 		this.tuiUtils = tuiUtils;
 		init();
 	}
@@ -79,7 +84,13 @@ public class MainTUI implements Closeable  {
 	}
 
 	public void stop() {
-		lvm.stop();
+		try
+		{
+			lifeCycleViewModel.stop();
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace(); //TODO
+		}
 	}
 
 	@Override
