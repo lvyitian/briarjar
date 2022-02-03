@@ -11,9 +11,10 @@ public class TUIUtils {
 	private final SignUp signUp;
 	private final ContactList contactList;
 	private final AddContact addContact;
+	private final Conversation conversation;
 
 	@Inject
-	public TUIUtils(SignIn signIn, SignUp signUp, ContactList contactList, AddContact addContact)
+	public TUIUtils(SignIn signIn, SignUp signUp, ContactList contactList, AddContact addContact, Conversation conversation)
 	{
 		this.signIn = signIn;
 			signIn.setTuiUtils(this);
@@ -23,6 +24,8 @@ public class TUIUtils {
 			contactList.setTuiUtils(this);
 		this.addContact = addContact;
 			addContact.setTuiUtils(this);
+		this.conversation = conversation;
+			conversation.setTuiUtils(this);
 	}
 
 	public static void addTitle(String title, Panel contentPanel) {
@@ -53,13 +56,7 @@ public class TUIUtils {
 		// MultiWindowTextGUI textGUI = (MultiWindowTextGUI) window.getTextGUI();
 		clearScreen(currentWindow);
 		currentWindow.close();
-		switch (tw)
-		{
-			case CONTACTLIST -> contactList.render();
-			case SIGNIN -> signIn.render();
-			case SIGNUP -> signUp.render();
-			case ADDCONTACT -> addContact.render();
-		}
+		switchWindow(tw);
 	}
 
 	/**
@@ -73,10 +70,11 @@ public class TUIUtils {
 			case SIGNIN -> signIn.render();
 			case SIGNUP -> signUp.render();
 			case ADDCONTACT -> addContact.render();
+			case CONVERSATION -> conversation.render();
 		}
 	}
 
-	// Getters
+	/* GETTERS */
 
 	public SignIn getSignIn()
 	{
@@ -97,5 +95,7 @@ public class TUIUtils {
 	{
 		return addContact;
 	}
+
+	public Conversation getConversation() { return conversation; }
 
 }

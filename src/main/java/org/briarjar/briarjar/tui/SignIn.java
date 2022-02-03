@@ -36,20 +36,26 @@ public class SignIn {
 		contentPanel.addComponent(
 				new Button("Sign In", () -> {
 
-					try {
-						lvm.signIn(passphrase);
+					if(passphrase != null && !passphrase.isEmpty())
+					{
+							try {
+								lvm.signIn(passphrase);
 
-						System.out.println("pre start: " +lvm.getLifeCycleState());
-						lvm.start();
-						System.out.println("post start: " +lvm.getLifeCycleState());
-					} catch (DecryptionException e) {
-						MessageDialog.showMessageDialog(textGUI, "DecryptionException occurred", e.getDecryptionResult().toString(), MessageDialogButton.OK);
-					} catch (InterruptedException e) {
-						MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
-					}
-					if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
-						tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
-				}));
+								System.out.println("pre start: " +lvm.getLifeCycleState());
+								lvm.start();
+								System.out.println("post start: " +lvm.getLifeCycleState());
+							} catch (DecryptionException e) {
+								MessageDialog.showMessageDialog(textGUI, "DecryptionException occurred", e.getDecryptionResult().toString(), MessageDialogButton.OK);
+							} catch (InterruptedException e) {
+								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
+							}
+
+							if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
+								tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
+					} else
+						MessageDialog.showMessageDialog(textGUI, "Empty Passphrase", "Please enter a passphrase",
+								MessageDialogButton.OK);
+					}));
 
 		TUIUtils.addHorizontalSeparator(contentPanel);
 
@@ -73,10 +79,12 @@ public class SignIn {
 		createWindow();
 
 		this.window = new BasicWindow("Welcome back to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel);
+		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
 		// render the window
 		textGUI.addWindowAndWait(window);
 	}
+
+	/* SETTERS */
 
 	public void setTextGUI(MultiWindowTextGUI textGUI)
 	{

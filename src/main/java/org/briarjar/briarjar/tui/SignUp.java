@@ -43,16 +43,28 @@ public class SignUp {
 
 		contentPanel.addComponent(
 				new Button("Sign Up", () -> {
-					try {
-						lvm.signUp(username, passphrase);}
-					catch (InterruptedException e) {
-						MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
-					}
-					try {
-						lvm.start();
-					} catch (InterruptedException e) {
-						MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
-					}
+					if(username != null && !username.isEmpty())
+					{
+						if(passphrase != null && !passphrase.isEmpty())
+						{
+							try {
+								lvm.signUp(username, passphrase);}
+							catch (InterruptedException e) {
+								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
+							}
+							try {
+								lvm.start();
+							} catch (InterruptedException e) {
+								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
+							}
+						} else
+							MessageDialog.showMessageDialog(textGUI, "Empty Passphrase", "Please enter a valid passphrase.",
+									MessageDialogButton.OK);
+					} else
+						MessageDialog.showMessageDialog(textGUI, "Empty Username", "Please choose a username.",
+								MessageDialogButton.OK);
+
+
 					if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
 						tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
 				}));
@@ -69,10 +81,12 @@ public class SignUp {
 		createWindow();
 
 		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel);
+		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
 		// render the window
 		textGUI.addWindowAndWait(window);
 	}
+
+	/* SETTERS */
 
 	public void setTextGUI(MultiWindowTextGUI textGUI)
 	{

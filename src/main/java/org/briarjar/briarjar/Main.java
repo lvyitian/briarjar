@@ -27,7 +27,7 @@ public class Main {
 			ui = UserInterface.GRAPHICAL;
 		// testing
 		//ui = UserInterface.GRAPHICAL;
-		ui = UserInterface.TERMINAL;
+		//ui = UserInterface.TERMINAL;
 
 		var briarJarApp = launchApp();
 
@@ -51,6 +51,10 @@ public class Main {
 		       .addShutdownHook(new Thread(Thread.currentThread()::stop));
 	}
 
+	/**
+	 *  Will be called on (re-)login!
+	 * @return
+	 */
 	public static BriarJarApp launchApp()
 	{
 		var briarJarApp = DaggerBriarJarApp.builder().

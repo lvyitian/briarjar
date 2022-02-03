@@ -81,14 +81,19 @@ public class AddContact {
 		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
 		gridLayout.setHorizontalSpacing(2);
 
+		handshakeLinkOfFriend = "";
+		aliasOfFriend = "Bob";
+
 		// init instance
 		createWindow();
 
 		this.window = new BasicWindow("Add a new Contact");
-		window.setComponent(contentPanel);
+		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
 		// render the window
 		textGUI.addWindowAndWait(window);
 	}
+
+	/* SETTERS */
 
 	public void setTextGUI(MultiWindowTextGUI textGUI)
 	{

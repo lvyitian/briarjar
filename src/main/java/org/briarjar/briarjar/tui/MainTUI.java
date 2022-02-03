@@ -68,6 +68,7 @@ public class MainTUI implements Closeable  {
 		tuiUtils.getSignUp().setTextGUI(textGUI);
 		tuiUtils.getAddContact().setTextGUI(textGUI);
 		tuiUtils.getContactList().setTextGUI(textGUI);
+		tuiUtils.getConversation().setTextGUI(textGUI);
 	}
 
 	public void init() {
