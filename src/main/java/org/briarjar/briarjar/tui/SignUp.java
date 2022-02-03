@@ -41,7 +41,6 @@ public class SignUp extends EventListenerViewModel {
 	}
 
 	private void createWindow() {
-		TUIUtils.addTitle("Please Create an Account", contentPanel);
 
 		contentPanel.addComponent(
 				new Button("Enter Username", () ->
@@ -95,7 +94,7 @@ public class SignUp extends EventListenerViewModel {
 		createWindow();
 
 		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Create an Account")));
 		// render the window
 		textGUI.addWindowAndWait(window);
 	}

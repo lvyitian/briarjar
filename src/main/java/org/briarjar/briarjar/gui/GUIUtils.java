@@ -4,6 +4,7 @@ import org.briarjar.briarjar.Main;
 
 import javax.inject.Inject;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
@@ -85,10 +86,11 @@ public class GUIUtils {
 		rootBorderPane.setCenter(signInGridPane);
 
 		// relaunch app
+
 		var briarJarApp = Main.launchApp();
 		var mainGUI = briarJarApp.getMainGUI();
 		mainGUI.init();
-		mainGUI.start(new Stage());
+		mainGUI.start(MainGUI.getPrimaryStage());
 	}
 
 	public static void showAlert(Alert.AlertType alertType, String message)

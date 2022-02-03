@@ -42,7 +42,6 @@ public class SignIn extends EventListenerViewModel {
 
 
 	private void createWindow() {
-		TUIUtils.addTitle("Please Sign In with your Account", contentPanel);
 		contentPanel.addComponent(
 				new Button("Enter Passphrase", () ->
 						passphrase = TextInputDialog.showPasswordDialog(textGUI, "Enter Passphrase", "Enter your account passphrase", ""))
@@ -93,7 +92,7 @@ public class SignIn extends EventListenerViewModel {
 		createWindow();
 
 		this.window = new BasicWindow("Welcome back to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Sign In with your Account")));
 		// render the window
 		textGUI.addWindowAndWait(window);
 	}

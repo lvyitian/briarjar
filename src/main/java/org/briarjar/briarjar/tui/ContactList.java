@@ -6,10 +6,13 @@ import org.briarjar.briarjar.Main;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;import org.briarproject.bramble.api.contact.Contact;
+import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.contact.event.*;
 import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
+import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
+import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,12 +24,14 @@ public class ContactList extends EventListenerViewModel {
 	private final ContactViewModel cvm;
 	private final LifeCycleViewModel lifeCycleViewModel;
 
-	private Panel contentPanel;
+	private Panel contentPanel, buttonPanel;
 	private BasicWindow window;
 	private WindowBasedTextGUI textGUI;
 	private TUIUtils tuiUtils;
 
-	private ComboBox<ListedContact> contactAliasComboBox;
+	private ActionListBox contactListBox;
+
+	private ArrayList<ListedContact> listedContactList;
 
 	@Inject
 	public ContactList( EventBus           eventBus,
@@ -41,51 +46,21 @@ public class ContactList extends EventListenerViewModel {
 	}
 
 	private void createWindow() {
-		TUIUtils.addTitle("Contact Selection", contentPanel);
+		updateContactList();
 
-		contentPanel.addComponent(
-				new Button("Add a new Contact", () ->
+		buttonPanel.addComponent(
+				new Button("Add...", () ->
 						tuiUtils.switchWindow(window, TUIWindow.ADDCONTACT)));
 
-		TUIUtils.addHorizontalSeparator(contentPanel);
-
-		try {
-			Collection<Contact> contactsCollection = cvm.getAcceptedContacts();
-			ArrayList<ListedContact> listedContactList = new ArrayList<>(contactsCollection.size());
-			if(contactsCollection.size() != 0) {
-				for (Contact c : contactsCollection) {
-					ListedContact lc = new ListedContact(c); // Contact --> ListedContact
-					listedContactList.add(lc);
-					contactAliasComboBox.addItem(lc);
-				}
-				contentPanel.addComponent(contactAliasComboBox);
-
-				TUIUtils.addHorizontalSeparator(contentPanel);
-
-				contentPanel.addComponent(
-						new Button("Chat with selected Contact", () -> {
-							try
-							{
-								tuiUtils.getConversation().setContact(contactAliasComboBox.getSelectedItem().getContact());
-								tuiUtils.switchWindow(window, TUIWindow.CONVERSATION);
-							} catch (Exception e)
-							{
-								e.printStackTrace();
-							}
-						}));
-
-			}
-			else
-				contentPanel.addComponent(new Label("No Contacts found!"));
-		} catch (DbException e) {
-			e.printStackTrace();
-		}
-
-		TUIUtils.addHorizontalSeparator(contentPanel);
-
-		contentPanel.addComponent(
-				new Button("Log Out", () -> {
-					lvm.stop();
+		buttonPanel.addComponent(
+				new Button("Exit", () -> {
+					try
+					{
+						lifeCycleViewModel.stop();
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
 
 					try
 					{
@@ -99,22 +74,61 @@ public class ContactList extends EventListenerViewModel {
 					var briarJarApp = Main.launchApp();
 					briarJarApp.getMainTUI().start();
 				}));
+
 	}
 
 	public void render()
 	{
-		this.contactAliasComboBox = new ComboBox<>();
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
+		contentPanel = new Panel(new BorderLayout());
+		buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
 
 		// init instance
 		createWindow();
 
-		this.window = new BasicWindow("Select or Add a Contact");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
+		contentPanel.addComponent(contactListBox.setLayoutData(BorderLayout.Location.CENTER));
+		contentPanel.addComponent(buttonPanel.withBorder(Borders.singleLine()).setLayoutData(BorderLayout.Location.BOTTOM));
+
+		this.window = new BasicWindow("Contact Selection");
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Choose your peer or Add a new one")));
 		// render the window
 		textGUI.addWindowAndWait(window);
+	}
+
+	private void updateContactList()
+	{
+		if(contactListBox != null)
+			contentPanel.removeComponent(contactListBox);
+
+		contactListBox = new ActionListBox();
+
+		try
+		{
+			Collection<Contact> contactsCollection = cvm.getAcceptedContacts();
+			listedContactList = new ArrayList<>(contactsCollection.size());
+			if(contactsCollection.size() != 0) {
+				for (Contact c : contactsCollection) {
+					ListedContact lc = new ListedContact(c); // Contact --> ListedContact
+					listedContactList.add(lc);
+					contactListBox.addItem(lc.toString(), () -> {
+						try
+						{
+							tuiUtils.getConversation().setContact(lc.getContact());
+							tuiUtils.switchWindow(window, TUIWindow.CONVERSATION);
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					});
+				}
+				contentPanel.addComponent(contactListBox);
+			}
+			else
+				contentPanel.addComponent(new Label("No Contacts found!"));
+
+		} catch (DbException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	/* SETTERS */
@@ -194,14 +208,28 @@ public class ContactList extends EventListenerViewModel {
 		if (e instanceof ContactAddedEvent)
 		{
 			System.out.println("ContactAddedEvent...");
+			updateContactList();
 		}
 		else if (e instanceof ContactRemovedEvent)
 		{
 			System.out.println("ContactRemovedEvent...");
+			updateContactList();
 		}
 		else if (e instanceof PendingContactAddedEvent)
 		{
 			System.out.println("PendingContactAddedEvent...");
+			updateContactList();
+		} else if (e instanceof ContactConnectedEvent)
+		{
+			System.out.println("ContactConnectedEvent...");
+			updateContactList();
+		} else if (e instanceof ContactDisconnectedEvent)
+		{
+			System.out.println("ContactDisconnectedEvent...");
+
+			if(listedContactList.contains(((ContactDisconnectedEvent) e).getContactId()))
+				// todo 4a implement some logic to allow setting Contact onlineStatus e.g. updateOnlineStatus(ContactId id)
+			updateContactList();
 		}
 	}
 }

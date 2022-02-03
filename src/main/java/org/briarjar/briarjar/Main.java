@@ -32,7 +32,7 @@ public class Main {
 			ui = UserInterface.GRAPHICAL;
 		// testing
 		//ui = UserInterface.GRAPHICAL;
-		//ui = UserInterface.TERMINAL;
+		ui = UserInterface.TERMINAL;
 
 		var briarJarApp = launchApp();
 
@@ -54,7 +54,6 @@ public class Main {
 
 	/**
 	 *  Will be called on (re-)login!
-	 * @return
 	 */
 	public static BriarJarApp launchApp()
 	{

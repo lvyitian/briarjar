@@ -151,7 +151,7 @@ public class RootBorderPane extends BorderPane
 		// TODO check this - might be dangerous!
 		try {
 			if (lvm.hasDbKey()) {
-				lvm.stop();
+				lifeCycleViewModel.stop();
 				guiUtils.switchToSignIn();
 			}
 		} catch (Exception e) {
@@ -182,7 +182,7 @@ public class RootBorderPane extends BorderPane
 	public void exit()
 	{
 		// FIXME: closing with "x" or Alt-F4 doesn't trigger exit() method!
-		if(lifeCycleViewModel.getLifeCycleState() == LifecycleState.RUNNING)
+		if(lifeCycleViewModel.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
 		{
 			System.out.println(lifeCycleViewModel.getLifeCycleState());
 			try {
