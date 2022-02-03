@@ -105,7 +105,7 @@ public class MessagesBorderPane extends BorderPane {
 		}
 
 		// test
-		Button alice = new Button("<alice>");
+		Button alice = new Button("<john-doe>");
 		alice.setPrefWidth(contactList.getPrefWidth());
 		contactList.getChildren().setAll(alice); // for testing only...
 

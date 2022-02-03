@@ -1,9 +1,12 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.Main;
+
 import javax.inject.Inject;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 public class GUIUtils {
 
@@ -80,6 +83,12 @@ public class GUIUtils {
 	{
 		rootBorderPane.disableComponents(false);
 		rootBorderPane.setCenter(signInGridPane);
+
+		// relaunch app
+		var briarJarApp = Main.launchApp();
+		var mainGUI = briarJarApp.getMainGUI();
+		mainGUI.init();
+		mainGUI.start(new Stage());
 	}
 
 	public static void showAlert(Alert.AlertType alertType, String message)

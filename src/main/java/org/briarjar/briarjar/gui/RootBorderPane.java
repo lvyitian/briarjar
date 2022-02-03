@@ -1,5 +1,6 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.Main;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
@@ -25,7 +26,8 @@ public class RootBorderPane extends BorderPane
 
 	private MenuBar menuBar;
 	private Menu    mBriar, mChat, mContact, mInfo;
-	private MenuItem 	miToggleOnline, miDeleteAccount, miExit, 		// mBriar
+	private MenuItem
+				miSignOut, miDeleteAccount, miExit, 		// mBriar
 				miShowContactList, 						// mChat
 				miAddContact, miRemoveContact, miChangeContactDisplayName, 	//mContact
 				miCheckForUpdates, miAbout;				// miInfo
@@ -62,7 +64,7 @@ public class RootBorderPane extends BorderPane
 		mContact 			= new Menu("Contact");
 		mInfo 				= new Menu("Info");
 
-		miToggleOnline 		= new MenuItem("Go Offline");
+		miSignOut           = new MenuItem("Sign Out");
 		miDeleteAccount		= new MenuItem("Delete Account & Exit");
 		miExit 				= new MenuItem("Exit");
 		miShowContactList 	= new MenuItem("Show Contact List");
@@ -83,7 +85,7 @@ public class RootBorderPane extends BorderPane
 	{
 		menuBar.getMenus().addAll(mBriar, mChat, mContact, mInfo);
 		
-		mBriar.getItems().addAll(miToggleOnline, miDeleteAccount, miExit);
+		mBriar.getItems().addAll(miSignOut, miDeleteAccount, miExit);
 		mChat.getItems().addAll(miShowContactList);
 		mContact.getItems().addAll(miAddContact, miRemoveContact, miChangeContactDisplayName);
 		mInfo.getItems().addAll(miCheckForUpdates, miAbout);
@@ -103,7 +105,7 @@ public class RootBorderPane extends BorderPane
 	private void addHandlers()
 	{
 		// menu: mBriar
-		miToggleOnline.setOnAction(e -> toggleOnline());
+		miSignOut.setOnAction(e -> signOut());
 		miDeleteAccount.setOnAction(e -> deleteAccount());
 		miExit.setOnAction(e -> exit());
 		
@@ -124,7 +126,7 @@ public class RootBorderPane extends BorderPane
 
 	public void disableComponents(boolean disable)
 	{
-		miToggleOnline.setDisable(disable);
+		miSignOut.setDisable(disable);
 		mContact.setDisable(disable);
 		mChat.setDisable(disable);
 		miDeleteAccount.setDisable(disable);
@@ -141,17 +143,14 @@ public class RootBorderPane extends BorderPane
 	// ============================ menu: mBriar ============================
 
 
-	private void toggleOnline()
+	private void signOut()
 	{
 		// TODO check this - might be dangerous!
 		try {
 			if (lvm.hasDbKey()) {
 				lvm.stop();
-				miToggleOnline.setText("Go Online");
+				guiUtils.switchToSignIn();
 			}
-			else
-				lvm.start();
-				miToggleOnline.setText("Go Offline");
 		} catch (Exception e) {
 			showAlert(AlertType.ERROR, e.getMessage());
 		}
