@@ -5,25 +5,39 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
+import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
+import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
-import org.briarproject.bramble.api.lifecycle.LifecycleManager;
+import org.briarproject.bramble.api.event.Event;
+import org.briarproject.bramble.api.event.EventBus;
+import org.briarproject.bramble.api.lifecycle.LifecycleManager.LifecycleState;
 
 import javax.inject.Inject;
 
-public class SignUp {
+public class SignUp extends EventListenerViewModel {
+
+	private final EventBus eventBus;
+	private final LoginViewModel lvm;
+	private final LifeCycleViewModel lifeCycleViewModel;
 
 	private Panel contentPanel;
 	private TUIUtils tuiUtils;
 	private BasicWindow window;
 	private MultiWindowTextGUI textGUI;
-	private final LoginViewModel lvm;
 	private String username;
 	private String passphrase;
 
 	@Inject
-	public SignUp(LoginViewModel lvm)
+	public SignUp ( EventBus           eventBus,
+			        LoginViewModel     lvm,
+			        LifeCycleViewModel lifeCycleViewModel )
 	{
+		super(eventBus);
+		super.onInit();
+
+		this.eventBus = eventBus;
 		this.lvm = lvm;
+		this.lifeCycleViewModel = lifeCycleViewModel;
 	}
 
 	private void createWindow() {
@@ -53,7 +67,7 @@ public class SignUp {
 								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 							}
 							try {
-								lvm.start();
+								lifeCycleViewModel.start();
 							} catch (InterruptedException e) {
 								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 							}
@@ -65,7 +79,7 @@ public class SignUp {
 								MessageDialogButton.OK);
 
 
-					if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
+					if(lifeCycleViewModel.getLifeCycleState() == LifecycleState.RUNNING)
 						tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
 				}));
 		TUIUtils.addHorizontalSeparator(contentPanel);
@@ -96,5 +110,72 @@ public class SignUp {
 	public void setTuiUtils(TUIUtils tuiUtils)
 	{
 		this.tuiUtils = tuiUtils;
+	}
+
+
+	@Override
+	public void
+	       eventOccurred( Event e )
+	{
+		/*
+		BRAMBLE-API -------------------------
+
+		ContactAddedEvent
+		ContactAliasChangedEvent
+		ContactRemovedEvent
+		ContactVerifiedEvent
+		PendingContactAddedEvent
+		PendingContactRemovedEvent
+		PendingContactStateChangedEvent
+
+		IdentityAddedEvent
+		IdentityRemovedEvent
+
+		KeyAgreementAbortedEvent
+		KeyAgreementFailedEvent
+		KeyAgreementFinishedEvent
+		KeyAgreementListeningEvent
+		KeyAgreementStartedEvent
+		KeyAgreementStoppedListeningEvent
+		KeyAgreementWaitingEvent
+
+		NetworkStatusEvent
+
+		ConnectionClosedEvent
+		ConnectionOpenedEvent
+		ContactConnectedEvent
+		ContactDisconnectedEvent
+
+		RendezvousConnectionClosedEvent
+		RendezvousConnectionOpenedEvent
+		RendezvousPollEvent
+
+		SettingsUpdatedEvent
+
+		MessageAddedEvent
+		MessageRequestedEvent
+		MessagesAckedEvent
+		MessageSharedEvent
+		MessagesSentEvent
+		MessageStateChangedEvent
+		MessageToAckEvent
+		MessageToRequestEvent
+
+
+		BRIAR-API ---------------------------
+
+		ConversationMessagesDeletedEvent
+
+		ConversationMessageReceivedEvent
+
+		IntroductionAbortedEvent
+		IntroductionRequestReceivedEvent
+		IntroductionResponseReceivedEvent
+
+		AttachmentReceivedEvent
+		PrivateMessageReceivedEvent
+		*/
+
+		System.out.println("EvListConfigured@TUISignUp   ====> "+e.getClass().getSimpleName());
 	}
 }

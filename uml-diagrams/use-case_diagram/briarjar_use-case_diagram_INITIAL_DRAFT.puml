@@ -1,0 +1,95 @@
+
+
+@startuml
+    actor User AS user
+
+rectangle "BriarJar (GUI/TUI)" {
+left to right direction
+
+    package "Account Management" {
+
+        usecase ca AS "Sign-Up
+                --
+                **Extension Point**
+                Throw Account Error"
+        usecase da AS "Delete Account"
+        usecase si AS "Sign-In
+                --
+                **Extension Point**
+                Throw Account Error"
+        usecase so AS "Sign-Out"
+
+        user -- ca
+        user -- da
+        user -- si
+        user -- so
+
+        usecase acc_mgmt_err AS "Show Error"
+
+        note "\
+**Condition:**\t{Enter Invalid Username or Passphrase}\n\
+**Ext. Point:**\tThrow Account Error" \
+        as note_acc_mgmt_err
+
+        ca .. note_acc_mgmt_err
+        si .. note_acc_mgmt_err
+        note_acc_mgmt_err .left. acc_mgmt_err : <<extend>>
+    }
+
+
+
+    package "Contact Management" {
+
+        usecase add AS "Add Contact
+                --
+                **Extension Point**
+                Throw Contact Error"
+        usecase get AS "Get own Contact Link"
+        usecase rem AS "Remove Contact"
+        usecase accept AS "Accept received 'Contact Request'"
+        usecase decline AS "Decline received 'Contact Request'"
+
+        user -- add
+        user -- get
+        user -- rem
+        user -- accept
+        user -- decline
+
+        usecase contact_err AS "Show Error"
+
+        note "\
+**Condition:**\t{Enter invalid or redundant Link}\n\
+**Ext. Point:**\tThrow Contact Error" \
+        as note_contact_err
+
+        add .. note_contact_err
+        note_contact_err .left. contact_err : <<extend>>
+    }
+
+
+
+    package "Conversation Management" {
+        usecase choosec AS "Choose Contact"
+        usecase writemsg AS "Write Message"
+        usecase readmsg AS "Read Message"
+
+        user -- choosec
+        user -- writemsg
+        user -- readmsg
+    }
+
+
+
+ note "=Version: ARCHIVED-DRAFT\n\
+                     (orig. 2022-01-27)\n\n===Further needs/possibilities:\n\
+*Set/Change Contact's Nickname?\n\
+*Split Diagram into multiple ones?\n\
+*...\n" as intro
+( ) .down. intro
+
+
+}
+
+@enduml
+
+Faulted for beeing wrongly designed regarded a software project

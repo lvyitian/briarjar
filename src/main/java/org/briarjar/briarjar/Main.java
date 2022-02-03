@@ -21,6 +21,11 @@ public class Main {
 
 	public static void main(String[] args)
 	{
+		// todo 4k: stop is deprecated
+		Runtime.getRuntime().addShutdownHook(
+				new Thread(Thread.currentThread()::stop));
+
+
 		if (Arrays.stream(args).anyMatch(s -> s.equals("--tui") || s.equals("tui")))
 			ui = UserInterface.TERMINAL;
 		else
@@ -45,10 +50,6 @@ public class Main {
 			mainTUI = briarJarApp.getMainTUI();
 			mainTUI.start();
 		}
-
-		// todo 4k: stop is deprecated
-		Runtime.getRuntime()
-		       .addShutdownHook(new Thread(Thread.currentThread()::stop));
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class Main {
 
 	public static File getDataDir()
 	{//todo
-		return new File(System.getProperty("user.home") + "/.briar");
+		return new File( System.getProperty("user.home")+"/.briar" );
 	}
 
 }

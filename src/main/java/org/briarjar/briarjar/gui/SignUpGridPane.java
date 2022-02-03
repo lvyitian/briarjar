@@ -1,5 +1,6 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
 import java.text.DecimalFormat;
@@ -30,6 +31,8 @@ import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 public class SignUpGridPane extends GridPane {
 
 	private final LoginViewModel lvm;
+	private final LifeCycleViewModel lifeCycleViewModel;
+
 	private ImageView imgWelcome;
 	private Text txtWelcome;
 	private Text txtSubtext;
@@ -40,9 +43,11 @@ public class SignUpGridPane extends GridPane {
 	private GUIUtils guiUtils;
 
 	@Inject
-	public SignUpGridPane(LoginViewModel lvm)
+	public SignUpGridPane( LoginViewModel     lvm,
+	                       LifeCycleViewModel lifeCycleViewModel )
 	{
 		this.lvm = lvm;
+		this.lifeCycleViewModel = lifeCycleViewModel;
 	}
 
 	public void create()
@@ -117,7 +122,7 @@ public class SignUpGridPane extends GridPane {
 			lvm.signUp(tfUsername.getText(), passphraseField.getText());
 
 			//todo 4k offline mode possible? // if (...
-			lvm.start();
+			lifeCycleViewModel.start();
 
 		} catch (InterruptedException e)
 		{

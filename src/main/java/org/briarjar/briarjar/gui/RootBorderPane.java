@@ -1,6 +1,6 @@
 package org.briarjar.briarjar.gui;
 
-import org.briarjar.briarjar.Main;
+import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
@@ -38,13 +38,16 @@ public class RootBorderPane extends BorderPane
 	private MessagesBorderPane    messagesBorderPane; // same again
 
 	private final LoginViewModel lvm;
+	private final LifeCycleViewModel lifeCycleViewModel;
 
 	private GUIUtils guiUtils;
 
 	@Inject
-	public RootBorderPane(LoginViewModel lvm)
+	public RootBorderPane( LoginViewModel lvm,
+	                       LifeCycleViewModel lifeCycleViewModel )
 	{
 		this.lvm = lvm;
+		this.lifeCycleViewModel = lifeCycleViewModel;
 	}
 
 	public void create()
@@ -179,11 +182,11 @@ public class RootBorderPane extends BorderPane
 	public void exit()
 	{
 		// FIXME: closing with "x" or Alt-F4 doesn't trigger exit() method!
-		if(lvm.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
+		if(lifeCycleViewModel.getLifeCycleState() == LifecycleState.RUNNING)
 		{
-			System.out.println(lvm.getLifeCycleState());
+			System.out.println(lifeCycleViewModel.getLifeCycleState());
 			try {
-				lvm.stop();
+				lifeCycleViewModel.stop();
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				showAlert(AlertType.ERROR, e.getMessage());
