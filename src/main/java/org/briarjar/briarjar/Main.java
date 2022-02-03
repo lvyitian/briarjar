@@ -21,6 +21,11 @@ public class Main {
 
 	public static void main(String[] args)
 	{
+		// todo 4k: stop is deprecated
+		Runtime.getRuntime().addShutdownHook(
+				new Thread(Thread.currentThread()::stop));
+
+
 		if (Arrays.stream(args).anyMatch(s -> s.equals("--tui") || s.equals("tui")))
 			ui = UserInterface.TERMINAL;
 		else
@@ -30,16 +35,17 @@ public class Main {
 		//ui = UserInterface.TERMINAL;
 
 
-		var briarJarApp = DaggerBriarJarApp.builder().
-		                                   briarJarModule(new BriarJarModule()).build();
-		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
-		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
+		BriarJarApp briarJarApp = DaggerBriarJarApp.builder()
+			                             .briarJarModule( new BriarJarModule() )
+                                         .build();
+		BrambleCoreEagerSingletons.Helper.injectEagerSingletons( briarJarApp );
+		BriarCoreEagerSingletons.Helper.injectEagerSingletons( briarJarApp );
 
 
 		if (ui.equals(UserInterface.GRAPHICAL))
 		{
 			Platform.startup(() -> {
-				mainGUI = DaggerBriarJarApp.builder().build().getMainGUI();
+				mainGUI = briarJarApp.getMainGUI();
 				mainGUI.init();
 
 				Stage stage = new Stage();
@@ -47,18 +53,14 @@ public class Main {
 			});
 		} else if (ui.equals(UserInterface.TERMINAL))
 		{
-			mainTUI = DaggerBriarJarApp.builder().build().getMainTUI();
+			mainTUI = briarJarApp.getMainTUI();
 			mainTUI.start();
 		}
-
-		// todo 4k: stop is deprecated
-		Runtime.getRuntime()
-		       .addShutdownHook(new Thread(Thread.currentThread()::stop));
 	}
 
 	public static File getDataDir()
 	{//todo
-		return new File(System.getProperty("user.home") + "/.briar");
+		return new File( System.getProperty("user.home")+"/.briar" );
 	}
 
 }
