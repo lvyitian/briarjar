@@ -2,11 +2,15 @@ package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
 
+import org.briarjar.briarjar.Main;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.db.DbException;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.inject.Inject;
 
 public class ContactList {
@@ -19,7 +23,7 @@ public class ContactList {
 	private WindowBasedTextGUI textGUI;
 	private TUIUtils tuiUtils;
 
-	private ComboBox<String> contactAliasComboBox;
+	private ComboBox<ListedContact> contactAliasComboBox;
 
 	@Inject
 	public ContactList(LoginViewModel lvm,
@@ -30,7 +34,7 @@ public class ContactList {
 	}
 
 	private void createWindow() {
-		TUIUtils.addTitle("Select or Add a Friend", contentPanel);
+		TUIUtils.addTitle("Contact Selection", contentPanel);
 
 		contentPanel.addComponent(
 				new Button("Add a new Contact", () ->
@@ -39,12 +43,30 @@ public class ContactList {
 		TUIUtils.addHorizontalSeparator(contentPanel);
 
 		try {
-			if(cvm.getAcceptedContacts().size() != 0) {
-				for (Contact c : cvm.getAcceptedContacts()
-						) {
-					contactAliasComboBox.addItem(c.getAlias());
+			Collection<Contact> contactsCollection = cvm.getAcceptedContacts();
+			ArrayList<ListedContact> listedContactList = new ArrayList<>(contactsCollection.size());
+			if(contactsCollection.size() != 0) {
+				for (Contact c : contactsCollection) {
+					ListedContact lc = new ListedContact(c); // Contact --> ListedContact
+					listedContactList.add(lc);
+					contactAliasComboBox.addItem(lc);
 				}
 				contentPanel.addComponent(contactAliasComboBox);
+
+				TUIUtils.addHorizontalSeparator(contentPanel);
+
+				contentPanel.addComponent(
+						new Button("Chat with selected Contact", () -> {
+							try
+							{
+								tuiUtils.getConversation().setContact(contactAliasComboBox.getSelectedItem().getContact());
+								tuiUtils.switchWindow(window, TUIWindow.CONVERSATION);
+							} catch (Exception e)
+							{
+								e.printStackTrace();
+							}
+						}));
+
 			}
 			else
 				contentPanel.addComponent(new Label("No Contacts found!"));
@@ -56,10 +78,19 @@ public class ContactList {
 
 		contentPanel.addComponent(
 				new Button("Log Out", () -> {
-					System.out.println("pre stop: "+ lvm.getLifeCycleState());
 					lvm.stop();
-					System.out.println("post stop: " + lvm.getLifeCycleState());
-					tuiUtils.switchWindow(window, TUIWindow.SIGNIN);
+
+					try
+					{
+						window.getTextGUI().getScreen().close();
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+
+					// relaunch app TODO is there a better solution?
+					var briarJarApp = Main.launchApp();
+					briarJarApp.getMainTUI().start();
 				}));
 	}
 
@@ -74,10 +105,12 @@ public class ContactList {
 		createWindow();
 
 		this.window = new BasicWindow("Select or Add a Contact");
-		window.setComponent(contentPanel);
+		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
 		// render the window
 		textGUI.addWindowAndWait(window);
 	}
+
+	/* SETTERS */
 
 	public void setTextGUI(MultiWindowTextGUI textGUI)
 	{
@@ -88,5 +121,30 @@ public class ContactList {
 	{
 		this.tuiUtils = tuiUtils;
 	}
+}
 
+
+/**
+	A "Wrapper" for a Contact with two properties
+	1. Only containing needed information for the UI
+	2. A toString() which returns the contact alias
+ */
+class ListedContact
+{
+	private Contact contact;
+	public ListedContact(Contact contact)
+	{
+		this.contact = contact;
+	}
+
+	@Override
+	public String toString()
+	{
+		return contact.getAlias();
+	}
+
+	public Contact getContact()
+	{
+		return contact;
+	}
 }

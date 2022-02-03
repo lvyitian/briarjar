@@ -27,19 +27,14 @@ public class Main {
 			ui = UserInterface.GRAPHICAL;
 		// testing
 		//ui = UserInterface.GRAPHICAL;
-		//ui = UserInterface.TERMINAL;
+		ui = UserInterface.TERMINAL;
 
-
-		var briarJarApp = DaggerBriarJarApp.builder().
-		                                   briarJarModule(new BriarJarModule()).build();
-		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
-		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
-
+		var briarJarApp = launchApp();
 
 		if (ui.equals(UserInterface.GRAPHICAL))
 		{
 			Platform.startup(() -> {
-				mainGUI = DaggerBriarJarApp.builder().build().getMainGUI();
+				mainGUI = briarJarApp.getMainGUI();
 				mainGUI.init();
 
 				Stage stage = new Stage();
@@ -47,13 +42,22 @@ public class Main {
 			});
 		} else if (ui.equals(UserInterface.TERMINAL))
 		{
-			mainTUI = DaggerBriarJarApp.builder().build().getMainTUI();
+			mainTUI = briarJarApp.getMainTUI();
 			mainTUI.start();
 		}
 
 		// todo 4k: stop is deprecated
 		Runtime.getRuntime()
 		       .addShutdownHook(new Thread(Thread.currentThread()::stop));
+	}
+
+	public static BriarJarApp launchApp()
+	{
+		var briarJarApp = DaggerBriarJarApp.builder().
+		                                   briarJarModule(new BriarJarModule()).build();
+		BrambleCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
+		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
+		return briarJarApp;
 	}
 
 	public static File getDataDir()
