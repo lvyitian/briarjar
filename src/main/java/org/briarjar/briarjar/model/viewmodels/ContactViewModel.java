@@ -104,8 +104,8 @@ public class ContactViewModel {
 
 
 	public void
-	setContactAlias2( ContactId contactId,
-	                  String    alias      )
+	       setContactAlias( ContactId contactId,
+	                        String    alias      )
 	throws DbException,
 	       GeneralException
 

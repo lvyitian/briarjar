@@ -5,7 +5,8 @@ import com.googlecode.lanterna.gui2.*;
 import org.briarjar.briarjar.Main;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
-import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;import org.briarproject.bramble.api.contact.Contact;
+import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
+import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.contact.event.*;
 import org.briarproject.bramble.api.db.DbException;
@@ -17,6 +18,8 @@ import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 public class ContactList extends EventListenerViewModel {
@@ -30,6 +33,8 @@ public class ContactList extends EventListenerViewModel {
 	private TUIUtils tuiUtils;
 
 	private ActionListBox contactListBox;
+	private HashMap< ContactId, Boolean > onlineStatusHashMap;
+	private Label noContactsLabel;
 
 	private ArrayList<ListedContact> listedContactList;
 
@@ -43,6 +48,15 @@ public class ContactList extends EventListenerViewModel {
 
 		this.cvm = cvm;
 		this.lifeCycleViewModel = lifeCycleViewModel;
+
+		init();
+	}
+
+	private void init()
+	{
+		contactListBox = new ActionListBox();
+		onlineStatusHashMap = new HashMap<>();
+		noContactsLabel = new Label("No Contacts yet.");
 	}
 
 	private void createWindow() {
@@ -94,22 +108,26 @@ public class ContactList extends EventListenerViewModel {
 		textGUI.addWindowAndWait(window);
 	}
 
-	private void updateContactList()
+	private void updateContactList0()
 	{
 		if(contactListBox != null)
 			contentPanel.removeComponent(contactListBox);
 
 		contactListBox = new ActionListBox();
 
+
 		try
 		{
 			Collection<Contact> contactsCollection = cvm.getAcceptedContacts();
 			listedContactList = new ArrayList<>(contactsCollection.size());
-			if(contactsCollection.size() != 0) {
+
+			if ( contactsCollection.size() > 0 )
+			{
 				for (Contact c : contactsCollection) {
 					ListedContact lc = new ListedContact(c); // Contact --> ListedContact
 					listedContactList.add(lc);
 					contactListBox.addItem(lc.toString(), () -> {
+					//contactListBox.addItem(prepareContactForList(lc), () -> {
 						try
 						{
 							tuiUtils.getConversation().setContact(lc.getContact());
@@ -130,6 +148,59 @@ public class ContactList extends EventListenerViewModel {
 			e.printStackTrace();
 		}
 	}
+
+
+	private void updateContactList()
+	{
+		contactListBox.clearItems();
+		contentPanel.removeComponent( contactListBox );
+		contentPanel.removeComponent(noContactsLabel);
+
+		try
+		{
+			if ( cvm.getAcceptedContacts().size() > 0 )                       // TODO accepted only currently
+			{
+				for ( Contact c : cvm.getAcceptedContacts() )
+				{
+					contactListBox.addItem( getAliasForList(c.getId()),
+					                        () -> {
+						        /* TODO this block must be adapted (buggy when
+						            switching back from messages) */
+								tuiUtils.getConversation().setContact( c );
+								tuiUtils.switchWindow( window,
+										               TUIWindow.CONVERSATION );
+							}
+					);
+				}
+				contentPanel.addComponent( contactListBox );
+			} else
+				contentPanel.addComponent(noContactsLabel);
+		}
+		catch (DbException e)
+		{
+			e.printStackTrace();
+		}
+}
+
+
+	private String getAliasForList( ContactId id )
+	{
+		String alias = "Internal Error: ContactID not found";
+		String status = onlineStatusHashMap
+		                       .getOrDefault( id, false ) ? "[on ] " : "[off] ";
+		try
+		{
+			alias = cvm.getContact( id ).getAlias();
+		}
+		catch (DbException e)
+		{
+			e.printStackTrace(); // TODO
+		}
+
+		return status+alias;
+	}
+
+
 
 	/* SETTERS */
 
@@ -219,16 +290,22 @@ public class ContactList extends EventListenerViewModel {
 		{
 			System.out.println("PendingContactAddedEvent...");
 			updateContactList();
-		} else if (e instanceof ContactConnectedEvent)
+		}
+		else if (e instanceof ContactConnectedEvent)
 		{
 			System.out.println("ContactConnectedEvent...");
+
+			onlineStatusHashMap.put(
+			              ((ContactConnectedEvent) e).getContactId(), true );
+
 			updateContactList();
-		} else if (e instanceof ContactDisconnectedEvent)
+		}
+		else if (e instanceof ContactDisconnectedEvent)
 		{
 			System.out.println("ContactDisconnectedEvent...");
 
-			if(listedContactList.contains(((ContactDisconnectedEvent) e).getContactId()))
-				// todo 4a implement some logic to allow setting Contact onlineStatus e.g. updateOnlineStatus(ContactId id)
+			onlineStatusHashMap.put(
+			             ((ContactDisconnectedEvent) e).getContactId(), false );
 			updateContactList();
 		}
 	}
