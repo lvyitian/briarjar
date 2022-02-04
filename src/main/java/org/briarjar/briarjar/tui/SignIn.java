@@ -12,6 +12,7 @@ import org.briarproject.bramble.api.crypto.DecryptionException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager.LifecycleState;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 
 import javax.inject.Inject;
 
@@ -46,9 +47,7 @@ public class SignIn extends EventListenerViewModel {
 
 	private void init()
 	{
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
+		contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
 		window = new BasicWindow("Welcome back to BriarJar TUI (development mode)");
 		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Sign In with your Account")));
@@ -130,6 +129,7 @@ public class SignIn extends EventListenerViewModel {
 	/* EVENT HANDLING */
 
 	@Override
+	@NotNullByDefault
 	public void
 	       eventOccurred( Event e )
 	{

@@ -11,6 +11,7 @@ import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager.LifecycleState;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 
 import javax.inject.Inject;
 
@@ -46,9 +47,7 @@ public class SignUp extends EventListenerViewModel {
 
 	private void init()
 	{
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
+		contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
 		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
 		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Create an Account")));
@@ -132,6 +131,7 @@ public class SignUp extends EventListenerViewModel {
 	/* EVENT HANDLING */
 
 	@Override
+	@NotNullByDefault
 	public void
 	       eventOccurred( Event e )
 	{

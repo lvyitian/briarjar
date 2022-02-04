@@ -12,6 +12,7 @@ import org.briarproject.bramble.api.contact.event.*;
 import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
 import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 
@@ -230,6 +231,7 @@ public class ContactList extends EventListenerViewModel {
 	/* EVENT HANDLING */
 
 	@Override
+	@NotNullByDefault
 	public void
 	eventOccurred( Event e )
 	{

@@ -22,8 +22,8 @@ public class AddContact {
 	private final ContactViewModel cvm;
 	private TUIUtils tuiUtils;
 
-	private String handshakeLinkOfFriend;
-	private String aliasOfFriend;
+	private String peerHandshakeLink;
+	private String peerAlias;
 
 	@Inject
 	public AddContact(ContactViewModel cvm)
@@ -36,12 +36,10 @@ public class AddContact {
 
 	private void init()
 	{
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
+		contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
-		handshakeLinkOfFriend = "";
-		aliasOfFriend = "Bob";
+		peerHandshakeLink = "";
+		peerAlias = "Bob";
 
 		window = new BasicWindow("Contact Manager");
 		window.setComponent(contentPanel.withBorder(Borders.singleLine("Add a new Contact")));
@@ -67,19 +65,19 @@ public class AddContact {
 
 		contentPanel.addComponent(
 				new Button("Enter your friends Handshake-Link", () ->
-						handshakeLinkOfFriend = TextInputDialog.showDialog(textGUI, "Enter Handshake-Link", "The Handshake-Link starts with briar://...", "")
+						peerHandshakeLink = TextInputDialog.showDialog(textGUI, "Enter Handshake-Link", "The Handshake-Link starts with briar://...", "")
 		));
 
 		contentPanel.addComponent(
 				new Button("Enter your friends Alias", () ->
-						aliasOfFriend = TextInputDialog.showDialog(textGUI, "Enter Alias of Friend", "Choose how you want your Friend to be referred to", "Bob")
+						peerAlias = TextInputDialog.showDialog(textGUI, "Enter Alias of Friend", "Choose how you want your Friend to be referred to", "Bob")
 		));
 
 		contentPanel.addComponent(
 				new Button("Start Handshake Process", () -> {
 					try
 					{
-						cvm.addPendingContact(handshakeLinkOfFriend, aliasOfFriend);
+						cvm.addPendingContact(peerHandshakeLink, peerAlias);
 					} catch (GeneralSecurityException | FormatException | DbException | GeneralException e)
 					{
 						MessageDialog.showMessageDialog(textGUI,

@@ -11,6 +11,7 @@ import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.sync.event.MessageAddedEvent;
 import org.briarproject.bramble.api.sync.event.MessageStateChangedEvent;
 import org.briarproject.bramble.api.sync.event.MessagesSentEvent;
@@ -190,6 +191,7 @@ public class Conversation extends EventListenerViewModel {
 	/* EVENT HANDLING */
 
 	@Override
+	@NotNullByDefault
 	public void eventOccurred(Event e)
 	{
 	/*
