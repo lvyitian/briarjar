@@ -38,15 +38,33 @@ public class SignIn extends EventListenerViewModel {
 
 		this.lvm = lvm;
 		this.lifeCycleViewModel = lifeCycleViewModel;
+
+		init();
 	}
 
+	/* INIT */
+
+	private void init()
+	{
+		contentPanel = new Panel(new GridLayout(1));
+		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+		gridLayout.setHorizontalSpacing(2);
+
+		window = new BasicWindow("Welcome back to BriarJar TUI (development mode)");
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Sign In with your Account")));
+	}
+
+	/* CREATE WINDOW */
 
 	private void createWindow() {
+		removeAllComponents();
+
+
+		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
 				new Button("Enter Passphrase", () ->
 						passphrase = TextInputDialog.showPasswordDialog(textGUI, "Enter Passphrase", "Enter your account passphrase", ""))
 		);
-
 		contentPanel.addComponent(
 				new Button("Sign In", () -> {
 
@@ -72,7 +90,7 @@ public class SignIn extends EventListenerViewModel {
 
 		TUIUtils.addHorizontalSeparator(contentPanel);
 
-		/*
+		/* TODO uncomment after delete logic is implemented
 		contentPanel.addComponent(
 				new Button("Delete Account", () -> {
 					lvm.deleteAccount();
@@ -82,18 +100,18 @@ public class SignIn extends EventListenerViewModel {
 		 */
 	}
 
+	/* PANELS REMOVER */
+
+	private void removeAllComponents()
+	{
+		contentPanel.removeAllComponents();
+	}
+
+	/* RENDER */
+
 	public void render()
 	{
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
-
-		// init instance
 		createWindow();
-
-		this.window = new BasicWindow("Welcome back to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Sign In with your Account")));
-		// render the window
 		textGUI.addWindowAndWait(window);
 	}
 
@@ -109,6 +127,7 @@ public class SignIn extends EventListenerViewModel {
 		this.tuiUtils = tuiUtils;
 	}
 
+	/* EVENT HANDLING */
 
 	@Override
 	public void

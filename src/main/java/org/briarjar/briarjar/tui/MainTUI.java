@@ -45,14 +45,11 @@ public class MainTUI implements Closeable  {
 		try {
 			Screen screen = defaultTerminalFactory.createScreen();
 
-
 			screen.startScreen();
 			this.screen = screen;
 
-			textGUI =
-					new MultiWindowTextGUI(this.screen, new DefaultWindowManager(),
-							new EmptySpace(
-									TextColor.ANSI.GREEN_BRIGHT));
+			textGUI = new MultiWindowTextGUI(this.screen, new DefaultWindowManager(),
+							new EmptySpace(TextColor.ANSI.GREEN_BRIGHT));
 
 			setAllTextGUI();
 		} catch (IOException e) {
@@ -67,7 +64,7 @@ public class MainTUI implements Closeable  {
 		}
 	}
 
-	public void setAllTextGUI()
+	private void setAllTextGUI()
 	{
 		tuiUtils.getSignIn().setTextGUI(textGUI);
 		tuiUtils.getSignUp().setTextGUI(textGUI);
@@ -97,6 +94,8 @@ public class MainTUI implements Closeable  {
 	@Override
 	public void close() throws IOException {
 		stop();
-		screen.stopScreen();
+		if(lifeCycleViewModel.getLifeCycleState() ==
+				LifecycleManager.LifecycleState.STOPPING)
+			screen.stopScreen();
 	}
 }

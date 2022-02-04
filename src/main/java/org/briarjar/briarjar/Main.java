@@ -53,7 +53,7 @@ public class Main {
 	}
 
 	/**
-	 *  Will be called on (re-)login!
+	 *  Will be called on application start and re-login.
 	 */
 	public static BriarJarApp launchApp()
 	{

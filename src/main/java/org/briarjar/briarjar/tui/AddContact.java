@@ -29,13 +29,33 @@ public class AddContact {
 	public AddContact(ContactViewModel cvm)
 	{
 		this.cvm = cvm;
+		init();
 	}
 
+	/* INIT */
+
+	private void init()
+	{
+		contentPanel = new Panel(new GridLayout(1));
+		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+		gridLayout.setHorizontalSpacing(2);
+
+		handshakeLinkOfFriend = "";
+		aliasOfFriend = "Bob";
+
+		window = new BasicWindow("Contact Manager");
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Add a new Contact")));
+	}
+
+	/* CREATE WINDOW */
+
 	private void createWindow() {
-		TUIUtils.addTitle("Add a new Contact", contentPanel);
+		removeAllComponents();
 
 		try {
 		String ownLink = cvm.getHandshakeLink();
+
+		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
 				new Button("Get your own Handshake-Link", () ->
 						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", ownLink, MessageDialogButton.OK)
@@ -75,21 +95,18 @@ public class AddContact {
 				new Button("Cancel", () -> tuiUtils.switchWindow(window,TUIWindow.CONTACTLIST)));
 	}
 
+	/* PANELS REMOVER */
+
+	private void removeAllComponents()
+	{
+		contentPanel.removeAllComponents();
+	}
+
+	/* RENDER */
+
 	public void render()
 	{
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
-
-		handshakeLinkOfFriend = "";
-		aliasOfFriend = "Bob";
-
-		// init instance
 		createWindow();
-
-		this.window = new BasicWindow("Add a new Contact");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
-		// render the window
 		textGUI.addWindowAndWait(window);
 	}
 

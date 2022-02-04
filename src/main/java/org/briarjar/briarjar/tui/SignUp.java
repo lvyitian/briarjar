@@ -38,10 +38,28 @@ public class SignUp extends EventListenerViewModel {
 		this.eventBus = eventBus;
 		this.lvm = lvm;
 		this.lifeCycleViewModel = lifeCycleViewModel;
+
+		init();
 	}
 
-	private void createWindow() {
+	/* INIT */
 
+	private void init()
+	{
+		contentPanel = new Panel(new GridLayout(1));
+		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+		gridLayout.setHorizontalSpacing(2);
+
+		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Create an Account")));
+	}
+
+	/* CREATE WINDOW */
+
+	private void createWindow() {
+		removeAllComponents();
+
+		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
 				new Button("Enter Username", () ->
 						username = TextInputDialog.showDialog(textGUI, "Choose a Username", "No account has been found, please choose a username.", "alice")
@@ -84,18 +102,18 @@ public class SignUp extends EventListenerViewModel {
 		TUIUtils.addHorizontalSeparator(contentPanel);
 	}
 
+	/* PANELS REMOVER */
+
+	private void removeAllComponents()
+	{
+		contentPanel.removeAllComponents();
+	}
+
+	/* RENDER */
+
 	public void render()
 	{
-		contentPanel = new Panel(new GridLayout(1));
-		GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-		gridLayout.setHorizontalSpacing(2);
-
-		// init instance
 		createWindow();
-
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Create an Account")));
-		// render the window
 		textGUI.addWindowAndWait(window);
 	}
 
@@ -111,6 +129,7 @@ public class SignUp extends EventListenerViewModel {
 		this.tuiUtils = tuiUtils;
 	}
 
+	/* EVENT HANDLING */
 
 	@Override
 	public void

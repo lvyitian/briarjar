@@ -17,7 +17,6 @@ import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -36,8 +35,6 @@ public class ContactList extends EventListenerViewModel {
 	private HashMap< ContactId, Boolean > onlineStatusHashMap;
 	private Label noContactsLabel;
 
-	private ArrayList<ListedContact> listedContactList;
-
 	@Inject
 	public ContactList( EventBus           eventBus,
 	                    ContactViewModel   cvm,
@@ -52,14 +49,25 @@ public class ContactList extends EventListenerViewModel {
 		init();
 	}
 
+	/* INIT */
+
 	private void init()
 	{
-		contactListBox = new ActionListBox();
 		onlineStatusHashMap = new HashMap<>();
 		noContactsLabel = new Label("No Contacts yet.");
+
+		contentPanel = new Panel(new BorderLayout());
+		buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
+
+		window = new BasicWindow("Contact Selection");
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Choose your peer or Add a new one")));
+
 	}
 
+	/* CREATE WINDOW */
+
 	private void createWindow() {
+		removeAllComponents();
 		updateContactList();
 
 		buttonPanel.addComponent(
@@ -67,7 +75,7 @@ public class ContactList extends EventListenerViewModel {
 						tuiUtils.switchWindow(window, TUIWindow.ADDCONTACT)));
 
 		buttonPanel.addComponent(
-				new Button("Exit", () -> {
+				new Button("Sign Out", () -> {
 					try
 					{
 						lifeCycleViewModel.stop();
@@ -89,72 +97,36 @@ public class ContactList extends EventListenerViewModel {
 					briarJarApp.getMainTUI().start();
 				}));
 
+		// contentPanel.addComponent(...)
+		contentPanel.addComponent(buttonPanel.withBorder(Borders.singleLine()).setLayoutData(BorderLayout.Location.BOTTOM));
 	}
+
+	/* PANELS REMOVER */
+
+	private void removeAllComponents()
+	{
+		buttonPanel.removeAllComponents();
+		contentPanel.removeAllComponents();
+	}
+
+	/* RENDER */
 
 	public void render()
 	{
-		contentPanel = new Panel(new BorderLayout());
-		buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
-
-		// init instance
 		createWindow();
-
-		contentPanel.addComponent(contactListBox.setLayoutData(BorderLayout.Location.CENTER));
-		contentPanel.addComponent(buttonPanel.withBorder(Borders.singleLine()).setLayoutData(BorderLayout.Location.BOTTOM));
-
-		this.window = new BasicWindow("Contact Selection");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Choose your peer or Add a new one")));
-		// render the window
 		textGUI.addWindowAndWait(window);
 	}
 
-	private void updateContactList0()
-	{
-		if(contactListBox != null)
-			contentPanel.removeComponent(contactListBox);
-
-		contactListBox = new ActionListBox();
-
-
-		try
-		{
-			Collection<Contact> contactsCollection = cvm.getAcceptedContacts();
-			listedContactList = new ArrayList<>(contactsCollection.size());
-
-			if ( contactsCollection.size() > 0 )
-			{
-				for (Contact c : contactsCollection) {
-					ListedContact lc = new ListedContact(c); // Contact --> ListedContact
-					listedContactList.add(lc);
-					contactListBox.addItem(lc.toString(), () -> {
-					//contactListBox.addItem(prepareContactForList(lc), () -> {
-						try
-						{
-							tuiUtils.getConversation().setContact(lc.getContact());
-							tuiUtils.switchWindow(window, TUIWindow.CONVERSATION);
-						} catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					});
-				}
-				contentPanel.addComponent(contactListBox);
-			}
-			else
-				contentPanel.addComponent(new Label("No Contacts found!"));
-
-		} catch (DbException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
+	/* UPDATE CLASS */
 
 	private void updateContactList()
 	{
-		contactListBox.clearItems();
-		contentPanel.removeComponent( contactListBox );
-		contentPanel.removeComponent(noContactsLabel);
+		// prevent null pointer exception
+		if(contactListBox != null)
+			contentPanel.removeComponent(contactListBox);
+
+		// fixes bug when switching windows
+		contactListBox = new ActionListBox();
 
 		try
 		{
@@ -172,7 +144,7 @@ public class ContactList extends EventListenerViewModel {
 							}
 					);
 				}
-				contentPanel.addComponent( contactListBox );
+				contentPanel.addComponent(contactListBox.setLayoutData(BorderLayout.Location.CENTER));
 			} else
 				contentPanel.addComponent(noContactsLabel);
 		}
@@ -180,8 +152,9 @@ public class ContactList extends EventListenerViewModel {
 		{
 			e.printStackTrace();
 		}
-}
+	}
 
+	/* LOGIC */
 
 	private String getAliasForList( ContactId id )
 	{
@@ -200,8 +173,6 @@ public class ContactList extends EventListenerViewModel {
 		return status+alias;
 	}
 
-
-
 	/* SETTERS */
 
 	public void setTextGUI(MultiWindowTextGUI textGUI)
@@ -213,6 +184,50 @@ public class ContactList extends EventListenerViewModel {
 	{
 		this.tuiUtils = tuiUtils;
 	}
+
+	/* TODO delete - deprecated
+	private void updateContactList0()
+	{
+		if(contactListBox != null)
+			contentPanel.removeComponent(contactListBox);
+
+		contactListBox = new ActionListBox();
+
+		try
+		{
+			Collection<Contact> contactsCollection = cvm.getAcceptedContacts();
+			listedContactList = new ArrayList<>(contactsCollection.size());
+
+			if ( contactsCollection.size() > 0 )
+			{
+				for (Contact c : contactsCollection) {
+					ListedContact lc = new ListedContact(c); // Contact --> ListedContact
+					listedContactList.add(lc);
+					contactListBox.addItem(lc.toString(), () -> {
+						//contactListBox.addItem(prepareContactForList(lc), () -> {
+						try
+						{
+							tuiUtils.getConversation().setContact(lc.getContact());
+							tuiUtils.switchWindow(window, TUIWindow.CONVERSATION);
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					});
+				}
+				contentPanel.addComponent(contactListBox);
+			}
+			else
+				contentPanel.addComponent(new Label("No Contacts found!"));
+		} catch (DbException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	 */
+
+	/* EVENT HANDLING */
 
 	@Override
 	public void
@@ -306,6 +321,7 @@ public class ContactList extends EventListenerViewModel {
 
 			onlineStatusHashMap.put(
 			             ((ContactDisconnectedEvent) e).getContactId(), false );
+			System.out.println("BEFOR UPDATE");
 			updateContactList();
 		}
 	}

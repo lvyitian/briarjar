@@ -85,8 +85,7 @@ public class GUIUtils {
 		rootBorderPane.disableComponents(false);
 		rootBorderPane.setCenter(signInGridPane);
 
-		// relaunch app
-
+		// relaunch app TODO is there a better solution
 		var briarJarApp = Main.launchApp();
 		var mainGUI = briarJarApp.getMainGUI();
 		mainGUI.init();

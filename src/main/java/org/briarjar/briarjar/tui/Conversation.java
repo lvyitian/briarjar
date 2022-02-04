@@ -11,8 +11,6 @@ import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
-import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
-import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 import org.briarproject.bramble.api.sync.event.MessageAddedEvent;
 import org.briarproject.bramble.api.sync.event.MessageStateChangedEvent;
 import org.briarproject.bramble.api.sync.event.MessagesSentEvent;
@@ -20,10 +18,6 @@ import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 import org.briarproject.briar.api.messaging.event.AttachmentReceivedEvent;
 import org.briarproject.briar.api.messaging.event.PrivateMessageReceivedEvent;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -50,14 +44,36 @@ public class Conversation extends EventListenerViewModel {
 
 		this.eventBus = eventBus;
 		this.cvm = cvm;
+
+		init();
 	}
 
-	public void createWindow()
+	/* INIT */
+
+	private void init()
 	{
+		contentPanel = new Panel(new BorderLayout());
+		chatBoxPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+		newMessagePanel = new Panel(new BorderLayout());
+
+		newMessage = new TextBox("", TextBox.Style.MULTI_LINE);
+
+		chatBox = new ActionListBox(new TerminalSize(48, 18));
+
+		window = new BasicWindow("Chat with a friend");
+		window.setFixedSize(new TerminalSize(50, 20));
+		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
+	}
+
+	/* CREATE WINDOW */
+
+	private void createWindow()
+	{
+		removeAllComponents();
+		window.setTitle("Chat with " + contact.getAlias());
 		updateChatBox();
 
 		newMessagePanel.addComponent(newMessage.setLayoutData(BorderLayout.Location.CENTER));
-
 		newMessagePanel.addComponent(
 				new Button("Send", () -> {
 					if(!newMessage.getText().isEmpty())
@@ -79,44 +95,45 @@ public class Conversation extends EventListenerViewModel {
 				new Button("Back", () -> {
 					try
 					{
+						contact = null;
 						tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
 					} catch (Exception e)
 					{
 						e.printStackTrace();
 					}
 				}).setLayoutData(BorderLayout.Location.LEFT));
-	}
 
-	public void render()
-	{
-		contentPanel = new Panel(new BorderLayout());
-		chatBoxPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-		newMessagePanel = new Panel(new BorderLayout());
-
-		newMessage = new TextBox("", TextBox.Style.MULTI_LINE);
-
+		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
 				newMessagePanel.withBorder(Borders.singleLine("Write your Message...")).setLayoutData(BorderLayout.Location.BOTTOM));
 		contentPanel.addComponent(
 				chatBoxPanel.withBorder(Borders.singleLine("Chat")).setLayoutData(BorderLayout.Location.CENTER));
 
-		// init instance
+	}
+
+	/* PANELS REMOVER */
+
+	private void removeAllComponents()
+	{
+		newMessagePanel.removeAllComponents();
+		chatBoxPanel.removeAllComponents();
+		contentPanel.removeAllComponents();
+	}
+
+	/* RENDER */
+
+	public void render()
+	{
 		createWindow();
-
-		// render window
-		this.window = new BasicWindow("Chat with " + contact.getAlias());
-		window.setFixedSize(new TerminalSize(50, 20));
-		window.setComponent(contentPanel.withBorder(Borders.singleLine()));
-
 		textGUI.addWindowAndWait(window);
 	}
 
-	public void updateChatBox()
-	{
-		if(chatBox != null)
-			chatBoxPanel.removeAllComponents();
+	/* UPDATE CLASS */
 
-		chatBox = new ActionListBox(new TerminalSize(48, 18));
+	private void updateChatBox()
+	{
+		chatBox.clearItems();
+
 		/* loop through all messages and add them to the chatBox */
 		try
 		{
@@ -144,6 +161,7 @@ public class Conversation extends EventListenerViewModel {
 					e.printStackTrace();
 				}
 			}
+			chatBox.setSelectedIndex(headers.size()-1);
 		} catch (DbException e)
 		{
 			e.printStackTrace();
@@ -168,6 +186,8 @@ public class Conversation extends EventListenerViewModel {
 	{
 		this.contact = contact;
 	}
+
+	/* EVENT HANDLING */
 
 	@Override
 	public void eventOccurred(Event e)
