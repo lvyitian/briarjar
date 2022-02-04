@@ -145,14 +145,12 @@ public class Conversation extends EventListenerViewModel {
 				{
 					String message = header.isLocal() ? "< " + cvm.getMessageText(header.getId()) : "> " + cvm.getMessageText(header.getId());
 
-					String metaData = new StringBuilder()
-							.append("ID: ").append(header.getId())
-							.append("\nisRead:").append(header.isRead())
-							.append("\nisLocal: ").append(header.isLocal())
-							.append("\nisSent: ").append(header.isSent())
-							.append("\nisSeen: ").append(header.isSeen())
-							.append("\nTimestamp: ").append(header.getTimestamp())
-							.toString();
+					String metaData = "ID: " + header.getId() +
+							"\nisRead:" + header.isRead() +
+							"\nisLocal: " + header.isLocal() +
+							"\nisSent: " + header.isSent() +
+							"\nisSeen: " + header.isSeen() +
+							"\nTimestamp: " + header.getTimestamp();
 
 					chatBox.addItem(message, () ->
 							MessageDialog.showMessageDialog(textGUI, "Message Metadata", metaData,
