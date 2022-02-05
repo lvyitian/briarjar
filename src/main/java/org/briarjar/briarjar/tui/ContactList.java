@@ -281,7 +281,6 @@ public class ContactList extends EventListenerViewModel {
 
 			onlineStatusHashMap.put(
 			             ((ContactDisconnectedEvent) e).getContactId(), false );
-			System.out.println("BEFOR UPDATE");
 			updateContactList();
 		}
 	}

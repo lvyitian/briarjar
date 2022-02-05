@@ -4,11 +4,10 @@ import org.briarjar.briarjar.Main;
 
 import javax.inject.Inject;
 
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.stage.Stage;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class GUIUtils {
 
 	private final RootBorderPane rootBorderPane;

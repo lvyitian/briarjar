@@ -14,6 +14,8 @@ import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 
 import javax.inject.Inject;
 
+import static com.googlecode.lanterna.gui2.dialogs.MessageDialog.showMessageDialog;
+
 public class SignIn extends EventListenerViewModel {
 
 	private final LoginViewModel lvm;
@@ -94,7 +96,8 @@ public class SignIn extends EventListenerViewModel {
 			try {
 				lvm.signIn( passphrase );
 				lifeCycleViewModel.start();
-				tuiUtils.switchWindow( window, TUIWindow.CONTACTLIST );
+				repeatDialog = false;
+				tuiUtils.switchWindow( TUIWindow.CONTACTLIST );
 
 			} catch ( GeneralException e )
 			{
