@@ -64,6 +64,7 @@ public class MainTUI implements Closeable  {
 		}
 	}
 
+	// TODO is there a better solution
 	private void setAllTextGUI()
 	{
 		tuiUtils.getSignIn().setTextGUI(textGUI);

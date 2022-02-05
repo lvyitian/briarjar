@@ -32,8 +32,7 @@ public class Conversation extends EventListenerViewModel {
 	private MultiWindowTextGUI textGUI;
 	private TUIUtils tuiUtils;
 
-	private final EventBus eventBus;
-	private ConversationViewModel cvm;
+	private final ConversationViewModel cvm;
 	private Contact contact;
 
 	@Inject
@@ -43,7 +42,6 @@ public class Conversation extends EventListenerViewModel {
 		super(eventBus);
 		super.onInit();
 
-		this.eventBus = eventBus;
 		this.cvm = cvm;
 
 		init();
@@ -71,8 +69,9 @@ public class Conversation extends EventListenerViewModel {
 	private void createWindow()
 	{
 		removeAllComponents();
-		window.setTitle("Chat with " + contact.getAlias());
 		updateChatBox();
+
+		window.setTitle("Chat with " + contact.getAlias());
 
 		newMessagePanel.addComponent(newMessage.setLayoutData(BorderLayout.Location.CENTER));
 		newMessagePanel.addComponent(
@@ -82,6 +81,7 @@ public class Conversation extends EventListenerViewModel {
 						try
 						{
 							cvm.write(contact.getId(), System.currentTimeMillis(), newMessage.getText());
+							newMessage.setText("");     // clear the newMessage text field
 						} catch (Exception e)
 						{
 							e.printStackTrace();

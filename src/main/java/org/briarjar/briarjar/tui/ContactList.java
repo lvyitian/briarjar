@@ -17,7 +17,6 @@ import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
 import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -186,48 +185,6 @@ public class ContactList extends EventListenerViewModel {
 		this.tuiUtils = tuiUtils;
 	}
 
-	/* TODO delete - deprecated
-	private void updateContactList0()
-	{
-		if(contactListBox != null)
-			contentPanel.removeComponent(contactListBox);
-
-		contactListBox = new ActionListBox();
-
-		try
-		{
-			Collection<Contact> contactsCollection = cvm.getAcceptedContacts();
-			listedContactList = new ArrayList<>(contactsCollection.size());
-
-			if ( contactsCollection.size() > 0 )
-			{
-				for (Contact c : contactsCollection) {
-					ListedContact lc = new ListedContact(c); // Contact --> ListedContact
-					listedContactList.add(lc);
-					contactListBox.addItem(lc.toString(), () -> {
-						//contactListBox.addItem(prepareContactForList(lc), () -> {
-						try
-						{
-							tuiUtils.getConversation().setContact(lc.getContact());
-							tuiUtils.switchWindow(window, TUIWindow.CONVERSATION);
-						} catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					});
-				}
-				contentPanel.addComponent(contactListBox);
-			}
-			else
-				contentPanel.addComponent(new Label("No Contacts found!"));
-		} catch (DbException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	 */
-
 	/* EVENT HANDLING */
 
 	@Override
@@ -326,31 +283,5 @@ public class ContactList extends EventListenerViewModel {
 			System.out.println("BEFOR UPDATE");
 			updateContactList();
 		}
-	}
-}
-
-
-/**
-	A "Wrapper" for a Contact with two properties
-	1. Only containing needed information for the UI
-	2. A toString() which returns the contact alias
- */
-class ListedContact
-{
-	private Contact contact;
-	public ListedContact(Contact contact)
-	{
-		this.contact = contact;
-	}
-
-	@Override
-	public String toString()
-	{
-		return contact.getAlias();
-	}
-
-	public Contact getContact()
-	{
-		return contact;
 	}
 }

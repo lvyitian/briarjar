@@ -17,7 +17,6 @@ import javax.inject.Inject;
 
 public class SignUp extends EventListenerViewModel {
 
-	private final EventBus eventBus;
 	private final LoginViewModel lvm;
 	private final LifeCycleViewModel lifeCycleViewModel;
 
@@ -34,9 +33,7 @@ public class SignUp extends EventListenerViewModel {
 			        LifeCycleViewModel lifeCycleViewModel )
 	{
 		super(eventBus);
-		super.onInit();
 
-		this.eventBus = eventBus;
 		this.lvm = lvm;
 		this.lifeCycleViewModel = lifeCycleViewModel;
 

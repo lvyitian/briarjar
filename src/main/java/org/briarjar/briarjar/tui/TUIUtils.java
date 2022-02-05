@@ -4,7 +4,7 @@ import com.googlecode.lanterna.gui2.*;
 
 import javax.inject.Inject;
 
-@SuppressWarnings("ClassCanBeRecord") // no, it shouldn't
+@SuppressWarnings("ClassCanBeRecord")
 public class TUIUtils {
 
 	private final SignIn signIn;
@@ -27,7 +27,11 @@ public class TUIUtils {
 	 *
 	 */
 	@Inject
-	public TUIUtils(SignIn signIn, SignUp signUp, ContactList contactList, AddContact addContact, Conversation conversation)
+	public TUIUtils(SignIn signIn,
+	                SignUp signUp,
+	                ContactList contactList,
+	                AddContact addContact,
+	                Conversation conversation) // TODO use Dagger to make it shorter
 	{
 		this.signIn = signIn;
 			signIn.setTuiUtils(this);

@@ -11,14 +11,12 @@ import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.crypto.DecryptionException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
-import org.briarproject.bramble.api.lifecycle.LifecycleManager.LifecycleState;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 
 import javax.inject.Inject;
 
 public class SignIn extends EventListenerViewModel {
 
-	private final EventBus eventBus;
 	private final LoginViewModel lvm;
 	private final LifeCycleViewModel lifeCycleViewModel;
 
@@ -27,15 +25,12 @@ public class SignIn extends EventListenerViewModel {
 	private MultiWindowTextGUI textGUI;
 	private TUIUtils tuiUtils;
 
-	private String passphrase;
-
 	@Inject
 	public SignIn( EventBus           eventBus,
 	               LoginViewModel     lvm,
 	               LifeCycleViewModel lifeCycleViewModel )
 	{
 		super(eventBus);
-		this.eventBus = eventBus;
 
 		this.lvm = lvm;
 		this.lifeCycleViewModel = lifeCycleViewModel;
@@ -58,36 +53,7 @@ public class SignIn extends EventListenerViewModel {
 	private void createWindow() {
 		removeAllComponents();
 
-
-		// contentPanel.addComponent(...)
-		contentPanel.addComponent(
-				new Button("Enter Passphrase", () ->
-						passphrase = TextInputDialog.showPasswordDialog(textGUI, "Enter Passphrase", "Enter your account passphrase", ""))
-		);
-		contentPanel.addComponent(
-				new Button("Sign In", () -> {
-
-					if(passphrase != null && !passphrase.isEmpty())
-					{
-						try {
-							lvm.signIn(passphrase);
-
-							System.out.println("pre start: " +lifeCycleViewModel.getLifeCycleState());
-							lifeCycleViewModel.start();
-							System.out.println("post start: " +lifeCycleViewModel.getLifeCycleState());
-						} catch (DecryptionException e) {
-							MessageDialog.showMessageDialog(textGUI, "DecryptionException occurred", e.getDecryptionResult().toString(), MessageDialogButton.OK);
-						} catch (InterruptedException e) {
-							MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
-						}
-						if(lifeCycleViewModel.getLifeCycleState() == LifecycleState.RUNNING)
-							tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
-					} else
-						MessageDialog.showMessageDialog(textGUI, "Empty Passphrase", "Please enter a passphrase",
-								MessageDialogButton.OK);
-					}));
-
-		TUIUtils.addHorizontalSeparator(contentPanel);
+		enterPassphrase();
 
 		/* TODO uncomment after delete logic is implemented
 		contentPanel.addComponent(
@@ -112,6 +78,46 @@ public class SignIn extends EventListenerViewModel {
 	{
 		createWindow();
 		textGUI.addWindowAndWait(window);
+	}
+
+	/* PASSPHRASE DIALOG */
+
+	private void enterPassphrase()
+	{
+		boolean repeatDialog = true;
+
+		while(repeatDialog)
+		{
+			String passphrase = TextInputDialog.showPasswordDialog(textGUI,
+					"Enter Passphrase",
+					"Enter your Account Passphrase", "");
+			if (passphrase != null && !passphrase.isEmpty())
+			{
+				try
+				{
+					lvm.signIn(passphrase);
+					lifeCycleViewModel.start();
+
+					repeatDialog = false;
+
+					tuiUtils.switchWindow(TUIWindow.CONTACTLIST);
+				} catch (DecryptionException e)
+				{
+					MessageDialog.showMessageDialog(textGUI,
+							"DecryptionException occurred",
+							e.getDecryptionResult().toString(),
+							MessageDialogButton.OK);
+				} catch (InterruptedException e)
+				{
+					MessageDialog.showMessageDialog(textGUI,
+							"InterruptedException occurred",
+							e.getMessage(), MessageDialogButton.OK);
+				}
+			} else
+				MessageDialog.showMessageDialog(textGUI,
+						"Empty Passphrase", "Please enter a passphrase",
+						MessageDialogButton.OK);
+		}
 	}
 
 	/* SETTERS */
