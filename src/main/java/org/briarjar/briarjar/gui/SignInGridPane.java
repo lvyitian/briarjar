@@ -1,5 +1,6 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.crypto.DecryptionException;
@@ -112,15 +113,10 @@ public class SignInGridPane extends GridPane {
 
 			btSignIn.setDisable(true);
 			guiUtils.switchToMain();
-		} catch (DecryptionException e)
+
+		} catch ( GeneralException e )
 		{
-			showAlert(Alert.AlertType.ERROR, "Could not decrypt " +
-					"database - wrong passphrase entered?\n(" + e.getDecryptionResult() +
-					")");
-		} catch (InterruptedException e)
-		{
-			showAlert(Alert.AlertType.ERROR,
-					"Startup Error: " + e.getMessage());
+			showAlert( Alert.AlertType.ERROR, e.getMessage() );
 		}
 	}
 

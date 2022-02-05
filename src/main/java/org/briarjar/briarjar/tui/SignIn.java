@@ -1,14 +1,13 @@
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
-import org.briarproject.bramble.api.crypto.DecryptionException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
@@ -91,32 +90,19 @@ public class SignIn extends EventListenerViewModel {
 			String passphrase = TextInputDialog.showPasswordDialog(textGUI,
 					"Enter Passphrase",
 					"Enter your Account Passphrase", "");
-			if (passphrase != null && !passphrase.isEmpty())
+
+			try {
+				lvm.signIn( passphrase );
+				lifeCycleViewModel.start();
+				tuiUtils.switchWindow( window, TUIWindow.CONTACTLIST );
+
+			} catch ( GeneralException e )
 			{
-				try
-				{
-					lvm.signIn(passphrase);
-					lifeCycleViewModel.start();
-
-					repeatDialog = false;
-
-					tuiUtils.switchWindow(TUIWindow.CONTACTLIST);
-				} catch (DecryptionException e)
-				{
-					MessageDialog.showMessageDialog(textGUI,
-							"DecryptionException occurred",
-							e.getDecryptionResult().toString(),
-							MessageDialogButton.OK);
-				} catch (InterruptedException e)
-				{
-					MessageDialog.showMessageDialog(textGUI,
-							"InterruptedException occurred",
-							e.getMessage(), MessageDialogButton.OK);
-				}
-			} else
-				MessageDialog.showMessageDialog(textGUI,
-						"Empty Passphrase", "Please enter a passphrase",
-						MessageDialogButton.OK);
+				showMessageDialog( textGUI,
+						e.getTitle(),
+						e.getMessage(),
+						MessageDialogButton.OK );
+			}
 		}
 	}
 

@@ -5,6 +5,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
@@ -76,12 +77,12 @@ public class SignUp extends EventListenerViewModel {
 						{
 							try {
 								lvm.signUp(username, passphrase);}
-							catch (InterruptedException e) {
+							catch (GeneralException e) {
 								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 							}
 							try {
 								lifeCycleViewModel.start();
-							} catch (InterruptedException e) {
+							} catch (GeneralException e) {
 								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 							}
 						} else
