@@ -129,7 +129,8 @@ public class ContactViewModel {
 		     alias.length() > MAX_AUTHOR_NAME_LENGTH )
 		{
 			throw new GeneralException( "Alias length must be not blank and " +
-				"max. "+MAX_AUTHOR_NAME_LENGTH+" not "+alias.length()+" long" );
+			                            "max. "+MAX_AUTHOR_NAME_LENGTH+" not "+
+			                             alias.length()+" characters long"    );
 		}
 		return alias;
 	}

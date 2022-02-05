@@ -11,8 +11,7 @@ import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
-import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
-import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.sync.event.MessageAddedEvent;
 import org.briarproject.bramble.api.sync.event.MessageStateChangedEvent;
 import org.briarproject.bramble.api.sync.event.MessagesSentEvent;
@@ -20,10 +19,6 @@ import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 import org.briarproject.briar.api.messaging.event.AttachmentReceivedEvent;
 import org.briarproject.briar.api.messaging.event.PrivateMessageReceivedEvent;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,7 +32,6 @@ public class Conversation extends EventListenerViewModel {
 	private MultiWindowTextGUI textGUI;
 	private TUIUtils tuiUtils;
 
-	private final EventBus eventBus;
 	private ConversationViewModel cvm;
 	private Contact contact;
 
@@ -48,7 +42,6 @@ public class Conversation extends EventListenerViewModel {
 		super(eventBus);
 		super.onInit();
 
-		this.eventBus = eventBus;
 		this.cvm = cvm;
 	}
 
@@ -144,6 +137,8 @@ public class Conversation extends EventListenerViewModel {
 					e.printStackTrace();
 				}
 			}
+
+			chatBox.setSelectedIndex( headers.size()-1 );
 		} catch (DbException e)
 		{
 			e.printStackTrace();
@@ -170,6 +165,7 @@ public class Conversation extends EventListenerViewModel {
 	}
 
 	@Override
+	@NotNullByDefault
 	public void eventOccurred(Event e)
 	{
 	/*

@@ -48,17 +48,7 @@ public class ConversationViewModel {
 
 // public ======================================================================
 
-	private PrivateMessage
-	        createLegacyPrivateMessage( GroupId groupId,
-	                                    long    timestamp,
-	                                    String  text       )
-	throws FormatException
-	{
-		return pmFactory.createLegacyPrivateMessage( groupId, timestamp, text );
-	}
-
-
-    public DeletionResult
+	public DeletionResult
            deleteAllMessages( ContactId c )
     throws DbException
     {
@@ -282,13 +272,6 @@ public class ConversationViewModel {
 
 // private =====================================================================
 
-
-	private void
-            addLocalMessage( PrivateMessage m )
-    throws DbException
-    {
-        messagingManager.addLocalMessage( m ); // for sending
-    }
 
 
 

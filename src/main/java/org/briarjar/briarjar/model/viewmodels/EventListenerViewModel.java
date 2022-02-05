@@ -5,16 +5,20 @@ import org.briarproject.bramble.api.event.EventListener;
 
 
 public abstract class EventListenerViewModel implements EventListener {
+
 	EventBus eventBus;
 
-	public EventListenerViewModel(EventBus eventBus)
+
+	public EventListenerViewModel( EventBus eventBus )
 	{
 		this.eventBus = eventBus;
 	}
 
+
+
 	public void onInit()
 	{
-		eventBus.addListener(this);
+		eventBus.addListener( this );
 	}
 
 	/* currently, not implemented
