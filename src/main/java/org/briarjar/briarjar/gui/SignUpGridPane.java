@@ -1,5 +1,6 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
@@ -124,7 +125,7 @@ public class SignUpGridPane extends GridPane {
 			//todo 4k offline mode possible? // if (...
 			lifeCycleViewModel.start();
 
-		} catch (InterruptedException e)
+		} catch (GeneralException e)
 		{
 			showAlert(Alert.AlertType.ERROR,
 					"Startup Error: " + e.getMessage());

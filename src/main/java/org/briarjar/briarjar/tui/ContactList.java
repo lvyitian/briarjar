@@ -3,6 +3,7 @@ package org.briarjar.briarjar.tui;
 import com.googlecode.lanterna.gui2.*;
 
 import org.briarjar.briarjar.Main;
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
@@ -12,6 +13,7 @@ import org.briarproject.bramble.api.contact.event.*;
 import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
+import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
 import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 
@@ -71,7 +73,7 @@ public class ContactList extends EventListenerViewModel {
 					try
 					{
 						lifeCycleViewModel.stop();
-					} catch (InterruptedException e)
+					} catch (GeneralException e)
 					{
 						e.printStackTrace();
 					}
@@ -158,7 +160,7 @@ public class ContactList extends EventListenerViewModel {
 
 		try
 		{
-			if ( cvm.getAcceptedContacts().size() > 0 )                       // TODO accepted only currently
+			if ( cvm.getAcceptedContacts().size() > 0 )   // TODO accepted only currently
 			{
 				for ( Contact c : cvm.getAcceptedContacts() )
 				{
@@ -215,6 +217,7 @@ public class ContactList extends EventListenerViewModel {
 	}
 
 	@Override
+	@NotNullByDefault
 	public void
 	eventOccurred( Event e )
 	{

@@ -7,6 +7,7 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.lifecycle.LifecycleManager;
@@ -88,7 +89,7 @@ public class MainTUI implements Closeable  {
 		try
 		{
 			lifeCycleViewModel.stop();
-		} catch (InterruptedException e)
+		} catch (GeneralException e)
 		{
 			e.printStackTrace(); //TODO
 		}
