@@ -2,10 +2,7 @@ package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
-import org.briarproject.bramble.api.FormatException;
-import org.briarproject.bramble.api.db.DbException;
 
-import java.security.GeneralSecurityException;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -72,7 +69,7 @@ public class AddContactDialog extends Stage {
 		{
 			lbOwnLink = new Label(cvm.getHandshakeLink());
 			lbOwnLink.setFont(Font.font("System", FontWeight.LIGHT, 14));
-		} catch (DbException e)
+		} catch (GeneralException e)
 		{
 			lbOwnLink = new Label("Errored... " + e.getMessage());
 			showAlert(Alert.AlertType.ERROR, e.getMessage());
@@ -119,7 +116,7 @@ public class AddContactDialog extends Stage {
 		{
 			cvm.addPendingContact(handshakeLinkOfFriend.getText(), aliasOfFriend.getText());
 			close();
-		} catch (GeneralSecurityException | FormatException | DbException | GeneralException e)
+		} catch (GeneralException e)
 		{
 			showAlert(Alert.AlertType.ERROR, e.getClass() + " - " + e.getMessage());
 		}

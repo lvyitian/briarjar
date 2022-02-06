@@ -2,16 +2,12 @@ package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
-import org.briarproject.bramble.api.FormatException;
-import org.briarproject.bramble.api.db.DbException;
-
-import java.security.GeneralSecurityException;
-
 import javax.inject.Inject;
 
 public class AddContact {
@@ -59,8 +55,8 @@ public class AddContact {
 						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", ownLink, MessageDialogButton.OK)
 				));
 			System.out.println(ownLink);
-		} catch (/*Db*/Exception e) {
-			e.printStackTrace();
+		} catch (GeneralException e) {
+			tuiUtils.show(e);
 		}
 
 		contentPanel.addComponent(
@@ -78,13 +74,12 @@ public class AddContact {
 					try
 					{
 						cvm.addPendingContact(peerHandshakeLink, peerAlias);
-					} catch (GeneralSecurityException | FormatException | DbException | GeneralException e)
-					{
-						MessageDialog.showMessageDialog(textGUI,
-								e.getClass().toString(), e.getMessage(),
-								MessageDialogButton.OK);
+						tuiUtils.switchWindow(window,TUIWindow.CONTACTLIST);
 					}
-					tuiUtils.switchWindow(window,TUIWindow.CONTACTLIST);
+					catch (GeneralException e)
+					{
+						tuiUtils.show(e);
+					}
 				}));
 
 		TUIUtils.addHorizontalSeparator(contentPanel);

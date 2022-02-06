@@ -10,7 +10,6 @@ import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.contact.event.*;
-import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
@@ -149,9 +148,9 @@ public class ContactList extends EventListenerViewModel {
 			} else
 				contentPanel.addComponent(noContactsLabel);
 		}
-		catch (DbException e)
+		catch (GeneralException e)
 		{
-			e.printStackTrace();
+			tuiUtils.show(e);
 		}
 	}
 
@@ -166,7 +165,7 @@ public class ContactList extends EventListenerViewModel {
 		{
 			alias = cvm.getContact( id ).getAlias();
 		}
-		catch (DbException e)
+		catch (GeneralException e)
 		{
 			e.printStackTrace(); // TODO
 		}

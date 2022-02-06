@@ -1,9 +1,9 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
-import org.briarproject.bramble.api.db.DbException;
 
 import java.util.Collection;
 
@@ -99,7 +99,7 @@ public class MessagesBorderPane extends BorderPane {
 				b.setOnAction(e -> loadMessages(c.getId()));
 				contactList.getChildren().setAll(new Button(c.getAlias()));
 			}
-		} catch (DbException e)
+		} catch (GeneralException e)
 		{
 			e.printStackTrace();
 		}

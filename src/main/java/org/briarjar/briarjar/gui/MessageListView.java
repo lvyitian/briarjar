@@ -1,8 +1,8 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ConversationViewModel;
 import org.briarproject.bramble.api.contact.ContactId;
-import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 
 import javax.inject.Inject;
@@ -30,7 +30,7 @@ public class MessageListView extends ListView<ConversationMessageHeader>
 		try
 		{
 			getItems().setAll(cvm.getMessageHeaders(id));
-		} catch (DbException e)
+		} catch (GeneralException e)
 		{
 			showAlert(Alert.AlertType.ERROR, e.getMessage());
 		}

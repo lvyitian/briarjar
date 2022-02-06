@@ -5,10 +5,10 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ConversationViewModel;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
 import org.briarproject.bramble.api.contact.Contact;
-import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
@@ -143,7 +143,7 @@ public class Conversation extends EventListenerViewModel {
 			{
 				try
 				{
-					String message = header.isLocal() ? "< " + cvm.getMessageText(header.getId()) : "> " + cvm.getMessageText(header.getId());
+					String message = header.isLocal() ? "   " + cvm.getMessageText(header.getId()) : "=> " + cvm.getMessageText(header.getId());
 
 					String metaData = "ID: " + header.getId() +
 							"\nisRead:" + header.isRead() +
@@ -155,13 +155,13 @@ public class Conversation extends EventListenerViewModel {
 					chatBox.addItem(message, () ->
 							MessageDialog.showMessageDialog(textGUI, "Message Metadata", metaData,
 									MessageDialogButton.Close));
-				} catch (DbException e)
+				} catch (GeneralException e)
 				{
 					e.printStackTrace();
 				}
 			}
 			chatBox.setSelectedIndex(headers.size()-1);
-		} catch (DbException e)
+		} catch (GeneralException e)
 		{
 			e.printStackTrace();
 		}
