@@ -1,11 +1,17 @@
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 
 import javax.inject.Inject;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class TUIUtils {
+
+	private TextGUI textGUI;
+	private TUIMessageDialog tuiMessageDialog;
 
 	private final SignIn signIn;
 	private final SignUp signUp;
@@ -43,6 +49,14 @@ public class TUIUtils {
 			addContact.setTuiUtils(this);
 		this.conversation = conversation;
 			conversation.setTuiUtils(this);
+	}
+
+	public void setTextGUI( MultiWindowTextGUI textGUI )
+	{
+		this.textGUI = textGUI;
+
+		//TODO not that beautiful here, but in the current structure it's a possibility
+		tuiMessageDialog = new TUIMessageDialog( textGUI );
 	}
 
 	public static void addHorizontalSeparator(Panel contentPanel) {
@@ -104,6 +118,12 @@ public class TUIUtils {
 			case CONVERSATION -> conversation.render();
 		}
 	}
+
+	public void show( GeneralException e, MessageDialogButton... buttons )
+	{
+		tuiMessageDialog.show( e, buttons );
+	}
+
 
 	/* GETTERS */
 
