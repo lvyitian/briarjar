@@ -45,39 +45,37 @@ public class LifeCycleViewModel {
 	       start()
 	throws GeneralException
 	{
-		System.out.println( "Starting LifecycleManager Services..." );
+		System.out.println( "Starting LifecycleManager Services..." ); //TEMP
 
+		String exTitle = "Attempting to start services";
 
 		/* Get needed Database Key for LifeCycle Startup */
 		SecretKey dbKey = accountManager.getDatabaseKey();
 
 		if ( dbKey == null )
-			throw new GeneralException( "Internal Error",
-			                        "Can not start services since no dbKey "+
-			                        "is provided at the moment."              );
+			throw new GeneralException( "Can not start services since no " +
+			                       "dbKey is provided at the moment", exTitle );
 
 
 		/* Startup LifeCycle */
 		StartResult result = lifecycleManager.startServices( dbKey );
 
 		if ( result.equals(StartResult.CLOCK_ERROR) )
-			throw new GeneralException( "Unreasonable System Clock",
-			                            "Please set the correct system clock" );
+			throw new GeneralException( "Unreasonable system clock, please " +
+			                            "set the correct one first", exTitle  );
 
 
 		/* Wait for finished LifeCycle Startup */
-		try
-		{
+		try {
 			lifecycleManager.waitForStartup();
-
-		} catch ( InterruptedException e )
-		{
-			throw new GeneralException( "Process interrupted",
-	                            "Services' startup interrupted while waiting" );
+		}
+		catch ( InterruptedException e ) {
+			throw new GeneralException(
+	                          "Services' startup got interrupted while waiting",
+					          exTitle, e, true );
 		}
 
-
-		System.out.println("Starting LifecycleManager Services... done.");
+		System.out.println("Starting LifecycleManager Services... done."); //TEMP
 	}
 
 
@@ -85,20 +83,19 @@ public class LifeCycleViewModel {
 	       stop()
 	throws GeneralException
 	{
-		System.out.println( "Stopping LifecycleManager Services..." );
+		System.out.println( "Stopping LifecycleManager Services..." ); //TEMP
 
-		try
-		{
+		try {
 			lifecycleManager.stopServices();
 			lifecycleManager.waitForShutdown();
-
-		} catch ( InterruptedException e )
-		{
-			throw new GeneralException( "Process interrupted",
-					           "Services' shutdown interrupted while waiting" );
+		}
+		catch ( InterruptedException e ) {
+			throw new GeneralException(
+			                 "Services' shutdown got interrupted while waiting",
+			                 "Attempting to stop services" );
 		}
 
-		System.out.println( "Stopping LifecycleManager Services... done." );
+		System.out.println( "Stopping LifecycleManager Services... done." ); //TEMP
 	}
 
 

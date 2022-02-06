@@ -37,7 +37,7 @@ public class LoginViewModel {
 	public void
 	       setPassphrase( String passphrase )
 	{
-		this.passphrase = passphrase;
+		this.passphrase = passphrase; //TODO currently not implemented / useful
 	}
 
 
@@ -54,7 +54,7 @@ public class LoginViewModel {
 
 	public void
 	       deleteAccount()
-	{
+	{ //TODO maybe ask beforehand for reading unseen messages
 		accountManager.deleteAccount();
 	}
 
@@ -78,22 +78,15 @@ public class LoginViewModel {
 	       signIn( String passphrase )
 	throws GeneralException
 	{
-		try
-		{
+		try {
 			accountManager.signIn( checkPassphraseLength(passphrase, false) );
-
-		} catch ( DecryptionException e )
-		{
+		}
+		catch ( DecryptionException e ) {
 			if ( e.getDecryptionResult().equals(INVALID_PASSWORD) )
-			{
-				throw new GeneralException( "Passphrase invalid",
-				                            "Please try again", e );
-			} else
-			{
-				throw new GeneralException( e.getDecryptionResult().name(),
-						            "There seems something wrong...\n"+
-		                            "May you want to try it again anyway?", e );
-			}
+				throw new GeneralException( "Invalid passphrase entered",
+				                            "Checking passphrase", e, false );
+			else
+				throw new GeneralException( e, true, "Attempting to sign in" );
 		}
 	}
 
@@ -121,15 +114,18 @@ public class LoginViewModel {
 		if ( isSignUp ) {
 
 			if ( passphrase == null ||
-			     passphrase.length() < MIN_PASSPHRASE_LENGTH )
-				throw new GeneralException( "Sorry",
-			                        "Passphrase must be at least "+
-			                         MIN_PASSPHRASE_LENGTH+" characters long" );
+			     passphrase.length() < MIN_PASSPHRASE_LENGTH ) {
+
+				String m = "Passphrase must be at least "+MIN_PASSPHRASE_LENGTH+
+				           " characters long";
+				throw new GeneralException( m, "Setting passphrase" );
+			}
+
 		} else {
 
 			if ( passphrase == null || passphrase.length() <= 0 )
-				throw new GeneralException( "Empty Passphrase",
-				                            "Please enter your passphrase" );
+				throw new GeneralException( "Passphrase can not be empty",
+					                        "Checking passphrase" );
 		}
 		return passphrase;
 	}

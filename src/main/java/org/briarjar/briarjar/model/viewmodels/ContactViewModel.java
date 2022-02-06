@@ -38,79 +38,147 @@ public class ContactViewModel {
 	public void
 	       addPendingContact( String link,
 	                          String alias )
-	throws DbException,
-	       FormatException,
-	       GeneralException,
-	       GeneralSecurityException
+	throws GeneralException
 	{
-		contactManager.addPendingContact( link, checkAlias(alias) );
+		String exTitle = "Checking handshake-link";
+
+		if ( link == null || link.isBlank() )
+			throw new GeneralException( "The handshake-link can not be empty",
+			                            exTitle );
+		try {
+			if ( link.equals( contactManager.getHandshakeLink() ) ) {
+				String m = "You entered your own handshake-link, but the link" +
+				           " of your contact is needed";
+				throw new GeneralException( m, exTitle );
+			}
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true, exTitle );
+		}
+
+
+		exTitle = "Attempting to add contact";
+		try {
+			contactManager.addPendingContact( link, checkAlias(alias) );
+		}
+		catch (DbException | GeneralSecurityException e) {
+			throw new GeneralException( e, true, exTitle );
+		}
+		catch (FormatException e) {
+			throw new GeneralException( "The link format seems to be invalid",
+			                            exTitle, e, true );
+		}
 	}
 
 
 	public Collection< Contact >
 	       getAcceptedContacts()
-	throws DbException
+	throws GeneralException
 	{
-		return contactManager.getContacts();
+		try	{
+			return contactManager.getContacts();
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+					                    "Attempting to get accepted contacts" );
+		}
 	}
 
 
 	public Contact
 	       getContact( ContactId contactId )
-	throws DbException
+	throws GeneralException
 	{
-		return contactManager.getContact( contactId );
+		try {
+			return contactManager.getContact( contactId );
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true, "Attempting to get contact" );
+		}
 	}
 
 
 	public Collection< Contact >
 	       getContacts()
-	throws DbException
+	throws GeneralException
 	{
-		return contactManager.getContacts();
+		try {
+			return contactManager.getContacts();
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true, "Attempting to get contacts" );
+		}
 	}
 
 
 	public String
 	       getHandshakeLink()
-	throws DbException
+	throws GeneralException
 	{
-		return contactManager.getHandshakeLink();
+		try {
+			return contactManager.getHandshakeLink();
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+			                            "Attempting to get handshake-link" );
+		}
 	}
 
 
 	public Collection< Pair<PendingContact, PendingContactState> >
 	       getPendingContacts()
-	throws DbException
+	throws GeneralException
 	{
-		return contactManager.getPendingContacts();
+		try {
+			return contactManager.getPendingContacts();
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true, "Attempting to get pending "+
+			                                     "contacts and their state"   );
+		}
 	}
 
 
 	public void
 	       removeAcceptedContact( ContactId c )
-    throws DbException
-    {
-        contactManager.removeContact( c );
+	throws GeneralException
+	{
+	    try {
+		    contactManager.removeContact( c );
+	    }
+		catch ( DbException e ) {
+		    throw new GeneralException( e, true,
+		                               "Attempting to remove accepted contact");
+	    }
     }
 
 
 	public void
 	       removePendingContact( PendingContactId p )
-	throws DbException
+	throws GeneralException
 	{
-		contactManager.removePendingContact( p );
+		try {
+			contactManager.removePendingContact( p );
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+			                            "Attempting to remove pending contact");
+		}
 	}
 
 
 	public void
 	       setContactAlias( ContactId contactId,
 	                        String    alias      )
-	throws DbException,
-	       GeneralException
-
+	throws GeneralException
 	{
-		contactManager.setContactAlias( contactId, checkAlias(alias) );
+		try {
+			contactManager.setContactAlias( contactId, checkAlias(alias) );
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+			                            "Attempting to set contact's alias" );
+		}
 	}
 
 
@@ -121,18 +189,17 @@ public class ContactViewModel {
 // private =====================================================================
 
 	private String
-	        checkAlias( String alias )
+	        checkAlias( String alias ) //TODO it's allowed to be empty at briar
 	throws GeneralException
 	{
-		// TODO further checks? (fe does alias already exist?)
 		if ( alias.isBlank() ||
 		     alias.length() > MAX_AUTHOR_NAME_LENGTH )
 		{
-			throw new GeneralException( "Alias length must be not blank and " +
-			                            "max. "+MAX_AUTHOR_NAME_LENGTH+" not "+
-			                             alias.length()+" characters long"    );
+			String msg = "Alias length must not be blank and max. "+
+                          MAX_AUTHOR_NAME_LENGTH+" (not "+alias.length()+
+			             ") characters long";
+			throw new GeneralException( msg, "Checking Alias" );
 		}
 		return alias;
 	}
-
 }

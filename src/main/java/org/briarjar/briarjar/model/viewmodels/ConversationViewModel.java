@@ -1,5 +1,6 @@
 package org.briarjar.briarjar.model.viewmodels;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarproject.bramble.api.FormatException;
 import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.db.DbException;
@@ -50,59 +51,100 @@ public class ConversationViewModel {
 
 	public DeletionResult
            deleteAllMessages( ContactId c )
-    throws DbException
-    {
-        return conversationManager.deleteAllMessages( c );
+	throws GeneralException
+	{
+	    try {
+		    return conversationManager.deleteAllMessages( c );
+	    }
+		catch (DbException e) {
+		    throw new GeneralException( e, true,
+		                                "Attempting to delete all messages" );
+	    }
     }
 
 
     public DeletionResult
            deleteMessages( ContactId             c,
                            Collection<MessageId> toDelete )
-    throws DbException
+    throws GeneralException
     {
-        return conversationManager.deleteMessages( c, toDelete );
+	    try {
+		    return conversationManager.deleteMessages( c, toDelete );
+	    }
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+			                         "Attempting to delete specific messages" );
+	    }
     }
 
 
 	public ContactId
 	       getContactId( GroupId g )
-	throws DbException
+	throws GeneralException
 	{
-        return messagingManager.getContactId( g );
-    }
+		try {
+			return messagingManager.getContactId( g );
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+			                        "Attempting to get contact's internal ID" );
+		}
+	}
 
 
 	public GroupId
 	       getConversationId( ContactId c )
-	throws DbException
+	throws GeneralException
 	{
-		return messagingManager.getConversationId( c );
+		try {
+			return messagingManager.getConversationId( c );
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+			           "Attempting to get contact's internal conversation ID" );
+		}
 	}
 
 
 	public GroupCount
-	       getGroupCount( ContactId contactId )
-    throws DbException
+	       getGroupCount( ContactId contactId ) // TODO what's this exactly?
+    throws GeneralException
     {
-		return conversationManager.getGroupCount( contactId );
-	}
+	    try {
+		    return conversationManager.getGroupCount( contactId );
+	    }
+		catch (DbException e) {
+		    throw new GeneralException( e, true,
+		                            "Attempting to get contact's group count" );
+	    }
+    }
 
 
 	public Collection< ConversationMessageHeader >
 	       getMessageHeaders( ContactId c )
-	throws DbException
+	throws GeneralException
 	{
-        return conversationManager.getMessageHeaders( c );
-    }
+		try {
+			return conversationManager.getMessageHeaders( c );
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+			                            "Attempting to get message headers" );
+		}
+	}
 
 
 	@Nullable
 	public String
 	       getMessageText( MessageId m )
-    throws DbException
+    throws GeneralException
     {
-		return messagingManager.getMessageText( m );
+	    try {
+		    return messagingManager.getMessageText( m );
+	    }
+		catch (DbException e) {
+		    throw new GeneralException(e,true,"Attempting to get message text");
+	    }
     }
 
 
@@ -110,9 +152,14 @@ public class ConversationViewModel {
 	       setReadFlag( GroupId   g,
 	                    MessageId m,
 	                    boolean   read )
-    throws DbException
+    throws GeneralException
     {
-        conversationManager.setReadFlag( g, m, read );
+	    try {
+		    conversationManager.setReadFlag( g, m, read );
+	    }
+		catch (DbException e) {
+		    throw new GeneralException( e, true, "Attempting to set read flag");
+	    }
     }
 
 
@@ -120,19 +167,38 @@ public class ConversationViewModel {
 	       write( ContactId contactId,
 				  long      timestamp,
 				  String    text       )
-	throws DbException,
-	       FormatException,
-	       InvalidMessageException
+	throws GeneralException
 	{
-		if ( text.isBlank() )
-			throw new InvalidMessageException("Message text can't be blank");
+		if ( text == null || text.isBlank() ) {
+			throw new GeneralException(
+			       new InvalidMessageException("Message text can not be blank"),
+			       true, "Checking if text input is not blank" );
+		}
 
-		GroupId groupId = messagingManager.getConversationId( contactId );
+		GroupId groupId;
+		try {
+			groupId = messagingManager.getConversationId( contactId );
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true,
+			           "Attempting to get contact's internal conversation ID" );
+		}
 
-		PrivateMessage pm = pmFactory.createLegacyPrivateMessage( groupId,
-				                                                  timestamp,
-				                                                  text       );
-		messagingManager.addLocalMessage(pm);
+		PrivateMessage pm;
+		try {
+			pm = pmFactory.createLegacyPrivateMessage(groupId, timestamp, text);
+		}
+		catch (FormatException e) {
+			throw new GeneralException("The message format seems to be invalid",
+			                           "Attempting to create message", e, true);
+		}
+
+		try {
+			messagingManager.addLocalMessage( pm );
+		}
+		catch (DbException e) {
+			throw new GeneralException( e, true, "Attempting to send message" );
+		}
 	}
 
 
@@ -143,11 +209,12 @@ public class ConversationViewModel {
 	public void
 	       eventOccurred( Event e )
 	{
-		/*
 		BRAMBLE-API -------------------------
 
 		ContactAddedEvent
 		ContactAliasChangedEvent
+		*/
+	/*
 		ContactRemovedEvent
 		ContactVerifiedEvent
 		PendingContactAddedEvent
