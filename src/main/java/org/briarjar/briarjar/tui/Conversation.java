@@ -143,7 +143,7 @@ public class Conversation extends EventListenerViewModel {
 			{
 				try
 				{
-					String message = header.isLocal() ? "   " + cvm.getMessageText(header.getId()) : "=> " + cvm.getMessageText(header.getId());
+					String message = header.isLocal() ? "<- " + cvm.getMessageText(header.getId()) : "-> " + cvm.getMessageText(header.getId());
 
 					String metaData = "ID: " + header.getId() +
 							"\nisRead:" + header.isRead() +

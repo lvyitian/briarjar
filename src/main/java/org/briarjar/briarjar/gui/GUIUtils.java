@@ -1,7 +1,6 @@
 package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.Main;
-
 import javax.inject.Inject;
 
 import javafx.scene.control.Alert;
@@ -18,7 +17,8 @@ public class GUIUtils {
 	private final MessageListView messageListView;
 
 	@Inject
-	public GUIUtils(RootBorderPane rootBorderPane, SignInGridPane signInGridPane,
+	public GUIUtils(RootBorderPane rootBorderPane,
+	                SignInGridPane signInGridPane,
 	                SignUpGridPane signUpGridPane,
 	                MessagesBorderPane messagesBorderPane,
 	                AddContactDialog addContactDialog,
@@ -77,13 +77,18 @@ public class GUIUtils {
 	{
 		rootBorderPane.disableComponents(false);
 		rootBorderPane.setCenter(signUpGridPane);
+		relaunchApp();
 	}
 
 	public void switchToSignIn()
 	{
 		rootBorderPane.disableComponents(false);
 		rootBorderPane.setCenter(signInGridPane);
+		relaunchApp();
+	}
 
+	private void relaunchApp()
+	{
 		// relaunch app TODO is there a better solution
 		var briarJarApp = Main.launchApp();
 		var mainGUI = briarJarApp.getMainGUI();

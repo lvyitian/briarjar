@@ -32,7 +32,7 @@ public class AddContactDialog extends Stage {
 	private Scene scene;
 	private Clipboard clipboard;
 	private Label lbOwnLink;
-	private TextField handshakeLinkOfFriend, aliasOfFriend;
+	private TextField peerHandshakeLink, peerAlias;
 	private Button btCopyOwnLink, btPasteLinkOfFriend, btStartHandshake;
 
 	private final ContactViewModel cvm;
@@ -75,10 +75,10 @@ public class AddContactDialog extends Stage {
 			showAlert(Alert.AlertType.ERROR, e.getMessage());
 		}
 
-		handshakeLinkOfFriend = new TextField();
-		handshakeLinkOfFriend.setPromptText("Starts with briar://");
-		aliasOfFriend = new TextField();
-		aliasOfFriend.setPromptText("Enter Alias/Nickname of Friend here");
+		peerHandshakeLink = new TextField();
+		peerHandshakeLink.setPromptText("Starts with briar://");
+		peerAlias = new TextField();
+		peerAlias.setPromptText("Enter Alias/Nickname of Friend here");
 
 		btCopyOwnLink = new Button("Copy your Link");
 		btPasteLinkOfFriend = new Button("Paste Friends Link");
@@ -94,10 +94,10 @@ public class AddContactDialog extends Stage {
 		gridPane.add(lbOwnLink, 0, 0, 2, 1);
 		gridPane.add(btCopyOwnLink, 4, 0, 1, 1);
 
-		gridPane.add(handshakeLinkOfFriend, 0, 1, 2, 1);
+		gridPane.add(peerHandshakeLink, 0, 1, 2, 1);
 		gridPane.add(btPasteLinkOfFriend, 4, 1, 1, 1);
 
-		gridPane.add(aliasOfFriend, 0, 2, 2, 1);
+		gridPane.add(peerAlias, 0, 2, 2, 1);
 		gridPane.add(btStartHandshake, 4, 2, 1, 1);
 
 		setScene(scene);
@@ -114,7 +114,7 @@ public class AddContactDialog extends Stage {
 	{
 		try
 		{
-			cvm.addPendingContact(handshakeLinkOfFriend.getText(), aliasOfFriend.getText());
+			cvm.addPendingContact(peerHandshakeLink.getText(), peerAlias.getText());
 			close();
 		} catch (GeneralException e)
 		{
@@ -128,7 +128,7 @@ public class AddContactDialog extends Stage {
 		{
 			String s = clipboard.getString();
 			if(s.startsWith("briar://"))
-				handshakeLinkOfFriend.setText(s);
+				peerHandshakeLink.setText(s);
 			else
 				showAlert(Alert.AlertType.ERROR, "Not a briar:// Link!");
 		}

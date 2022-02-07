@@ -68,7 +68,7 @@ public class RootBorderPane extends BorderPane
 		mInfo 				= new Menu("Info");
 
 		miSignOut           = new MenuItem("Sign Out");
-		miDeleteAccount		= new MenuItem("Delete Account & Exit");
+		miDeleteAccount		= new MenuItem("Delete Account");
 		miExit 				= new MenuItem("Exit");
 		miShowContactList 	= new MenuItem("Show Contact List");
 		miAddContact        = new MenuItem("Add a new Contact");
@@ -97,6 +97,7 @@ public class RootBorderPane extends BorderPane
 		
 		setTop(menuBar);
 
+		// login or register view
 		if (lvm.accountExists())
 			setCenter(signInGridPane);
 		 else
@@ -162,7 +163,7 @@ public class RootBorderPane extends BorderPane
 	private void deleteAccount()
 	{
 		Alert deletionAlert = new Alert(AlertType.WARNING, "Deleting an account is permanent. You will lose all contacts, messages, etc. forever! Are you sure?", ButtonType.YES, ButtonType.CANCEL);
-		deletionAlert.setTitle("Delete Account & Exit");
+		deletionAlert.setTitle("Delete Account");
 		deletionAlert.setHeaderText(null);
 		deletionAlert.showAndWait();
 		
@@ -171,7 +172,6 @@ public class RootBorderPane extends BorderPane
 			if(lvm.hasDbKey()) {
 				lvm.deleteAccount();
 				guiUtils.switchToSignUp();
-				exit();
 			}
 			else
 				showAlert(AlertType.ERROR, "No DbKey");
@@ -184,7 +184,6 @@ public class RootBorderPane extends BorderPane
 		// FIXME: closing with "x" or Alt-F4 doesn't trigger exit() method!
 		if(lifeCycleViewModel.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
 		{
-			System.out.println(lifeCycleViewModel.getLifeCycleState());
 			try {
 				lifeCycleViewModel.stop();
 			} catch (Exception e) {

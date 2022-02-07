@@ -136,8 +136,6 @@ public class ContactList extends EventListenerViewModel {
 				{
 					contactListBox.addItem( getAliasForList(c.getId()),
 					                        () -> {
-						        /* TODO this block must be adapted (buggy when
-						            switching back from messages) */
 								tuiUtils.getConversation().setContact( c );
 								tuiUtils.switchWindow( window,
 										               TUIWindow.CONVERSATION );

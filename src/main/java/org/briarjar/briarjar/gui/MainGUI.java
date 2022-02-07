@@ -1,5 +1,9 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarproject.bramble.api.event.Event;
+import org.briarproject.bramble.api.event.EventBus;
+import org.briarproject.bramble.api.event.EventListener;
+
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -20,9 +24,8 @@ public class MainGUI extends Application {
 	private final GUIUtils guiUtils;
 
 	@Inject
-	public MainGUI(GUIUtils guiUtils)
+	public MainGUI(GUIUtils guiUtils, EventBus eventBus)
 	{
-		super();
 		this.guiUtils = guiUtils;
 	}
 
@@ -65,5 +68,4 @@ public class MainGUI extends Application {
 	{
 		return primaryStage;
 	}
-
 }

@@ -3,7 +3,6 @@ package org.briarjar.briarjar.gui;
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
-import org.briarproject.bramble.api.crypto.DecryptionException;
 
 import java.util.Objects;
 
