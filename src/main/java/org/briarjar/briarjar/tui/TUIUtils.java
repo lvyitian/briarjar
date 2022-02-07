@@ -7,7 +7,6 @@ import org.briarjar.briarjar.model.exceptions.GeneralException;
 
 import javax.inject.Inject;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class TUIUtils {
 
 	private TextGUI textGUI;

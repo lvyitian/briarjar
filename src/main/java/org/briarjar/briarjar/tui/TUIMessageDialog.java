@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class TUIMessageDialog {
 
 	private final MultiWindowTextGUI textGUI;

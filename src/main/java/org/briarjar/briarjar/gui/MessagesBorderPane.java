@@ -1,12 +1,12 @@
 package org.briarjar.briarjar.gui;
 
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.contact.event.ContactAddedEvent;
 import org.briarproject.bramble.api.contact.event.ContactRemovedEvent;
 import org.briarproject.bramble.api.contact.event.PendingContactAddedEvent;
-import org.briarproject.bramble.api.db.DbException;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.event.EventListener;

@@ -2,10 +2,7 @@ package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ConversationViewModel;
-import org.briarproject.bramble.api.FormatException;
 import org.briarproject.bramble.api.contact.Contact;
-import org.briarproject.bramble.api.db.DbException;
-import org.briarproject.bramble.api.sync.InvalidMessageException;
 
 import javax.inject.Inject;
 
