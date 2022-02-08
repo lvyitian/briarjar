@@ -97,6 +97,9 @@ public class ContactList extends EventListenerViewModel {
 					briarJarApp.getMainTUI().start();
 				}));
 
+		buttonPanel.addComponent( new Button("Exit", () -> System.exit(0)) );
+
+
 		// contentPanel.addComponent(...)
 		contentPanel.addComponent(buttonPanel.withBorder(Borders.singleLine()).setLayoutData(BorderLayout.Location.BOTTOM));
 	}

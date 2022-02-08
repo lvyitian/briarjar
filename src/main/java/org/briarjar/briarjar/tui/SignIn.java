@@ -93,6 +93,11 @@ public class SignIn extends EventListenerViewModel {
 					"Enter Passphrase",
 					"Enter your Account Passphrase", "");
 
+			if ( passphrase == null ) {
+				System.out.println("STOPPING BriarJar TUI …");
+				System.exit(0);
+			}
+
 			try {
 				lvm.signIn( passphrase );
 				lifeCycleViewModel.start();

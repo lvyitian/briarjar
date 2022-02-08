@@ -1,8 +1,6 @@
 package org.briarjar.briarjar.gui;
 
-import org.briarproject.bramble.api.event.Event;
-import org.briarproject.bramble.api.event.EventBus;
-import org.briarproject.bramble.api.event.EventListener;
+import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 
 import java.util.Objects;
 
@@ -24,7 +22,7 @@ public class MainGUI extends Application {
 	private final GUIUtils guiUtils;
 
 	@Inject
-	public MainGUI(GUIUtils guiUtils, EventBus eventBus)
+	public MainGUI(GUIUtils guiUtils)
 	{
 		this.guiUtils = guiUtils;
 	}
@@ -34,6 +32,8 @@ public class MainGUI extends Application {
 	{
 		try
 		{
+			primaryStage.setOnCloseRequest( event -> stop() );
+
 			MainGUI.primaryStage = primaryStage;
 			Scene sceneRoot = new Scene(guiUtils.getRootBorderPane(), 850, 560);
 			// sceneRoot.getStylesheets().add(getClass().getResource("briar.css").toExternalForm());
@@ -43,6 +43,7 @@ public class MainGUI extends Application {
 					getClass().getResource("/briar-icon.png")).toExternalForm();
 			primaryStage.getIcons().add(new Image(obj));
 			primaryStage.show();
+
 		} catch (Exception e)
 		{
 			showAlert(AlertType.ERROR, e.getMessage());
@@ -61,7 +62,8 @@ public class MainGUI extends Application {
 	@Override
 	public void stop()
 	{
-		guiUtils.getRootBorderPane().exit();
+		System.out.println("STOPPING BriarJar GUI …");
+		System.exit(0);
 	}
 
 	public static Stage getPrimaryStage()

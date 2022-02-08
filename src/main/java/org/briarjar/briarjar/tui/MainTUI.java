@@ -7,22 +7,17 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
-import org.briarjar.briarjar.model.exceptions.GeneralException;
-import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
-import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MainTUI implements Closeable  {
+public class MainTUI {
 
 	private final LoginViewModel lvm;
-	private final LifeCycleViewModel lifeCycleViewModel;
 	private MultiWindowTextGUI textGUI;
 	private final TUIUtils tuiUtils;
 
@@ -30,11 +25,9 @@ public class MainTUI implements Closeable  {
 
 	@Inject
 	public MainTUI( LoginViewModel     lvm,
-					LifeCycleViewModel lifeCycleViewModel,
 	                TUIUtils           tuiUtils            )
 	{
 		this.lvm = lvm;
-		this.lifeCycleViewModel = lifeCycleViewModel;
 		this.tuiUtils = tuiUtils;
 		init();
 	}
@@ -82,23 +75,5 @@ public class MainTUI implements Closeable  {
 		System.out.println("JRE Version (java.runtime.version): "+System.getProperty("java.runtime.version"));
 		System.out.println("Operating System (os.name): "+System.getProperty("os.name"));
 		System.out.println("==========================================");
-	}
-
-	public void stop() {
-		try
-		{
-			lifeCycleViewModel.stop();
-		} catch (GeneralException e)
-		{
-			e.printStackTrace(); //TODO
-		}
-	}
-
-	@Override
-	public void close() throws IOException {
-		stop();
-		if(lifeCycleViewModel.getLifeCycleState() ==
-				LifecycleManager.LifecycleState.STOPPING)
-			screen.stopScreen();
 	}
 }

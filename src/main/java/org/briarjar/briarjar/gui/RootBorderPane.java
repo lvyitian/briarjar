@@ -2,12 +2,10 @@ package org.briarjar.briarjar.gui;
 
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
-import org.briarproject.bramble.api.lifecycle.LifecycleManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
@@ -111,8 +109,11 @@ public class RootBorderPane extends BorderPane
 		// menu: mBriar
 		miSignOut.setOnAction(e -> signOut());
 		miDeleteAccount.setOnAction(e -> deleteAccount());
-		miExit.setOnAction(e -> exit());
-		
+		miExit.setOnAction( event -> {
+			System.out.println("STOPPING BriarJar GUI …");
+			System.exit(0);
+		} );
+
 		// menu: mChat
 		miShowContactList.setOnAction(e -> showContactList());
 		
@@ -179,21 +180,6 @@ public class RootBorderPane extends BorderPane
 		}
 	}
 
-	public void exit()
-	{
-		// FIXME: closing with "x" or Alt-F4 doesn't trigger exit() method!
-		if(lifeCycleViewModel.getLifeCycleState() == LifecycleManager.LifecycleState.RUNNING)
-		{
-			try {
-				lifeCycleViewModel.stop();
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				showAlert(AlertType.ERROR, e.getMessage());
-			}
-		}
-		Platform.exit();
-	}
-	
 	// ============================ menu: mChat ============================
 
 

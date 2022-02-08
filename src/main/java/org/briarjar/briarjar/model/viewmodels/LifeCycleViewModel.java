@@ -26,6 +26,8 @@ public class LifeCycleViewModel {
 	{
 		this.lifecycleManager = lifecycleManager;
 		this.accountManager   = accountManager;
+
+		addShutdownThread();
 	}
 
 
@@ -45,7 +47,7 @@ public class LifeCycleViewModel {
 	       start()
 	throws GeneralException
 	{
-		System.out.println( "Starting LifecycleManager Services..." ); //TEMP
+		System.out.println( "STARTING LifecycleManager Services …" );
 
 		String exTitle = "Attempting to start services";
 
@@ -75,7 +77,7 @@ public class LifeCycleViewModel {
 					          exTitle, e, true );
 		}
 
-		System.out.println("Starting LifecycleManager Services... done."); //TEMP
+		System.out.println("STARTING LifecycleManager Services … done");
 	}
 
 
@@ -83,19 +85,22 @@ public class LifeCycleViewModel {
 	       stop()
 	throws GeneralException
 	{
-		System.out.println( "Stopping LifecycleManager Services..." ); //TEMP
-
 		try {
-			lifecycleManager.stopServices();
-			lifecycleManager.waitForShutdown();
+			if ( lifecycleManager.getLifecycleState()
+			                     .isAfter(LifecycleState.STARTING) ) {
+				System.out.println( "STOPPING LifecycleManager Services …" );
+				lifecycleManager.stopServices();
+				lifecycleManager.waitForShutdown();
+				System.out.println("STOPPING LifecycleManager Services … done");
+			} else
+				System.out.println( "LifecycleManager doesn't need to STOP " +
+				                    "services since none are running" );
 		}
 		catch ( InterruptedException e ) {
 			throw new GeneralException(
 			                 "Services' shutdown got interrupted while waiting",
 			                 "Attempting to stop services" );
 		}
-
-		System.out.println( "Stopping LifecycleManager Services... done." ); //TEMP
 	}
 
 
@@ -105,4 +110,16 @@ public class LifeCycleViewModel {
 
 // private======================================================================
 
+	private void addShutdownThread()
+	{
+		Thread shutdownThread = new Thread(() -> {
+			try {
+				stop();
+			}
+			catch (GeneralException e) {
+				e.printStackTrace();
+			}
+		});
+		Runtime.getRuntime().addShutdownHook( shutdownThread );
+	}
 }

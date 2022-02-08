@@ -21,35 +21,32 @@ public class Main {
 
 	public static void main(String[] args)
 	{
-		// todo 4k: stop is deprecated
-		Runtime.getRuntime().addShutdownHook(
-				new Thread(Thread.currentThread()::stop));
+			if ( Arrays.stream(args).anyMatch( s -> s.equals("--tui") ||
+			                                        s.equals("tui")      ) )
+				ui = UserInterface.TERMINAL;
+			else
+				ui = UserInterface.GRAPHICAL;
+			// testing
+			//ui = UserInterface.TERMINAL;
 
+			var briarJarApp = launchApp();
 
-		if (Arrays.stream(args).anyMatch(s -> s.equals("--tui") || s.equals("tui")))
-			ui = UserInterface.TERMINAL;
-		else
-			ui = UserInterface.GRAPHICAL;
-		// testing
-		//ui = UserInterface.GRAPHICAL;
-		//ui = UserInterface.TERMINAL;
+			if ( ui.equals(UserInterface.GRAPHICAL) )
+			{
+				Platform.startup( () -> {
+					mainGUI = briarJarApp.getMainGUI();
+					mainGUI.init();
 
-		var briarJarApp = launchApp();
-
-		if (ui.equals(UserInterface.GRAPHICAL))
-		{
-			Platform.startup(() -> {
-				mainGUI = briarJarApp.getMainGUI();
-				mainGUI.init();
-
-				Stage stage = new Stage();
-				mainGUI.start(stage);
-			});
-		} else if (ui.equals(UserInterface.TERMINAL))
-		{
-			mainTUI = briarJarApp.getMainTUI();
-			mainTUI.start();
-		}
+					Stage stage = new Stage();
+					mainGUI.start( stage );
+				} );
+			} else if ( ui.equals(UserInterface.TERMINAL) )
+			{
+				mainTUI = briarJarApp.getMainTUI();
+				mainTUI.start();
+				System.out.println("STOPPING BriarJar TUI …");
+				System.exit(0);
+			}
 	}
 
 	/**
