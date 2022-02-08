@@ -324,17 +324,5 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			System.out.println("MessageAddedEvent...");
 			Platform.runLater(() -> messageListView.updateOnMessageAdded());
 		}
-
-		/*
-		else if (e instanceof MessagesSentEvent)
-		{
-			System.out.println("MessagesSentEvent...");
-			//Platform.runLater(() -> updateOnMessageSent(((MessagesSentEvent) e).getMessageIds()));
-		} else if (e instanceof MessageStateChangedEvent)
-		{
-			System.out.println("MessageStateChangedEvent...");
-			//Platform.runLater(() -> updateOnMessageStateChanged(((MessageStateChangedEvent) e).getMessageId());
-		}
-		 */
 	}
 }

@@ -1,7 +1,5 @@
 package org.briarjar.briarjar.gui;
 
-import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
-
 import java.util.Objects;
 
 import javax.inject.Inject;

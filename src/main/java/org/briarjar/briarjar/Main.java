@@ -13,38 +13,36 @@ import javafx.stage.Stage;
 
 public class Main {
 
-	private static UserInterface ui;
-
-	private static MainGUI mainGUI;
-	private static MainTUI mainTUI;
-
 	public static void main(String[] args)
 	{
-			if ( Arrays.stream(args).anyMatch( s -> s.equals("--tui") ||
+		UserInterface ui;
+		if ( Arrays.stream(args).anyMatch(s -> s.equals("--tui") ||
 			                                        s.equals("tui")      ) )
 				ui = UserInterface.TERMINAL;
 			else
 				ui = UserInterface.GRAPHICAL;
-			// testing
-			ui = UserInterface.TERMINAL;
+
+			// testing for terminal
+			//ui = UserInterface.TERMINAL;
 
 			var briarJarApp = launchApp();
 
-			if ( ui.equals(UserInterface.GRAPHICAL) )
+			if ( ui.equals(UserInterface.TERMINAL) )
+			{
+				MainTUI mainTUI = briarJarApp.getMainTUI();
+				mainTUI.start();
+				System.out.println("STOPPING BriarJar TUI …");
+				System.exit(0);
+
+			} else
 			{
 				Platform.startup( () -> {
-					mainGUI = briarJarApp.getMainGUI();
+					MainGUI mainGUI = briarJarApp.getMainGUI();
 					mainGUI.init();
 
 					Stage stage = new Stage();
 					mainGUI.start( stage );
 				} );
-			} else if ( ui.equals(UserInterface.TERMINAL) )
-			{
-				mainTUI = briarJarApp.getMainTUI();
-				mainTUI.start();
-				System.out.println("STOPPING BriarJar TUI …");
-				System.exit(0);
 			}
 	}
 

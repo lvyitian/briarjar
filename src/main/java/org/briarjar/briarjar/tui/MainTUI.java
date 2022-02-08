@@ -36,13 +36,11 @@ public class MainTUI {
 
 		try {
 			Screen screen = defaultTerminalFactory.createScreen();
-
 			screen.startScreen();
 
 			textGUI = new MultiWindowTextGUI(screen, new DefaultWindowManager(),
 							new EmptySpace(TextColor.ANSI.GREEN_BRIGHT));
-
-			setAllTextGUI();
+			setTextGUI();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -55,8 +53,7 @@ public class MainTUI {
 		}
 	}
 
-	// TODO is there a better solution
-	private void setAllTextGUI()
+	private void setTextGUI()
 	{
 		tuiUtils.setTextGUI(textGUI);
 	}
