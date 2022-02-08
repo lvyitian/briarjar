@@ -26,7 +26,7 @@ public class Main {
 			else
 				ui = UserInterface.GRAPHICAL;
 			// testing
-			//ui = UserInterface.TERMINAL;
+			ui = UserInterface.TERMINAL;
 
 			var briarJarApp = launchApp();
 

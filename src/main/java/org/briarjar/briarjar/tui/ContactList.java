@@ -54,13 +54,13 @@ public class ContactList extends EventListenerViewModel {
 	private void init()
 	{
 		onlineStatusHashMap = new HashMap<>();
-		noContactsLabel = new Label("No Contacts yet.");
+		noContactsLabel = new Label("No contacts yet.");
 
 		contentPanel = new Panel(new BorderLayout());
 		buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
 
 		window = new BasicWindow("Contact Selection");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Choose your peer or Add a new one")));
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Choose your peer or add a new one")));
 
 	}
 
@@ -71,7 +71,7 @@ public class ContactList extends EventListenerViewModel {
 		updateContactList();
 
 		buttonPanel.addComponent(
-				new Button("Add...", () ->
+				new Button("Add new", () ->
 						tuiUtils.switchWindow(window, TUIWindow.ADDCONTACT)));
 
 		buttonPanel.addComponent(

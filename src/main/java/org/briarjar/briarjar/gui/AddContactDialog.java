@@ -76,20 +76,20 @@ public class AddContactDialog extends Stage {
 		}
 
 		peerHandshakeLink = new TextField();
-		peerHandshakeLink.setPromptText("Starts with briar://");
+		peerHandshakeLink.setPromptText("Link starts with briar://");
 		peerAlias = new TextField();
-		peerAlias.setPromptText("Enter Alias/Nickname of Friend here");
+		peerAlias.setPromptText("Choose an alias for your friend here");
 
-		btCopyOwnLink = new Button("Copy your Link");
-		btPasteLinkOfFriend = new Button("Paste Friends Link");
-		btStartHandshake = new Button("Start Handshaking!");
+		btCopyOwnLink = new Button("Copy your link");
+		btPasteLinkOfFriend = new Button("Paste friends link");
+		btStartHandshake = new Button("Start handshaking");
 		scene = new Scene(gridPane, 800, 350);
 		clipboard = Clipboard.getSystemClipboard();
 	}
 
 	private void addComponents()
 	{
-		setTitle("Add a new Contact");
+		setTitle("Add a new contact");
 
 		gridPane.add(lbOwnLink, 0, 0, 2, 1);
 		gridPane.add(btCopyOwnLink, 4, 0, 1, 1);
@@ -130,10 +130,10 @@ public class AddContactDialog extends Stage {
 			if(s.startsWith("briar://"))
 				peerHandshakeLink.setText(s);
 			else
-				showAlert(Alert.AlertType.ERROR, "Not a briar:// Link!");
+				showAlert(Alert.AlertType.ERROR, "Not a briar:// link.");
 		}
 		else
-			showAlert(Alert.AlertType.ERROR, "No String in Clipboard");
+			showAlert(Alert.AlertType.ERROR, "There is no text in your clipboard.");
 	}
 
 	private void copyOwnLink()

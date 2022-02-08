@@ -48,7 +48,7 @@ public class SignUp extends EventListenerViewModel {
 		contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
 		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Create an Account")));
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please create an account")));
 	}
 
 	/* CREATE WINDOW */
@@ -58,13 +58,13 @@ public class SignUp extends EventListenerViewModel {
 
 		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
-				new Button("Enter Username", () ->
-						username = TextInputDialog.showDialog(textGUI, "Choose a Username", "No account has been found, please choose a username.", "alice")
+				new Button("Choose username", () ->
+						username = TextInputDialog.showDialog(textGUI, "Choose a username", "No account has been found, please choose a username.", "alice")
 				));
 
 		contentPanel.addComponent(
-				new Button("Enter Passphrase", () ->
-						passphrase = TextInputDialog.showPasswordDialog(textGUI, "Enter Passphrase", "Choose a strong passphrase, which will be used to decrypt your account", "")
+				new Button("Choose passphrase", () ->
+						passphrase = TextInputDialog.showPasswordDialog(textGUI, "Choose passphrase", "Choose a strong passphrase, which will be used to decrypt your account.", "")
 		));
 
 		// passphraseStrength = lvm.calcPassphraseStrength(passphrase);
@@ -86,10 +86,10 @@ public class SignUp extends EventListenerViewModel {
 								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 							}
 						} else
-							MessageDialog.showMessageDialog(textGUI, "Empty Passphrase", "Please enter a valid passphrase.",
+							MessageDialog.showMessageDialog(textGUI, "Empty passphrase", "Please enter a valid passphrase.",
 									MessageDialogButton.OK);
 					} else
-						MessageDialog.showMessageDialog(textGUI, "Empty Username", "Please choose a username.",
+						MessageDialog.showMessageDialog(textGUI, "Empty username", "Please choose a username.",
 								MessageDialogButton.OK);
 
 

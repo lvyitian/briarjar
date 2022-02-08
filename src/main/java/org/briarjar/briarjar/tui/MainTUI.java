@@ -21,8 +21,6 @@ public class MainTUI {
 	private MultiWindowTextGUI textGUI;
 	private final TUIUtils tuiUtils;
 
-	private Screen screen;
-
 	@Inject
 	public MainTUI( LoginViewModel     lvm,
 	                TUIUtils           tuiUtils            )
@@ -40,9 +38,8 @@ public class MainTUI {
 			Screen screen = defaultTerminalFactory.createScreen();
 
 			screen.startScreen();
-			this.screen = screen;
 
-			textGUI = new MultiWindowTextGUI(this.screen, new DefaultWindowManager(),
+			textGUI = new MultiWindowTextGUI(screen, new DefaultWindowManager(),
 							new EmptySpace(TextColor.ANSI.GREEN_BRIGHT));
 
 			setAllTextGUI();

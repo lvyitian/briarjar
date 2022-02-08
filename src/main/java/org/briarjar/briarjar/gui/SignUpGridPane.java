@@ -80,14 +80,14 @@ public class SignUpGridPane extends GridPane {
 
 		txtWelcome = new Text("Welcome to BriarJar!");
 		txtWelcome.setFont(Font.font("System", FontWeight.LIGHT, 20));
-		txtSubtext = new Text("Please Create an Account.");
+		txtSubtext = new Text("Please create an account.");
 		txtSubtext.setFont(Font.font("System", FontWeight.LIGHT, 15));
 		setHalignment(txtWelcome, HPos.CENTER);
 
 		tfUsername = new TextField("");
-		tfUsername.setPromptText("Enter a Username");
+		tfUsername.setPromptText("Enter a username");
 		passphraseField = new PasswordField();
-		passphraseField.setPromptText("Enter a Passphrase");
+		passphraseField.setPromptText("Enter a passphrase");
 
 		passphraseStrength = new Text("0.00");
 

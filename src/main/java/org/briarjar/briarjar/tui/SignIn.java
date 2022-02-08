@@ -43,10 +43,9 @@ public class SignIn extends EventListenerViewModel {
 
 	private void init()
 	{
-		contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-
-		window = new BasicWindow("Welcome back to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please Sign In with your Account")));
+		contentPanel = new Panel();
+		window = new BasicWindow();
+		window.setComponent(contentPanel);
 	}
 
 	/* CREATE WINDOW */
@@ -90,8 +89,8 @@ public class SignIn extends EventListenerViewModel {
 		while(repeatDialog)
 		{
 			String passphrase = TextInputDialog.showPasswordDialog(textGUI,
-					"Enter Passphrase",
-					"Enter your Account Passphrase", "");
+					"Enter passphrase",
+					"Enter your account passphrase", "");
 
 			if ( passphrase == null ) {
 				System.out.println("STOPPING BriarJar TUI …");

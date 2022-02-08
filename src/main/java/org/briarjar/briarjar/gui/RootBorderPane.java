@@ -162,7 +162,7 @@ public class RootBorderPane extends BorderPane
 	private void deleteAccount()
 	{
 		Alert deletionAlert = new Alert(AlertType.WARNING, "Deleting an account is permanent. You will lose all contacts, messages, etc. forever! Are you sure?", ButtonType.YES, ButtonType.CANCEL);
-		deletionAlert.setTitle("Delete Account");
+		deletionAlert.setTitle("Delete account");
 		deletionAlert.setHeaderText(null);
 		deletionAlert.showAndWait();
 		
@@ -173,7 +173,7 @@ public class RootBorderPane extends BorderPane
 				guiUtils.switchToSignUp();
 			}
 			else
-				showAlert(AlertType.ERROR, "No DbKey");
+				showAlert(AlertType.ERROR, "No DbKey found.");
 		}
 	}
 
@@ -185,12 +185,12 @@ public class RootBorderPane extends BorderPane
 		if(!messagesBorderPane.isContactListVisible())
 		{
 			messagesBorderPane.showContactList();
-			miShowContactList.setText("Hide Contact List");
+			miShowContactList.setText("Hide contact list");
 		}
 		else
 		{
 			messagesBorderPane.hideContactList();
-			miShowContactList.setText("Show Contact List");
+			miShowContactList.setText("Show contact list");
 		}
 	}
 	

@@ -73,7 +73,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		onlineStatusHashMap = new HashMap<>();
 
 		messageBox = new TextArea();
-		messageBox.setPromptText("Type in your private message here... Press Enter to send");
+		messageBox.setPromptText("Type in your private message here... (Press enter to send)");
 		messageBox.setPrefHeight(40);
 		messageBox.setMinHeight(40);
 		messageBox.setDisable(true);

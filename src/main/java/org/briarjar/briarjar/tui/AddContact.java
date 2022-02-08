@@ -44,7 +44,7 @@ public class AddContact {
 		peerAlias = "Bob";
 
 		window = new BasicWindow("Contact Manager");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Add a new Contact")));
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Add a new contact")));
 	}
 
 	/* CREATE WINDOW */
@@ -57,12 +57,12 @@ public class AddContact {
 
 		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
-				new Button("Copy your Handshake-Link to clipboard", () ->
+				new Button("Copy your handshake-link to clipboard", () ->
 				{
 					StringSelection selection = new StringSelection(ownLink);
 					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 					clipboard.setContents(selection, selection);
-					MessageDialog.showMessageDialog(textGUI, "Your Handshake-Link is in your clipboard", ownLink, MessageDialogButton.OK);
+					MessageDialog.showMessageDialog(textGUI, "Your handshake-link is in the clipboard", ownLink, MessageDialogButton.OK);
 				}));
 
 			System.out.println(ownLink);
@@ -71,17 +71,17 @@ public class AddContact {
 		}
 
 		contentPanel.addComponent(
-				new Button("Enter your friends Handshake-Link", () ->
-						peerHandshakeLink = TextInputDialog.showDialog(textGUI, "Enter Handshake-Link", "The Handshake-Link starts with briar://...", "")
+				new Button("Enter your friends handshake-link", () ->
+						peerHandshakeLink = TextInputDialog.showDialog(textGUI, "Enter handshake-link", "The Handshake-Link starts with briar://...", "")
 		));
 
 		contentPanel.addComponent(
-				new Button("Enter your friends Alias", () ->
-						peerAlias = TextInputDialog.showDialog(textGUI, "Enter Alias of Friend", "Choose how you want your Friend to be referred to", "Bob")
+				new Button("Choose an alias for your friends", () ->
+						peerAlias = TextInputDialog.showDialog(textGUI, "Enter alias of Friend", "Choose how you want your friend to be referred to", "Bob")
 		));
 
 		contentPanel.addComponent(
-				new Button("Start Handshake Process", () -> {
+				new Button("Start handshaking", () -> {
 					try
 					{
 						cvm.addPendingContact(peerHandshakeLink, peerAlias);

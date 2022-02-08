@@ -7,7 +7,6 @@ import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 import org.briarproject.briar.api.messaging.PrivateMessageHeader;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 

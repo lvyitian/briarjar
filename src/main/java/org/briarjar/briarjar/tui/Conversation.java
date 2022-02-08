@@ -12,15 +12,11 @@ import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
-import org.briarproject.bramble.api.sync.MessageId;
 import org.briarproject.bramble.api.sync.event.MessageAddedEvent;
-import org.briarproject.bramble.api.sync.event.MessageStateChangedEvent;
-import org.briarproject.bramble.api.sync.event.MessagesSentEvent;
 import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 import org.briarproject.briar.api.messaging.PrivateMessageHeader;
 import org.briarproject.briar.api.messaging.event.PrivateMessageReceivedEvent;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -92,7 +88,7 @@ public class Conversation extends EventListenerViewModel {
 						}
 					}
 					else
-						MessageDialog.showMessageDialog(textGUI, "Empty Messagebox", "Please write a message",
+						MessageDialog.showMessageDialog(textGUI, "Empty message", "Please write a message",
 									MessageDialogButton.OK);
 				}).setLayoutData(BorderLayout.Location.RIGHT));
 
@@ -110,7 +106,7 @@ public class Conversation extends EventListenerViewModel {
 
 		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
-				newMessagePanel.withBorder(Borders.singleLine("Write your Message...")).setLayoutData(BorderLayout.Location.BOTTOM));
+				newMessagePanel.withBorder(Borders.singleLine("Write your message...")).setLayoutData(BorderLayout.Location.BOTTOM));
 		contentPanel.addComponent(
 				chatBoxPanel.withBorder(Borders.singleLine("Chat")).setLayoutData(BorderLayout.Location.CENTER));
 
@@ -183,40 +179,6 @@ public class Conversation extends EventListenerViewModel {
 		}
 	}
 
-	private void updateOnMessageStateChanged(MessageId messageId)
-	{
-		/* TODO
-		if(contact != null)
-		{
-			try
-			{
-				// update headers
-				this.headers = cvm.getMessageHeaders(contact.getId()).stream().toList();
-
-				// re-add all message, whose IDs have changed
-				for (int i = 0; i < headers.size(); i++)
-				{
-					if (headers.get(i).getId().equals(messageId))
-					{
-						// TODO check this
-						chatBox.removeItem(i);
-						addMessageToChatBox(headers.get(i));
-					}
-				}
-
-			} catch (GeneralException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		 */
-	}
-
-	private void updateOnMessageSent(Collection<MessageId> messageIds)
-	{
-		// TODO
-	}
-
 	private void initChatBox()
 	{
 		chatBox.clearItems();
@@ -267,7 +229,7 @@ public class Conversation extends EventListenerViewModel {
 
 			chatBox.addItem(message, () ->
 					MessageDialog.showMessageDialog(textGUI,
-							"Message Metadata", finalMetaData,
+							"Message metadata", finalMetaData,
 							MessageDialogButton.Close));
 		} catch (GeneralException e)
 		{
@@ -364,7 +326,9 @@ public class Conversation extends EventListenerViewModel {
 		{
 			System.out.println("MessageAddedEvent...");
 			updateOnMessageAdded();
-		} else if (e instanceof MessagesSentEvent)
+		}
+		/* TODO handle these events
+		else if (e instanceof MessagesSentEvent)
 		{
 			System.out.println("MessagesSentEvent...");
 			updateOnMessageSent(((MessagesSentEvent) e).getMessageIds());
@@ -373,5 +337,6 @@ public class Conversation extends EventListenerViewModel {
 			System.out.println("MessageStateChangedEvent...");
 			updateOnMessageStateChanged(((MessageStateChangedEvent) e).getMessageId());
 		}
+		 */
 	}
 }

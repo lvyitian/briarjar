@@ -75,12 +75,12 @@ public class SignInGridPane extends GridPane {
 
 		txtWelcome = new Text("Welcome to BriarJar!");
 		txtWelcome.setFont(Font.font("System", FontWeight.LIGHT, 20));
-		txtSubtext = new Text("Please Sign In with your Account");
+		txtSubtext = new Text("Please Sign In with your account");
 		txtSubtext.setFont(Font.font("System", FontWeight.LIGHT, 15));
 		setHalignment(txtWelcome, HPos.CENTER);
 
 		passphraseField = new PasswordField();
-		passphraseField.setPromptText("Enter your Passphrase");
+		passphraseField.setPromptText("Enter your passphrase");
 
 
 		btSignIn = new Button("Sign In");
