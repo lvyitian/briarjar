@@ -12,13 +12,15 @@ import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
+import org.briarproject.bramble.api.sync.MessageId;
 import org.briarproject.bramble.api.sync.event.MessageAddedEvent;
 import org.briarproject.bramble.api.sync.event.MessageStateChangedEvent;
 import org.briarproject.bramble.api.sync.event.MessagesSentEvent;
 import org.briarproject.briar.api.conversation.ConversationMessageHeader;
-import org.briarproject.briar.api.messaging.event.AttachmentReceivedEvent;
+import org.briarproject.briar.api.messaging.PrivateMessageHeader;
 import org.briarproject.briar.api.messaging.event.PrivateMessageReceivedEvent;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,6 +36,8 @@ public class Conversation extends EventListenerViewModel {
 
 	private final ConversationViewModel cvm;
 	private Contact contact;
+
+	List<ConversationMessageHeader> headers;
 
 	@Inject
 	public Conversation(EventBus eventBus,
@@ -69,7 +73,7 @@ public class Conversation extends EventListenerViewModel {
 	private void createWindow()
 	{
 		removeAllComponents();
-		updateChatBox();
+		initChatBox();
 
 		window.setTitle("Chat with " + contact.getAlias());
 
@@ -131,42 +135,144 @@ public class Conversation extends EventListenerViewModel {
 
 	/* UPDATE CLASS */
 
-	private void updateChatBox()
+	private void updateOnMessageReceived(PrivateMessageHeader header)
+	{
+		if(contact != null)
+		{
+			try
+			{
+				// update headers
+				this.headers = cvm.getMessageHeaders(contact.getId()).stream().toList();
+
+				// add message
+				addMessageToChatBox(header);
+
+				// set selected
+				chatBox.setSelectedIndex(headers.size() - 1);
+			} catch (GeneralException e)
+			{
+				tuiUtils.show(e);
+			}
+		}
+	}
+
+	private void updateOnMessageAdded()
+	{
+		if(contact != null)
+		{
+			try
+			{
+				var updatedHeader = cvm.getMessageHeaders(contact.getId()).stream().toList();
+				// starting index = last index of header
+				int headersLastIndex = headers.size()-1;
+				for(int i = headersLastIndex; i < updatedHeader.size(); i++)
+				{
+					if(updatedHeader.get(i).getTimestamp() > headers.get(headersLastIndex).getTimestamp())
+						addMessageToChatBox(updatedHeader.get(i));
+				}
+
+				// update headers
+				this.headers = updatedHeader;
+
+				// set selected
+				chatBox.setSelectedIndex(headers.size() - 1);
+			} catch (GeneralException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void updateOnMessageStateChanged(MessageId messageId)
+	{
+		/* TODO
+		if(contact != null)
+		{
+			try
+			{
+				// update headers
+				this.headers = cvm.getMessageHeaders(contact.getId()).stream().toList();
+
+				// re-add all message, whose IDs have changed
+				for (int i = 0; i < headers.size(); i++)
+				{
+					if (headers.get(i).getId().equals(messageId))
+					{
+						// TODO check this
+						chatBox.removeItem(i);
+						addMessageToChatBox(headers.get(i));
+					}
+				}
+
+			} catch (GeneralException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		 */
+	}
+
+	private void updateOnMessageSent(Collection<MessageId> messageIds)
+	{
+		// TODO
+	}
+
+	private void initChatBox()
 	{
 		chatBox.clearItems();
-
-		/* loop through all messages and add them to the chatBox */
-		try
+		if(contact != null)
 		{
-			List<ConversationMessageHeader> headers = cvm.getMessageHeaders(contact.getId()).stream().toList();
-			for(var header : headers)
+			try
 			{
-				try
-				{
-					String message = header.isLocal() ? "<- " + cvm.getMessageText(header.getId()) : "-> " + cvm.getMessageText(header.getId());
-
-					String metaData = "ID: " + header.getId() +
-							"\nisRead:" + header.isRead() +
-							"\nisLocal: " + header.isLocal() +
-							"\nisSent: " + header.isSent() +
-							"\nisSeen: " + header.isSeen() +
-							"\nTimestamp: " + header.getTimestamp();
-
-					chatBox.addItem(message, () ->
-							MessageDialog.showMessageDialog(textGUI, "Message Metadata", metaData,
-									MessageDialogButton.Close));
-				} catch (GeneralException e)
-				{
-					e.printStackTrace();
-				}
+				headers =
+						cvm.getMessageHeaders(contact.getId()).stream()
+						   .toList();
+			/* loop through all messages and add them to the chatBox */
+			for (var header : headers)
+			{
+				addMessageToChatBox(header);
 			}
-			chatBox.setSelectedIndex(headers.size()-1);
-		} catch (GeneralException e)
-		{
-			e.printStackTrace();
+			} catch (GeneralException e)
+			{
+				e.printStackTrace();
+			}
+			chatBox.setSelectedIndex(headers.size() - 1);
 		}
 
 		chatBoxPanel.addComponent(chatBox);
+	}
+
+	private void addMessageToChatBox(ConversationMessageHeader header)
+	{
+		try {
+			String message = header.isLocal() ?
+					"<- " + cvm.getMessageText(header.getId()) :
+					"-> " + cvm.getMessageText(header.getId());
+
+			String metaData;
+			if(header.isLocal())
+			{
+				metaData = "ID: " + header.getId() +
+						"\nisRead:" + header.isRead() +
+						"\nisLocal: " + header.isLocal() +
+						"\nisSent: " + header.isSent() +
+						"\nisSeen: " + header.isSeen() +
+						"\nTimestamp: " + header.getTimestamp();
+			} else
+			{
+				metaData = "ID: " + header.getId() +
+							"\nTimestamp: " + header.getTimestamp();
+			}
+			String finalMetaData = metaData;
+
+			chatBox.addItem(message, () ->
+					MessageDialog.showMessageDialog(textGUI,
+							"Message Metadata", finalMetaData,
+							MessageDialogButton.Close));
+		} catch (GeneralException e)
+		{
+			tuiUtils.show(e);
+		}
 	}
 
 	/* SETTERS */
@@ -253,24 +359,19 @@ public class Conversation extends EventListenerViewModel {
 		if (e instanceof PrivateMessageReceivedEvent)
 		{
 			System.out.println("PrivateMessageReceivedEvent...");
-			updateChatBox();
-		} else if (e instanceof AttachmentReceivedEvent)
-		{
-			System.out.println("AttachmentReceivedEvent...");
-			updateChatBox();
+			updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
 		} else if (e instanceof MessageAddedEvent)
 		{
 			System.out.println("MessageAddedEvent...");
-			updateChatBox();
+			updateOnMessageAdded();
 		} else if (e instanceof MessagesSentEvent)
 		{
 			System.out.println("MessagesSentEvent...");
-			updateChatBox();
+			updateOnMessageSent(((MessagesSentEvent) e).getMessageIds());
 		} else if (e instanceof MessageStateChangedEvent)
 		{
 			System.out.println("MessageStateChangedEvent...");
-			updateChatBox();
+			updateOnMessageStateChanged(((MessageStateChangedEvent) e).getMessageId());
 		}
-
 	}
 }

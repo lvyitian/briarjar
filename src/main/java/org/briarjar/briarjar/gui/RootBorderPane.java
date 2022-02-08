@@ -28,7 +28,7 @@ public class RootBorderPane extends BorderPane
 				miSignOut, miDeleteAccount, miExit, 		// mBriar
 				miShowContactList, 						// mChat
 				miAddContact, miRemoveContact, miChangeContactDisplayName, 	//mContact
-				miCheckForUpdates, miAbout;				// miInfo
+				miAbout;				// miInfo
 	private ToolBar statusBar; 		// the bar at the bottom
 	
 	private SignInGridPane signInGridPane;
@@ -68,11 +68,10 @@ public class RootBorderPane extends BorderPane
 		miSignOut           = new MenuItem("Sign Out");
 		miDeleteAccount		= new MenuItem("Delete Account");
 		miExit 				= new MenuItem("Exit");
-		miShowContactList 	= new MenuItem("Show Contact List");
+		miShowContactList 	= new MenuItem("Hide Contact List"); // default
 		miAddContact        = new MenuItem("Add a new Contact");
 		miRemoveContact 	= new MenuItem("Remove this Contact");
 		miChangeContactDisplayName = new MenuItem("Change Contact Display-Name");
-		miCheckForUpdates 	= new MenuItem("Check for Updates");
 		miAbout 			= new MenuItem("About");
 		
 		statusBar 			= new ToolBar();
@@ -89,7 +88,7 @@ public class RootBorderPane extends BorderPane
 		mBriar.getItems().addAll(miSignOut, miDeleteAccount, miExit);
 		mChat.getItems().addAll(miShowContactList);
 		mContact.getItems().addAll(miAddContact, miRemoveContact, miChangeContactDisplayName);
-		mInfo.getItems().addAll(miCheckForUpdates, miAbout);
+		mInfo.getItems().addAll(miAbout);
 		
 		statusBar.getItems().setAll(new Label("Ready to chat!"));
 		
@@ -123,7 +122,6 @@ public class RootBorderPane extends BorderPane
 		miChangeContactDisplayName.setOnAction(e -> changeContactDisplayName());
 		
 		// menu: mInfo
-		miCheckForUpdates.setOnAction(e -> checkForUpdates());
 		miAbout.setOnAction(e -> about());
 
 	}
@@ -176,19 +174,11 @@ public class RootBorderPane extends BorderPane
 			}
 			else
 				showAlert(AlertType.ERROR, "No DbKey");
-			// TODO architectural changes... maybe remove the delete feat. completely?
 		}
 	}
 
 	// ============================ menu: mChat ============================
 
-
-	private void addContact()
-	{
-		AddContactDialog addContactDialog = guiUtils.getAddContactDialog();
-		addContactDialog.create();      // !!
-		addContactDialog.showAndWait();
-	}
 
 	private void showContactList()
 	{
@@ -205,7 +195,14 @@ public class RootBorderPane extends BorderPane
 	}
 	
 	// ============================ menu: mContact ============================
-	
+
+	private void addContact()
+	{
+		AddContactDialog addContactDialog = guiUtils.getAddContactDialog();
+		addContactDialog.create();      // !!
+		addContactDialog.showAndWait();
+	}
+
 	private void removeContact()
 	{
 		unimplemented();
@@ -217,15 +214,10 @@ public class RootBorderPane extends BorderPane
 	}
 	
 	// ============================ menu: mInfo ============================
-
-	private void checkForUpdates()
-	{
-		unimplemented();
-	}
 	
 	private void about()
 	{
-		// showAlert(AlertType.INFORMATION, "BriarJar GUI Mode. This development build is a GUI prototype. Try out the TUI Mode with --tui or tui option");
+		showAlert(AlertType.INFORMATION, "BriarJar GUI Mode. This development build is a GUI prototype. Try out the TUI Mode with --tui or tui option");
 	}
 	
 	public void setGUIUtils(GUIUtils guiUtils)

@@ -1,5 +1,8 @@
 package org.briarjar.briarjar.gui;
 
+import com.github.plushaze.traynotification.animations.Animations;
+import com.github.plushaze.traynotification.notification.TrayNotification;
+
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarproject.bramble.api.contact.Contact;
@@ -14,13 +17,11 @@ import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
 import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 import org.briarproject.bramble.api.sync.event.MessageAddedEvent;
-import org.briarproject.bramble.api.sync.event.MessageStateChangedEvent;
-import org.briarproject.bramble.api.sync.event.MessagesSentEvent;
-import org.briarproject.briar.api.messaging.event.AttachmentReceivedEvent;
 import org.briarproject.briar.api.messaging.event.PrivateMessageReceivedEvent;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,11 +29,13 @@ import javax.inject.Singleton;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 @Singleton
 public class MessagesBorderPane extends BorderPane implements EventListener {
@@ -44,6 +47,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	private VBox contactList;
 	private boolean isContactListVisible;
 	private GUIUtils guiUtils;
+	private Image briarLogo;
 
 	private HashMap<ContactId, Boolean > onlineStatusHashMap;
 
@@ -70,8 +74,9 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		messageBox = new TextArea();
 		messageBox.setPromptText("Type in your private message here... Press Enter to send");
-		messageBox.setPrefHeight(35);
-		messageBox.setMinHeight(35);
+		messageBox.setPrefHeight(40);
+		messageBox.setMinHeight(40);
+		messageBox.setDisable(true);
 
 		contactList = new VBox();
 		contactList.setPrefWidth(110);
@@ -79,6 +84,9 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		messageListView = guiUtils.getMessageListView();
 
+		String obj = Objects.requireNonNull(
+				getClass().getResource("/briar-icon.png")).toExternalForm();
+		briarLogo = new Image(obj);
 		// statusText = new Label("Select a contact to show status.");
 	}
 
@@ -117,11 +125,20 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	 * This method will be used in the RootBorderPane.
 	 */
 	public void showContactList()
-
 	{
-		// TODO:
-		// 1. "translate" all Contacts into Buttons/Items of a ListView<String>
-		// 2. add all contacts to contactList
+		updateContactList();
+		setLeft(contactList);
+		isContactListVisible = true;
+	}
+
+	public void hideContactList()
+	{
+		setLeft(null);
+		isContactListVisible = false;
+	}
+
+	private void updateContactList()
+	{
 		try
 		{
 			contactList.getChildren().clear();
@@ -135,7 +152,8 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 				b.setTextFill(getColorsForList(c.getId()));
 				b.setOnAction(e -> {
 					messageListView.setContact(c);
-					messageListView.update();
+					messageListView.initListView();
+					messageBox.setDisable(false);
 				});
 				contactList.getChildren().add(b);
 			}
@@ -143,21 +161,31 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		{
 			e.printStackTrace();
 		}
-
-		setLeft(contactList);
-		isContactListVisible = true;
-	}
-
-	public void hideContactList()
-	{
-		setLeft(null);
-		isContactListVisible = false;
 	}
 
 	private Color getColorsForList( ContactId id )
 	{
 		return onlineStatusHashMap
-				.getOrDefault( id, false ) ? Color.LIMEGREEN : Color.GREY;
+				.getOrDefault( id, false ) ? Color.LIMEGREEN : Color.DIMGREY;
+	}
+
+	private void notifyOnNewMessage(ContactId sender)
+	{
+		TrayNotification notification = new TrayNotification();
+		String alias = "";
+		try
+		{
+			alias = cvm.getContact(sender).getAlias();
+		} catch (GeneralException ex)
+		{
+			ex.printStackTrace();
+		}
+
+		notification.setTitle("New message");
+		notification.setMessage(alias + " sent you a private message.");
+		notification.setImage(briarLogo);
+		notification.setAnimation(Animations.FADE);
+		notification.showAndDismiss(Duration.seconds(2));
 	}
 
 	public void setGUIUtils(GUIUtils guiUtils)
@@ -245,21 +273,21 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		{
 			System.out.println("ContactAddedEvent...");
 			Platform.runLater(
-					this::showContactList
+					this::updateContactList
 			);
 		}
 		else if (e instanceof ContactRemovedEvent)
 		{
 			System.out.println("ContactRemovedEvent...");
 			Platform.runLater(
-					this::showContactList
+					this::updateContactList
 			);
 		}
 		else if (e instanceof PendingContactAddedEvent)
 		{
 			System.out.println("PendingContactAddedEvent...");
 			Platform.runLater(
-					this::showContactList
+					this::updateContactList
 			);
 		}
 		else if (e instanceof ContactConnectedEvent)
@@ -269,56 +297,44 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 					((ContactConnectedEvent) e).getContactId(), true );
 
 			Platform.runLater(
-					this::showContactList
+					this::updateContactList
 			);
 		}
 		else if (e instanceof ContactDisconnectedEvent)
 		{
 			System.out.println("ContactDisconnectedEvent...");
-
 			onlineStatusHashMap.put(
 					((ContactDisconnectedEvent) e).getContactId(), false );
-
 			Platform.runLater(
-					this::showContactList
+					this::updateContactList
 			);
 		}
-
 
 		/* CONVERSATION RELATED EVENTS */
 
 		if (e instanceof PrivateMessageReceivedEvent)
 		{
 			System.out.println("PrivateMessageReceivedEvent...");
-			Platform.runLater(
-					() -> messageListView.update()
-			);
-
-		} else if (e instanceof AttachmentReceivedEvent)
-		{
-			System.out.println("AttachmentReceivedEvent...");
-			Platform.runLater(
-					() -> messageListView.update()
-			);
+			Platform.runLater(() -> {
+				notifyOnNewMessage(((PrivateMessageReceivedEvent) e).getContactId());
+				messageListView.updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
+			});
 		} else if (e instanceof MessageAddedEvent)
 		{
 			System.out.println("MessageAddedEvent...");
-			Platform.runLater(
-					() -> messageListView.update()
-			);
-		} else if (e instanceof MessagesSentEvent)
+			Platform.runLater(() -> messageListView.updateOnMessageAdded());
+		}
+
+		/*
+		else if (e instanceof MessagesSentEvent)
 		{
 			System.out.println("MessagesSentEvent...");
-			Platform.runLater(
-					() -> messageListView.update()
-			);
+			//Platform.runLater(() -> updateOnMessageSent(((MessagesSentEvent) e).getMessageIds()));
 		} else if (e instanceof MessageStateChangedEvent)
 		{
 			System.out.println("MessageStateChangedEvent...");
-			Platform.runLater(
-					() -> messageListView.update()
-			);
+			//Platform.runLater(() -> updateOnMessageStateChanged(((MessageStateChangedEvent) e).getMessageId());
 		}
-
+		 */
 	}
 }

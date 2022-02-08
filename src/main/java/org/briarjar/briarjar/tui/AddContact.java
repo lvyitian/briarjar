@@ -1,12 +1,19 @@
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+
 import javax.inject.Inject;
 
 public class AddContact {
@@ -50,9 +57,14 @@ public class AddContact {
 
 		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
-				new Button("Get your own Handshake-Link", () ->
-						MessageDialog.showMessageDialog(textGUI, "Share your Handshake-Link", ownLink, MessageDialogButton.OK)
-				));
+				new Button("Copy your Handshake-Link to clipboard", () ->
+				{
+					StringSelection selection = new StringSelection(ownLink);
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(selection, selection);
+					MessageDialog.showMessageDialog(textGUI, "Your Handshake-Link is in your clipboard", ownLink, MessageDialogButton.OK);
+				}));
+
 			System.out.println(ownLink);
 		} catch (GeneralException e) {
 			tuiUtils.show(e);

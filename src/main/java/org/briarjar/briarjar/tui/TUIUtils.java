@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 public class TUIUtils {
 
-	private TextGUI textGUI;
+	private MultiWindowTextGUI textGUI;
 	private TUIMessageDialog tuiMessageDialog;
 
 	private final SignIn signIn;
@@ -53,9 +53,18 @@ public class TUIUtils {
 	public void setTextGUI( MultiWindowTextGUI textGUI )
 	{
 		this.textGUI = textGUI;
+		setAllTextGui();
+	}
 
+	private void setAllTextGui()
+	{
 		//TODO not that beautiful here, but in the current structure it's a possibility
 		tuiMessageDialog = new TUIMessageDialog( textGUI );
+		signIn.setTextGUI(textGUI);
+		signUp.setTextGUI(textGUI);
+		addContact.setTextGUI(textGUI);
+		contactList.setTextGUI(textGUI);
+		conversation.setTextGUI(textGUI);
 	}
 
 	public static void addHorizontalSeparator(Panel contentPanel) {
@@ -130,10 +139,7 @@ public class TUIUtils {
 	 * TUIUtils offers us getters to the windows!
 	 */
 
-	public SignIn getSignIn()
-	{
-		return signIn;
-	}
+	// public SignIn getSignIn() { return signIn; }
 
 	public SignUp getSignUp()
 	{
@@ -145,10 +151,7 @@ public class TUIUtils {
 		return contactList;
 	}
 
-	public AddContact getAddContact()
-	{
-		return addContact;
-	}
+	// public AddContact getAddContact() { return addContact; }
 
 	public Conversation getConversation() { return conversation; }
 

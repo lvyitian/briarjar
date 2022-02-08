@@ -62,11 +62,6 @@ public class MainTUI {
 	private void setAllTextGUI()
 	{
 		tuiUtils.setTextGUI(textGUI);
-		tuiUtils.getSignIn().setTextGUI(textGUI);
-		tuiUtils.getSignUp().setTextGUI(textGUI);
-		tuiUtils.getAddContact().setTextGUI(textGUI);
-		tuiUtils.getContactList().setTextGUI(textGUI);
-		tuiUtils.getConversation().setTextGUI(textGUI);
 	}
 
 	public void init() {

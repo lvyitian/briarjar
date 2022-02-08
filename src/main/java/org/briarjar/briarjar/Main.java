@@ -6,7 +6,6 @@ import org.briarjar.briarjar.tui.MainTUI;
 import org.briarproject.bramble.BrambleCoreEagerSingletons;
 import org.briarproject.briar.BriarCoreEagerSingletons;
 
-import java.io.File;
 import java.util.Arrays;
 
 import javafx.application.Platform;
@@ -60,10 +59,4 @@ public class Main {
 		BriarCoreEagerSingletons.Helper.injectEagerSingletons(briarJarApp);
 		return briarJarApp;
 	}
-
-	public static File getDataDir()
-	{//todo
-		return new File( System.getProperty("user.home")+"/.briar" );
-	}
-
 }

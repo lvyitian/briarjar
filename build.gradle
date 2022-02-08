@@ -11,7 +11,11 @@ plugins {
 
 group 'org.briarjar'
 version '0.1'
-mainClassName = 'org.briarjar.briarjar.Main'
+
+application {
+    mainClassName = 'org.briarjar.briarjar.Main'
+    applicationName = 'briarjar'
+}
 
 allprojects {
     repositories {
@@ -21,10 +25,12 @@ allprojects {
     }
 }
 
+
 javafx {
     version = "17"
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
+
 
 dependencies {
 
