@@ -7,11 +7,8 @@ import javax.inject.Singleton;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
-import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 
 @Singleton
 public class MainGUI extends Application {
@@ -33,18 +30,20 @@ public class MainGUI extends Application {
 			primaryStage.setOnCloseRequest( event -> stop() );
 
 			MainGUI.primaryStage = primaryStage;
-			Scene sceneRoot = new Scene(guiUtils.getRootBorderPane(), 850, 560);
-			// sceneRoot.getStylesheets().add(getClass().getResource("briar.css").toExternalForm());
+			Scene sceneRoot = new Scene(guiUtils.getRootStackPane(), 850, 560);
 			primaryStage.setScene(sceneRoot);
 			primaryStage.setTitle("BriarJar GUI Mode (development version)");
-			String obj = Objects.requireNonNull(
-					getClass().getResource("/briar-icon.png")).toExternalForm();
-			primaryStage.getIcons().add(new Image(obj));
+			String img = Objects.requireNonNull(
+					getClass().getResource("/images/briar-icon.png")).toExternalForm();
+			primaryStage.getIcons().add(new Image(img));
+			String css = Objects.requireNonNull(
+					getClass().getResource("/application.css")).toExternalForm();
+			sceneRoot.getStylesheets().add(css);
 			primaryStage.show();
 
 		} catch (Exception e)
 		{
-			showAlert(AlertType.ERROR, e.getMessage());
+			guiUtils.showMaterialDialog("Error", e.getMessage());
 		}
 	}
 

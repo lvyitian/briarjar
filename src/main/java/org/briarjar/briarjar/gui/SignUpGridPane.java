@@ -1,5 +1,8 @@
 package org.briarjar.briarjar.gui;
 
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
+
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
@@ -11,10 +14,7 @@ import javax.inject.Inject;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -27,7 +27,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 
 public class SignUpGridPane extends GridPane {
 
@@ -37,8 +36,8 @@ public class SignUpGridPane extends GridPane {
 	private ImageView imgWelcome;
 	private Text txtWelcome;
 	private Text txtSubtext;
-	private TextField tfUsername;
-	private PasswordField passphraseField;
+	private JFXTextField tfUsername;
+	private JFXPasswordField passphraseField;
 	private Text passphraseStrength;
 	private Button btSignUp;
 	private GUIUtils guiUtils;
@@ -70,28 +69,27 @@ public class SignUpGridPane extends GridPane {
 		try
 		{
 			String obj = Objects.requireNonNull(
-					getClass().getResource("/briar-icon.png")).toExternalForm();
+					getClass().getResource("/images/briar-icon.png")).toExternalForm();
 			imgWelcome = new ImageView(new Image(obj));
 		} catch (Exception e)
 		{
-			showAlert(Alert.AlertType.ERROR,
-					"Configured welcome image not found.");
+			guiUtils.showMaterialDialog("Image not found.", e.getMessage());
 		}
 
 		txtWelcome = new Text("Welcome to BriarJar!");
-		txtWelcome.setFont(Font.font("System", FontWeight.LIGHT, 20));
+		txtWelcome.setFont(Font.font("Arial", FontWeight.LIGHT, 20));
 		txtSubtext = new Text("Please create an account.");
-		txtSubtext.setFont(Font.font("System", FontWeight.LIGHT, 15));
+		txtSubtext.setFont(Font.font("Arial", FontWeight.LIGHT, 15));
 		setHalignment(txtWelcome, HPos.CENTER);
 
-		tfUsername = new TextField("");
+		tfUsername = new JFXTextField("");
 		tfUsername.setPromptText("Enter a username");
-		passphraseField = new PasswordField();
+		passphraseField = new JFXPasswordField();
 		passphraseField.setPromptText("Enter a passphrase");
 
 		passphraseStrength = new Text("0.00");
 
-		btSignUp = new Button("Sign Up");
+		btSignUp = new Button("Sign up");
 	}
 
 	private void addComponents()
@@ -121,14 +119,10 @@ public class SignUpGridPane extends GridPane {
 		try
 		{
 			lvm.signUp(tfUsername.getText(), passphraseField.getText());
-
-			//todo 4k offline mode possible? // if (...
 			lifeCycleViewModel.start();
-
 		} catch (GeneralException e)
 		{
-			showAlert(Alert.AlertType.ERROR,
-					"Startup Error: " + e.getMessage());
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 
 		btSignUp.setDisable(true);

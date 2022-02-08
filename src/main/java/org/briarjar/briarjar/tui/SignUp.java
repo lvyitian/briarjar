@@ -71,7 +71,7 @@ public class SignUp extends EventListenerViewModel {
 		// passphraseStrength = lvm.calcPassphraseStrength(passphrase);
 
 		contentPanel.addComponent(
-				new Button("Sign Up", () -> {
+				new Button("Sign up", () -> {
 					if(username != null && !username.isEmpty())
 					{
 						if(passphrase != null && !passphrase.isEmpty())

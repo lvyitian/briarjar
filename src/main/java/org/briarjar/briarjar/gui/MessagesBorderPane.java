@@ -2,6 +2,8 @@ package org.briarjar.briarjar.gui;
 
 import com.github.plushaze.traynotification.animations.Animations;
 import com.github.plushaze.traynotification.notification.TrayNotification;
+import com.jfoenix.controls.*;
+import com.jfoenix.controls.events.JFXDialogEvent;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
@@ -27,8 +29,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -42,7 +46,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 	private final ContactViewModel cvm;
 
-	private TextArea messageBox;
+	private JFXTextArea messageBox;
 	private MessageListView messageListView;
 	private VBox contactList;
 	private boolean isContactListVisible;
@@ -70,12 +74,16 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 	private void initComponents()
 	{
+
 		onlineStatusHashMap = new HashMap<>();
 
-		messageBox = new TextArea();
+		messageBox = new JFXTextArea();
+		messageBox.setLabelFloat(true);
 		messageBox.setPromptText("Type in your private message here... (Press enter to send)");
-		messageBox.setPrefHeight(40);
-		messageBox.setMinHeight(40);
+		messageBox.setTooltip(new Tooltip("Click on a user or add a new one from the Chat menu"));
+		messageBox.setPrefHeight(50);
+		messageBox.setMinHeight(50);
+		messageBox.setFocusColor(Color.LIMEGREEN);
 		messageBox.setDisable(true);
 
 		contactList = new VBox();
@@ -85,9 +93,10 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		messageListView = guiUtils.getMessageListView();
 
 		String obj = Objects.requireNonNull(
-				getClass().getResource("/briar-icon.png")).toExternalForm();
+				getClass().getResource("/images/briar-icon.png")).toExternalForm();
 		briarLogo = new Image(obj);
 		// statusText = new Label("Select a contact to show status.");
+		setPadding(new Insets(7));
 	}
 
 
@@ -127,13 +136,13 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	public void showContactList()
 	{
 		updateContactList();
-		setLeft(contactList);
+		guiUtils.getRootBorderPane().setLeft(contactList);
 		isContactListVisible = true;
 	}
 
 	public void hideContactList()
 	{
-		setLeft(null);
+		guiUtils.getRootBorderPane().setLeft(null);
 		isContactListVisible = false;
 	}
 
@@ -147,9 +156,10 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 			for (Contact c : contacts)
 			{
-				Button b = new Button(c.getAlias());
+				JFXButton b = new JFXButton(c.getAlias());
 				b.setPrefWidth(contactList.getPrefWidth());
 				b.setTextFill(getColorsForList(c.getId()));
+				b.setRipplerFill(getColorsForList(c.getId()));
 				b.setOnAction(e -> {
 					messageListView.setContact(c);
 					messageListView.initListView();
@@ -159,7 +169,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			}
 		} catch (GeneralException e)
 		{
-			e.printStackTrace();
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 	}
 
@@ -169,6 +179,130 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 				.getOrDefault( id, false ) ? Color.LIMEGREEN : Color.DIMGREY;
 	}
 
+	public void contactRemovalDialog()
+	{
+		if(messageListView.getContact() != null)
+		{
+			BoxBlur blur = new BoxBlur(3, 3, 3);
+			JFXDialogLayout dialogLayout = new JFXDialogLayout();
+			JFXDialog dialog =
+					new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
+							JFXDialog.DialogTransition.TOP);
+			JFXButton remove = new JFXButton("Remove");
+			JFXButton cancel = new JFXButton("Cancel");
+
+			remove.setOnAction(e -> {
+				try
+				{
+					cvm.removeAcceptedContact(
+							messageListView.getContact().getId());
+					messageListView.setContact(null);
+					updateContactList();
+					dialog.close();
+				} catch (GeneralException ex)
+				{
+					guiUtils.showMaterialDialog(ex.getTitle(), ex.getMessage());
+				}
+			});
+
+			cancel.setOnAction(e -> dialog.close());
+
+			dialogLayout.setActions(remove, cancel);
+			dialogLayout.setHeading(new Label("Removing contact"));
+			dialogLayout.setBody(
+					new Label("Are you sure you want to remove this contact?"));
+			dialog.show();
+
+			dialog.setOnDialogClosed(
+					(JFXDialogEvent event1) -> guiUtils.getRootBorderPane()
+					                                   .setEffect(null));
+			guiUtils.getRootBorderPane().setEffect(blur);
+		} else
+			guiUtils.showMaterialDialog("Removing contact", "No contact to remove selected.");
+	}
+
+	public void deleteAllMessagesDialog()
+	{
+		if(messageListView.getContact() != null)
+		{
+			BoxBlur blur = new BoxBlur(3, 3, 3);
+			JFXDialogLayout dialogLayout = new JFXDialogLayout();
+			JFXDialog dialog =
+					new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
+							JFXDialog.DialogTransition.TOP);
+			JFXButton wipe = new JFXButton("Wipe");
+			JFXButton cancel = new JFXButton("Cancel");
+
+			wipe.setOnAction(e -> {
+				messageListView.deleteAllMessages();
+				messageListView.initListView(); // re-init
+				dialog.close();
+			});
+
+			cancel.setOnAction(e -> dialog.close());
+
+			dialogLayout.setActions(wipe, cancel);
+			dialogLayout.setHeading(new Label("Wiping chat"));
+			dialogLayout.setBody(
+					new Label("You are about to wipe your chat history with " +
+							messageListView.getContact().getAlias() + ". Are you sure?"));
+			dialog.show();
+
+			dialog.setOnDialogClosed(
+					(JFXDialogEvent event1) -> guiUtils.getRootBorderPane()
+					                                   .setEffect(null));
+			guiUtils.getRootBorderPane().setEffect(blur);
+		} else
+			guiUtils.showMaterialDialog("Wiping chat",
+					"Please open the chat, which you want to wipe.");
+	}
+
+	public void changeContactAlias()
+	{
+		if(messageListView.getContact() != null)
+		{
+			BoxBlur blur = new BoxBlur(3, 3, 3);
+			JFXDialogLayout dialogLayout = new JFXDialogLayout();
+			JFXDialog dialog =
+					new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
+							JFXDialog.DialogTransition.TOP);
+			JFXButton change = new JFXButton("Change");
+			JFXButton cancel = new JFXButton("Cancel");
+
+			JFXTextField newAlias = new JFXTextField();
+			newAlias.setPromptText("Change alias of " + messageListView.getContact().getAlias() + " here");
+			newAlias.setLabelFloat(true);
+
+			change.setOnAction(e -> {
+				try
+				{
+					cvm.setContactAlias(messageListView.getContact().getId(), newAlias.getText());
+					updateContactList();
+					dialog.close();
+				} catch (GeneralException ex)
+				{
+					guiUtils.showMaterialDialog(ex.getTitle(), ex.getMessage());
+				}
+			});
+
+			cancel.setOnAction(e -> dialog.close());
+
+			dialogLayout.setActions(change, cancel);
+			dialogLayout.setHeading(new Label("Changing alias"));
+			dialogLayout.setBody(newAlias);
+			dialog.show();
+
+			dialog.setOnDialogClosed(
+					(JFXDialogEvent event1) -> guiUtils.getRootBorderPane()
+					                                   .setEffect(null));
+			guiUtils.getRootBorderPane().setEffect(blur);
+		} else
+			guiUtils.showMaterialDialog("Changing alias",
+					"Please open the chat, which you want to wipe.");
+
+	}
+
+
 	private void notifyOnNewMessage(ContactId sender)
 	{
 		TrayNotification notification = new TrayNotification();
@@ -176,16 +310,16 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		try
 		{
 			alias = cvm.getContact(sender).getAlias();
-		} catch (GeneralException ex)
+		} catch (GeneralException e)
 		{
-			ex.printStackTrace();
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 
 		notification.setTitle("New message");
 		notification.setMessage(alias + " sent you a private message.");
 		notification.setImage(briarLogo);
 		notification.setAnimation(Animations.FADE);
-		notification.showAndDismiss(Duration.seconds(2));
+		notification.showAndDismiss(Duration.seconds(1.5));
 	}
 
 	public void setGUIUtils(GUIUtils guiUtils)
@@ -208,65 +342,6 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	@NotNullByDefault
 	public void eventOccurred(Event e)
 	{
-		/*
-		BRAMBLE-API -------------------------
-
-		ContactAddedEvent
-		ContactAliasChangedEvent
-		ContactRemovedEvent
-		ContactVerifiedEvent
-		PendingContactAddedEvent
-		PendingContactRemovedEvent
-		PendingContactStateChangedEvent
-
-		IdentityAddedEvent
-		IdentityRemovedEvent
-
-		KeyAgreementAbortedEvent
-		KeyAgreementFailedEvent
-		KeyAgreementFinishedEvent
-		KeyAgreementListeningEvent
-		KeyAgreementStartedEvent
-		KeyAgreementStoppedListeningEvent
-		KeyAgreementWaitingEvent
-
-		NetworkStatusEvent
-
-		ConnectionClosedEvent
-		ConnectionOpenedEvent
-		ContactConnectedEvent
-		ContactDisconnectedEvent
-
-		RendezvousConnectionClosedEvent
-		RendezvousConnectionOpenedEvent
-		RendezvousPollEvent
-
-		SettingsUpdatedEvent
-
-		MessageAddedEvent
-		MessageRequestedEvent
-		MessagesAckedEvent
-		MessageSharedEvent
-		MessagesSentEvent
-		MessageStateChangedEvent
-		MessageToAckEvent
-		MessageToRequestEvent
-
-
-		BRIAR-API ---------------------------
-
-		ConversationMessagesDeletedEvent
-
-		ConversationMessageReceivedEvent
-
-		IntroductionAbortedEvent
-		IntroductionRequestReceivedEvent
-		IntroductionResponseReceivedEvent
-
-		AttachmentReceivedEvent
-		PrivateMessageReceivedEvent
-		*/
-
 		/* CONTACT MANAGEMENT RELATED EVENTS */
 
 		if (e instanceof ContactAddedEvent)
@@ -312,14 +387,14 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		/* CONVERSATION RELATED EVENTS */
 
-		if (e instanceof PrivateMessageReceivedEvent)
+		if (e instanceof PrivateMessageReceivedEvent && messageListView.getContact() != null)
 		{
 			System.out.println("PrivateMessageReceivedEvent...");
 			Platform.runLater(() -> {
 				notifyOnNewMessage(((PrivateMessageReceivedEvent) e).getContactId());
 				messageListView.updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
 			});
-		} else if (e instanceof MessageAddedEvent)
+		} else if (e instanceof MessageAddedEvent && messageListView.getContact() != null)
 		{
 			System.out.println("MessageAddedEvent...");
 			Platform.runLater(() -> messageListView.updateOnMessageAdded());

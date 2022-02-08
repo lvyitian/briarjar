@@ -41,20 +41,26 @@ dependencies {
     implementation project(path: ':briar:bramble-java', configuration: 'default')
 
     implementation 'com.googlecode.lanterna:lanterna:3.1.1'
+
+    implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
+
 }
 
 // Fix for "Unsupported JavaFX configuration" warning
-run   {
-    doFirst   {
-        jvmArgs   =   [
-                '--module-path', classpath.asPath,
-                '--add-modules', 'javafx.controls',
-                '--add-modules', 'javafx.fxml',
-                '--add-modules', 'javafx.graphics',
-                '--add-modules', 'javafx.base',
-        ]
-    }
+// USE THIS RUN TASK FOR TESTING THE GUI IN THE IDE!
+run {
+    jvmArgs = [
+            '--module-path', classpath.asPath,
+            '--add-modules', 'javafx.controls',
+            '--add-modules', 'javafx.fxml',
+            '--add-modules', 'javafx.graphics',
+            '--add-modules', 'javafx.base',
+            '--add-opens', 'java.base/java.lang.reflect=ALL-UNNAMED', // !! IS REQUIRED WHEN STARTING
+            // fixes IllegalAccessException
+    ]
 }
+
+
 
 shadowJar {
     manifest {

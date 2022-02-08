@@ -1,20 +1,36 @@
 package org.briarjar.briarjar.gui;
 
+import com.intel.bluetooth.SelectServiceHandler;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.events.JFXDialogEvent;
+
 import org.briarjar.briarjar.Main;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.layout.StackPane;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class GUIUtils {
 
+	private final RootStackPane rootStackPane;
 	private final RootBorderPane rootBorderPane;
 	private final MessagesBorderPane messagesBorderPane;
 	private final SignInGridPane signInGridPane;
 	private final SignUpGridPane signUpGridPane;
 	private final AddContactDialog addContactDialog;
 	private final MessageListView messageListView;
+
 
 	@Inject
 	public GUIUtils(RootBorderPane rootBorderPane,
@@ -27,7 +43,11 @@ public class GUIUtils {
 
 		// no create() call
 		this.messageListView = messageListView;
+		messageListView.setGuiUtils(this);
+
 		this.addContactDialog = addContactDialog;
+		addContactDialog.setGuiUtils(this);
+
 		this.messagesBorderPane = messagesBorderPane;
 		messagesBorderPane.setGUIUtils(this);
 
@@ -41,6 +61,8 @@ public class GUIUtils {
 		this.rootBorderPane = rootBorderPane;
 		rootBorderPane.setGUIUtils(this);
 		rootBorderPane.create();
+
+		this.rootStackPane = new RootStackPane(rootBorderPane);
 	}
 
 	// Getters
@@ -49,6 +71,8 @@ public class GUIUtils {
 	{
 		return rootBorderPane;
 	}
+
+	public RootStackPane getRootStackPane() { return rootStackPane; }
 
 	public SignInGridPane getSignInGridPane()
 	{
@@ -96,13 +120,25 @@ public class GUIUtils {
 		mainGUI.start(MainGUI.getPrimaryStage());
 	}
 
-	public static void showAlert(Alert.AlertType alertType, String message)
-	{
-		System.out.println(message);
-		Alert alert = new Alert(alertType, message, ButtonType.OK);
-		alert.setHeaderText(null);
-		alert.setHeight(350);
-		alert.setTitle("BriarJar Message");
-		alert.showAndWait();
+	public void showMaterialDialog(String header, String body) {
+		showMaterialDialog(rootStackPane, rootBorderPane, header, body);
+	}
+
+	public void showMaterialDialog(StackPane root, Node nodeToBlur, String header, String body) {
+		BoxBlur blur = new BoxBlur(3, 3, 3);
+
+		JFXDialogLayout dialogLayout = new JFXDialogLayout();
+		JFXDialog dialog = new JFXDialog(root, dialogLayout, JFXDialog.DialogTransition.TOP);
+		JFXButton button = new JFXButton("Okay");
+
+		button.setOnAction(e -> dialog.close());
+		dialogLayout.setActions(button);
+		dialogLayout.setHeading(new Label(header));
+		dialogLayout.setBody(new Label(body));
+		dialog.show();
+
+
+		dialog.setOnDialogClosed((JFXDialogEvent event1) -> nodeToBlur.setEffect(null));
+		nodeToBlur.setEffect(blur);
 	}
 }

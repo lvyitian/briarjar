@@ -1,27 +1,33 @@
 package org.briarjar.briarjar.gui;
 
+import com.jfoenix.controls.JFXListView;
+
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ConversationViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 import org.briarproject.briar.api.messaging.PrivateMessageHeader;
 
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 
-import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 
-public class MessageListView extends ListView<String>
+public class MessageListView extends JFXListView<String>
 {
 
 	private Contact contact;
 	private final ConversationViewModel cvm;
 	private List<ConversationMessageHeader> headers;
+
+
+	private GUIUtils guiUtils;
 
 	@Inject
 	public MessageListView (ConversationViewModel cvm)
@@ -32,8 +38,6 @@ public class MessageListView extends ListView<String>
 
 	public void initListView()
 	{
-		if(contact != null)
-		{
 			getItems().clear();
 			try
 			{
@@ -52,82 +56,79 @@ public class MessageListView extends ListView<String>
 
 			} catch (GeneralException e)
 			{
-				showAlert(Alert.AlertType.ERROR, e.getMessage());
+				guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 			}
-		}
 	}
 
 	public void updateOnMessageAdded()
 	{
-		if(contact != null)
+		try
 		{
-			try
+			var updatedHeader = cvm.getMessageHeaders(contact.getId()).stream().toList();
+			// starting index = last index of header
+			int headersLastIndex = headers.size()-1;
+			if(headersLastIndex > 0)
 			{
-				var updatedHeader = cvm.getMessageHeaders(contact.getId()).stream().toList();
-				// starting index = last index of header
-				int headersLastIndex = headers.size()-1;
-				if(headersLastIndex >= 0)
+				for (int i = headersLastIndex; i < updatedHeader.size(); i++)
 				{
-					for (int i = headersLastIndex; i < updatedHeader.size(); i++)
-					{
-						// TODO ideally, there shouldn't be this 'if' - but without it, past messages occur duplicated
-						if (updatedHeader.get(i).getTimestamp() >
-								headers.get(headersLastIndex).getTimestamp())
-							addMessageToListView(updatedHeader.get(i));
-					}
-				} else
-					addMessageToListView(updatedHeader.get(0));
+					// TODO ideally, there shouldn't be this 'if' - but without it, past messages occur duplicated
+					if (updatedHeader.get(i).getTimestamp() >
+							headers.get(headersLastIndex).getTimestamp())
+						addMessageToListView(updatedHeader.get(i));
+				}
+			} else
+				addMessageToListView(updatedHeader.get(0));
 
-				// update headers
-				this.headers = updatedHeader;
+			// update headers
+			this.headers = updatedHeader;
 
-				// set selected
-				getSelectionModel().selectLast();
-				scrollTo(getSelectionModel().getSelectedIndex());
-			} catch (GeneralException e)
-			{
-				e.printStackTrace();
-			}
+			// set selected
+			getSelectionModel().selectLast();
+			scrollTo(getSelectionModel().getSelectedIndex());
+		} catch (GeneralException e)
+		{
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 	}
 
 	public void updateOnMessageReceived(PrivateMessageHeader header)
 	{
-		if(contact != null)
+		try
 		{
-			try
-			{
-				// update headers
-				this.headers = cvm.getMessageHeaders(contact.getId()).stream().toList();
+			// update headers
+			this.headers = cvm.getMessageHeaders(contact.getId()).stream().toList();
 
-				// add message
-				addMessageToListView(header);
+			// add message
+			addMessageToListView(header);
 
-				// set selected
-				getSelectionModel().selectLast();
-				scrollTo(getSelectionModel().getSelectedIndex());
-			} catch (GeneralException e)
-			{
-				showAlert(Alert.AlertType.ERROR, e.getMessage());
-			}
+			// set selected
+			getSelectionModel().selectLast();
+			scrollTo(getSelectionModel().getSelectedIndex());
+		} catch (GeneralException e)
+		{
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 	}
 
 	private void addMessageToListView(ConversationMessageHeader header)
 	{
-		String message = null;
+		// TODO add metadata
+
 		try
 		{
-			message = header.isLocal() ?
-					"<- " + cvm.getMessageText(header.getId()) :
-					"-> " + cvm.getMessageText(header.getId());
+			String time = millisecondsToLocalTime(header.getTimestamp());
+			if(header.isLocal())
+			{
+				getItems().add("[" + time + "] " + " You > " + cvm.getMessageText(header.getId()));
+			} else
+			{
+				getItems().add("[" + time + "] " + "Peer > " + cvm.getMessageText(header.getId()));
+			}
+
 		} catch (GeneralException e)
 		{
-			showAlert(Alert.AlertType.ERROR, e.getMessage());
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
-
-		// TODO add metadata
-		getItems().add(message);
 	}
 
 	public void sendMessage(String messageText)
@@ -137,13 +138,41 @@ public class MessageListView extends ListView<String>
 			cvm.write(contact.getId(), System.currentTimeMillis(), messageText);
 		} catch (GeneralException e)
 		{
-			e.printStackTrace();
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 	}
 
+	public void deleteAllMessages()
+	{
+		try
+		{
+			cvm.deleteAllMessages(contact.getId());
+		} catch (GeneralException e)
+		{
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
+		}
+	}
+
+	private static String millisecondsToLocalTime(long ms) {
+		Instant instant = Instant.ofEpochMilli(ms);
+		DateTimeFormatter formatter
+				= DateTimeFormatter.ofPattern("HH:mm");
+		LocalTime time = instant.atZone(ZoneId.systemDefault()).toLocalTime();
+		return formatter.format(time);
+	}
+
+	public Contact getContact()
+	{
+		return contact;
+	}
 
 	public void setContact(Contact contact)
 	{
 		this.contact = contact;
+	}
+
+	public void setGuiUtils(GUIUtils guiUtils)
+	{
+		this.guiUtils = guiUtils;
 	}
 }

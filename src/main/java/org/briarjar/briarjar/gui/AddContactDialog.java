@@ -1,5 +1,8 @@
 package org.briarjar.briarjar.gui;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
+
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 
@@ -9,31 +12,30 @@ import javax.inject.Inject;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
-
 public class AddContactDialog extends Stage {
 
+	private StackPane rootStackPane;
 	private GridPane gridPane;
 	private Scene scene;
 	private Clipboard clipboard;
 	private Label lbOwnLink;
-	private TextField peerHandshakeLink, peerAlias;
-	private Button btCopyOwnLink, btPasteLinkOfFriend, btStartHandshake;
+	private JFXTextField peerHandshakeLink, peerAlias;
+	private JFXButton btCopyOwnLink, btPasteLinkOfFriend, btStartHandshake;
+
+	private GUIUtils guiUtils;
 
 	private final ContactViewModel cvm;
 
@@ -54,36 +56,41 @@ public class AddContactDialog extends Stage {
 	private void initComponents()
 	{
 		String obj = Objects.requireNonNull(
-				getClass().getResource("/briar-icon.png")).toExternalForm();
+				getClass().getResource("/images/briar-icon.png")).toExternalForm();
 		getIcons().add(new Image(obj));
 
+		rootStackPane = new StackPane();
 		gridPane = new GridPane();
 
 		gridPane.setBackground(new Background(new BackgroundFill(
 				Paint.valueOf("#ffffff"), null, gridPane.getInsets())));
 		gridPane.setHgap(10);
-		gridPane.setVgap(10);
+		gridPane.setVgap(16);
 		gridPane.setAlignment(Pos.CENTER);
 
 		try
 		{
 			lbOwnLink = new Label(cvm.getHandshakeLink());
-			lbOwnLink.setFont(Font.font("System", FontWeight.LIGHT, 14));
+			lbOwnLink.setFont(Font.font("Arial", FontWeight.LIGHT, 14));
 		} catch (GeneralException e)
 		{
 			lbOwnLink = new Label("Errored... " + e.getMessage());
-			showAlert(Alert.AlertType.ERROR, e.getMessage());
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 
-		peerHandshakeLink = new TextField();
+		peerHandshakeLink = new JFXTextField();
+		peerHandshakeLink.setLabelFloat(true);
 		peerHandshakeLink.setPromptText("Link starts with briar://");
-		peerAlias = new TextField();
+		peerAlias = new JFXTextField();
+		peerAlias.setLabelFloat(true);
 		peerAlias.setPromptText("Choose an alias for your friend here");
 
-		btCopyOwnLink = new Button("Copy your link");
-		btPasteLinkOfFriend = new Button("Paste friends link");
-		btStartHandshake = new Button("Start handshaking");
-		scene = new Scene(gridPane, 800, 350);
+		btCopyOwnLink = new JFXButton("Copy your link");
+		btPasteLinkOfFriend = new JFXButton("Paste friends link");
+		btStartHandshake = new JFXButton("Start handshaking");
+
+		rootStackPane.getChildren().add(gridPane);
+		scene = new Scene(rootStackPane, 800, 350);
 		clipboard = Clipboard.getSystemClipboard();
 	}
 
@@ -118,7 +125,7 @@ public class AddContactDialog extends Stage {
 			close();
 		} catch (GeneralException e)
 		{
-			showAlert(Alert.AlertType.ERROR, e.getClass() + " - " + e.getMessage());
+			guiUtils.showMaterialDialog(rootStackPane, gridPane, e.getTitle(), e.getMessage());
 		}
 	}
 
@@ -130,10 +137,10 @@ public class AddContactDialog extends Stage {
 			if(s.startsWith("briar://"))
 				peerHandshakeLink.setText(s);
 			else
-				showAlert(Alert.AlertType.ERROR, "Not a briar:// link.");
+				guiUtils.showMaterialDialog(rootStackPane, gridPane, "Clipboard Error", "Not a briar handshake link.");
 		}
 		else
-			showAlert(Alert.AlertType.ERROR, "There is no text in your clipboard.");
+			guiUtils.showMaterialDialog(rootStackPane, gridPane, "Clipboard Error", "No text in clipboard.");
 	}
 
 	private void copyOwnLink()
@@ -141,5 +148,10 @@ public class AddContactDialog extends Stage {
 		ClipboardContent clipboardContent = new ClipboardContent();
 		clipboardContent.putString(lbOwnLink.getText());
 		clipboard.setContent(clipboardContent);
+	}
+
+	public void setGuiUtils(GUIUtils guiUtils)
+	{
+		this.guiUtils = guiUtils;
 	}
 }

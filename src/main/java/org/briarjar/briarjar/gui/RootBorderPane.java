@@ -1,35 +1,31 @@
 package org.briarjar.briarjar.gui;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.events.JFXDialogEvent;
+
+import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.BorderPane;
-
-import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
 
 @Singleton
 public class RootBorderPane extends BorderPane
 {
-
 	private MenuBar menuBar;
 	private Menu    mBriar, mChat, mContact, mInfo;
 	private MenuItem
 				miSignOut, miDeleteAccount, miExit, 		// mBriar
-				miShowContactList, 						// mChat
-				miAddContact, miRemoveContact, miChangeContactDisplayName, 	//mContact
+				miShowContactList, miDeleteAllMessages, 						// mChat
+				miAddContact, miRemoveContact, miChangeContactAlias, 	//mContact
 				miAbout;				// miInfo
-	private ToolBar statusBar; 		// the bar at the bottom
 	
 	private SignInGridPane signInGridPane;
 	private SignUpGridPane signUpGridPane;
@@ -65,16 +61,15 @@ public class RootBorderPane extends BorderPane
 		mContact 			= new Menu("Contact");
 		mInfo 				= new Menu("Info");
 
-		miSignOut           = new MenuItem("Sign Out");
-		miDeleteAccount		= new MenuItem("Delete Account");
+		miSignOut           = new MenuItem("Sign out");
+		miDeleteAccount		= new MenuItem("Delete account");
 		miExit 				= new MenuItem("Exit");
-		miShowContactList 	= new MenuItem("Hide Contact List"); // default
-		miAddContact        = new MenuItem("Add a new Contact");
-		miRemoveContact 	= new MenuItem("Remove this Contact");
-		miChangeContactDisplayName = new MenuItem("Change Contact Display-Name");
+		miShowContactList 	= new MenuItem("Hide contact list"); // default
+		miDeleteAllMessages = new MenuItem("Delete all messages");
+		miAddContact        = new MenuItem("Add a new contact");
+		miRemoveContact 	= new MenuItem("Remove this contact");
+		miChangeContactAlias = new MenuItem("Change contact alias");
 		miAbout 			= new MenuItem("About");
-		
-		statusBar 			= new ToolBar();
 
 		signInGridPane      	= guiUtils.getSignInGridPane();
 		signUpGridPane          = guiUtils.getSignUpGridPane();
@@ -86,12 +81,13 @@ public class RootBorderPane extends BorderPane
 		menuBar.getMenus().addAll(mBriar, mChat, mContact, mInfo);
 		
 		mBriar.getItems().addAll(miSignOut, miDeleteAccount, miExit);
-		mChat.getItems().addAll(miShowContactList);
-		mContact.getItems().addAll(miAddContact, miRemoveContact, miChangeContactDisplayName);
+		mChat.getItems().addAll(miShowContactList, new SeparatorMenuItem(),
+								miDeleteAllMessages);
+		mContact.getItems().addAll(miAddContact, miRemoveContact,
+				miChangeContactAlias);
 		mInfo.getItems().addAll(miAbout);
-		
-		statusBar.getItems().setAll(new Label("Ready to chat!"));
-		
+
+
 		setTop(menuBar);
 
 		// login or register view
@@ -99,15 +95,13 @@ public class RootBorderPane extends BorderPane
 			setCenter(signInGridPane);
 		 else
 			 setCenter(signUpGridPane);
-
-		setBottom(statusBar);
 	}
 	
 	private void addHandlers()
 	{
 		// menu: mBriar
 		miSignOut.setOnAction(e -> signOut());
-		miDeleteAccount.setOnAction(e -> deleteAccount());
+		miDeleteAccount.setOnAction(e -> accountDeletionDialog());
 		miExit.setOnAction( event -> {
 			System.out.println("STOPPING BriarJar GUI …");
 			System.exit(0);
@@ -115,11 +109,12 @@ public class RootBorderPane extends BorderPane
 
 		// menu: mChat
 		miShowContactList.setOnAction(e -> showContactList());
+		miDeleteAllMessages.setOnAction(e -> messagesBorderPane.deleteAllMessagesDialog());
 		
 		// menu: mContact
 		miAddContact.setOnAction(e -> addContact());
-		miRemoveContact.setOnAction(e -> removeContact());
-		miChangeContactDisplayName.setOnAction(e -> changeContactDisplayName());
+		miRemoveContact.setOnAction(e -> messagesBorderPane.contactRemovalDialog());
+		miChangeContactAlias.setOnAction(e -> messagesBorderPane.changeContactAlias());
 		
 		// menu: mInfo
 		miAbout.setOnAction(e -> about());
@@ -134,14 +129,6 @@ public class RootBorderPane extends BorderPane
 		mChat.setDisable(disable);
 		miDeleteAccount.setDisable(disable);
 	}
-	
-	// ============================ logic ============================
-	
-	private void unimplemented()
-	{
-		showAlert(AlertType.INFORMATION, "This feature is not part of the prototype and unimplemented!");
-	}
-
 
 	// ============================ menu: mBriar ============================
 
@@ -150,31 +137,47 @@ public class RootBorderPane extends BorderPane
 	{
 		// TODO check this - might be dangerous!
 		try {
-			if (lvm.hasDbKey()) {
-				lifeCycleViewModel.stop();
-				guiUtils.switchToSignIn();
-			}
-		} catch (Exception e) {
-			showAlert(AlertType.ERROR, e.getMessage());
+			lifeCycleViewModel.stop();
+			guiUtils.switchToSignIn();
+		} catch (GeneralException e) {
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 	}
 
-	private void deleteAccount()
+	private void accountDeletionDialog()
 	{
-		Alert deletionAlert = new Alert(AlertType.WARNING, "Deleting an account is permanent. You will lose all contacts, messages, etc. forever! Are you sure?", ButtonType.YES, ButtonType.CANCEL);
-		deletionAlert.setTitle("Delete account");
-		deletionAlert.setHeaderText(null);
-		deletionAlert.showAndWait();
-		
-		if(deletionAlert.getResult() == ButtonType.YES)
-		{
-			if(lvm.hasDbKey()) {
+		BoxBlur blur = new BoxBlur(3, 3, 3);
+		JFXDialogLayout dialogLayout = new JFXDialogLayout();
+		JFXDialog dialog =
+				new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
+						JFXDialog.DialogTransition.TOP);
+		JFXButton remove = new JFXButton("Delete account");
+		JFXButton cancel = new JFXButton("Cancel");
+
+		remove.setOnAction(e -> {
+			try
+			{
 				lvm.deleteAccount();
 				guiUtils.switchToSignUp();
+				dialog.close();
+			} catch (Exception ex)
+			{
+				guiUtils.showMaterialDialog("Removing account", ex.getMessage());
 			}
-			else
-				showAlert(AlertType.ERROR, "No DbKey found.");
-		}
+		});
+
+		cancel.setOnAction(e -> dialog.close());
+
+		dialogLayout.setActions(remove, cancel);
+		dialogLayout.setHeading(new Label("Removing account"));
+		dialogLayout.setBody(
+				new Label("Are you sure you want to remove your account? This is permanent and can't be recovered."));
+		dialog.show();
+
+		dialog.setOnDialogClosed(
+				(JFXDialogEvent event1) -> guiUtils.getRootBorderPane()
+				                                   .setEffect(null));
+		guiUtils.getRootBorderPane().setEffect(blur);
 	}
 
 	// ============================ menu: mChat ============================
@@ -202,22 +205,20 @@ public class RootBorderPane extends BorderPane
 		addContactDialog.create();      // !!
 		addContactDialog.showAndWait();
 	}
-
-	private void removeContact()
-	{
-		unimplemented();
-	}
-	
-	private void changeContactDisplayName()
-	{
-		unimplemented();
-	}
 	
 	// ============================ menu: mInfo ============================
 	
 	private void about()
 	{
-		showAlert(AlertType.INFORMATION, "BriarJar GUI Mode. This development build is a GUI prototype. Try out the TUI Mode with --tui or tui option");
+		guiUtils.showMaterialDialog("BriarJar GUI",
+				"""
+						This development build is a GUI prototype.Try out the TUI Mode with --tui or tui option.
+						Briar is licensed unser GPLv3.
+						This project uses the following third-party libraries:
+						- JFoenix (Apache V2, jfoenix.com)
+						- TrayNotification by PlusHaze (MIT, github.com/PlusHaze)
+						"""
+						);
 	}
 	
 	public void setGUIUtils(GUIUtils guiUtils)

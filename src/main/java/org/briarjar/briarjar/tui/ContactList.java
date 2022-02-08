@@ -70,7 +70,7 @@ public class ContactList extends EventListenerViewModel {
 						tuiUtils.switchWindow(window, TUIWindow.ADDCONTACT)));
 
 		buttonPanel.addComponent(
-				new Button("Sign Out", () -> {
+				new Button("Sign out", () -> {
 					// launches a new instance in a new thread
 					var instance = new Thread(() -> {
 						var briarJarApp = Main.launchApp();

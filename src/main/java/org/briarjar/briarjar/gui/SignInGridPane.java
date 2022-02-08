@@ -1,5 +1,8 @@
 package org.briarjar.briarjar.gui;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXPasswordField;
+
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
@@ -10,9 +13,6 @@ import javax.inject.Inject;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -25,8 +25,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import static org.briarjar.briarjar.gui.GUIUtils.showAlert;
-
 public class SignInGridPane extends GridPane {
 
 	private final LoginViewModel lvm;
@@ -34,8 +32,8 @@ public class SignInGridPane extends GridPane {
 	private ImageView imgWelcome;
 	private Text txtWelcome;
 	private Text txtSubtext;
-	private PasswordField passphraseField;
-	private Button btSignIn;
+	private JFXPasswordField passphraseField;
+	private JFXButton btSignIn;
 	private GUIUtils guiUtils;
 
 	@Inject
@@ -65,25 +63,26 @@ public class SignInGridPane extends GridPane {
 		try
 		{
 			String obj = Objects.requireNonNull(
-					getClass().getResource("/briar-icon.png")).toExternalForm();
+					getClass().getResource("/images/briar-icon.png")).toExternalForm();
 			imgWelcome = new ImageView(new Image(obj));
 		} catch (Exception e)
 		{
-			showAlert(Alert.AlertType.ERROR,
-					"Configured welcome image not found.");
+			guiUtils.showMaterialDialog("Image not found.", e.getMessage());
 		}
 
 		txtWelcome = new Text("Welcome to BriarJar!");
-		txtWelcome.setFont(Font.font("System", FontWeight.LIGHT, 20));
+		txtWelcome.setFont(Font.font("Arial", FontWeight.LIGHT, 20));
 		txtSubtext = new Text("Please Sign In with your account");
-		txtSubtext.setFont(Font.font("System", FontWeight.LIGHT, 15));
+		txtSubtext.setFont(Font.font("Arial", FontWeight.LIGHT, 15));
 		setHalignment(txtWelcome, HPos.CENTER);
 
-		passphraseField = new PasswordField();
+		passphraseField = new JFXPasswordField();
+		passphraseField.requestFocus();
+		passphraseField.setLabelFloat(true);
 		passphraseField.setPromptText("Enter your passphrase");
 
 
-		btSignIn = new Button("Sign In");
+		btSignIn = new JFXButton("Sign in");
 	}
 
 	private void addComponents()
@@ -108,14 +107,13 @@ public class SignInGridPane extends GridPane {
 		try
 		{
 			lvm.signIn(passphraseField.getText());
-			lifeCycleViewModel.start();
-
 			btSignIn.setDisable(true);
+			lifeCycleViewModel.start();
 			guiUtils.switchToMain();
 
 		} catch ( GeneralException e )
 		{
-			showAlert( Alert.AlertType.ERROR, e.getMessage() );
+			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 	}
 
