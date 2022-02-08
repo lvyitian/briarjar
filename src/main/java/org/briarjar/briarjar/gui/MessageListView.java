@@ -66,12 +66,17 @@ public class MessageListView extends ListView<String>
 				var updatedHeader = cvm.getMessageHeaders(contact.getId()).stream().toList();
 				// starting index = last index of header
 				int headersLastIndex = headers.size()-1;
-				for(int i = headersLastIndex; i < updatedHeader.size(); i++)
+				if(headersLastIndex >= 0)
 				{
-					// TODO ideally, there shouldn't be this 'if' - but without it, past messages occur duplicated
-					if(updatedHeader.get(i).getTimestamp() > headers.get(headersLastIndex).getTimestamp())
-						addMessageToListView(updatedHeader.get(i));
-				}
+					for (int i = headersLastIndex; i < updatedHeader.size(); i++)
+					{
+						// TODO ideally, there shouldn't be this 'if' - but without it, past messages occur duplicated
+						if (updatedHeader.get(i).getTimestamp() >
+								headers.get(headersLastIndex).getTimestamp())
+							addMessageToListView(updatedHeader.get(i));
+					}
+				} else
+					addMessageToListView(updatedHeader.get(0));
 
 				// update headers
 				this.headers = updatedHeader;
