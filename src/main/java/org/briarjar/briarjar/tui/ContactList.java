@@ -6,7 +6,6 @@ import org.briarjar.briarjar.Main;
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
-import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
 import org.briarproject.bramble.api.contact.event.*;
@@ -16,7 +15,6 @@ import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
 import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -24,7 +22,6 @@ import javax.inject.Inject;
 public class ContactList extends EventListenerViewModel {
 
 	private final ContactViewModel cvm;
-	private final LifeCycleViewModel lifeCycleViewModel;
 
 	private Panel contentPanel, buttonPanel;
 	private BasicWindow window;
@@ -37,14 +34,12 @@ public class ContactList extends EventListenerViewModel {
 
 	@Inject
 	public ContactList( EventBus           eventBus,
-	                    ContactViewModel   cvm,
-                        LifeCycleViewModel lifeCycleViewModel )
+	                    ContactViewModel   cvm )
 	{
 		super(eventBus);
 		super.onInit();
 
 		this.cvm = cvm;
-		this.lifeCycleViewModel = lifeCycleViewModel;
 
 		init();
 	}
@@ -76,25 +71,13 @@ public class ContactList extends EventListenerViewModel {
 
 		buttonPanel.addComponent(
 				new Button("Sign Out", () -> {
-					try
-					{
-						lifeCycleViewModel.stop();
-					} catch (GeneralException e)
-					{
-						e.printStackTrace();
-					}
-
-					try
-					{
-						window.getTextGUI().getScreen().close();
-					} catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-
-					// relaunch app TODO is there a better solution?
-					var briarJarApp = Main.launchApp();
-					briarJarApp.getMainTUI().start();
+					// launches a new instance in a new thread
+					var instance = new Thread(() -> {
+						var briarJarApp = Main.launchApp();
+						briarJarApp.getMainTUI().start();
+					});
+					instance.start();
+					Thread.currentThread().interrupt(); // FIXME causes Tor Plugin Exception
 				}));
 
 		buttonPanel.addComponent( new Button("Exit", () -> System.exit(0)) );
@@ -139,9 +122,9 @@ public class ContactList extends EventListenerViewModel {
 				{
 					contactListBox.addItem( getAliasForList(c.getId()),
 					                        () -> {
-								tuiUtils.getConversation().setContact( c );
-								tuiUtils.switchWindow( window,
-										               TUIWindow.CONVERSATION );
+							tuiUtils.getConversation().setContact( c );
+							tuiUtils.switchWindow( window,
+									               TUIWindow.CONVERSATION );
 							}
 					);
 				}
@@ -168,7 +151,7 @@ public class ContactList extends EventListenerViewModel {
 		}
 		catch (GeneralException e)
 		{
-			e.printStackTrace(); // TODO
+			tuiUtils.show(e);
 		}
 
 		return status+alias;

@@ -2,7 +2,6 @@ package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
@@ -20,6 +19,8 @@ import org.briarproject.briar.api.messaging.event.PrivateMessageReceivedEvent;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import static com.googlecode.lanterna.gui2.dialogs.MessageDialog.showMessageDialog;
 
 public class Conversation extends EventListenerViewModel {
 
@@ -82,13 +83,13 @@ public class Conversation extends EventListenerViewModel {
 						{
 							cvm.write(contact.getId(), System.currentTimeMillis(), newMessage.getText());
 							newMessage.setText("");     // clear the newMessage text field
-						} catch (Exception e)
+						} catch (GeneralException e)
 						{
-							e.printStackTrace();
+							tuiUtils.show(e);
 						}
 					}
 					else
-						MessageDialog.showMessageDialog(textGUI, "Empty message", "Please write a message",
+						showMessageDialog(textGUI, "Empty message", "Please write a message",
 									MessageDialogButton.OK);
 				}).setLayoutData(BorderLayout.Location.RIGHT));
 
@@ -174,7 +175,7 @@ public class Conversation extends EventListenerViewModel {
 				chatBox.setSelectedIndex(headers.size() - 1);
 			} catch (GeneralException e)
 			{
-				e.printStackTrace();
+				tuiUtils.show(e);
 			}
 		}
 	}
@@ -196,7 +197,7 @@ public class Conversation extends EventListenerViewModel {
 			}
 			} catch (GeneralException e)
 			{
-				e.printStackTrace();
+				tuiUtils.show(e);
 			}
 			chatBox.setSelectedIndex(headers.size() - 1);
 		}
@@ -228,7 +229,7 @@ public class Conversation extends EventListenerViewModel {
 			String finalMetaData = metaData;
 
 			chatBox.addItem(message, () ->
-					MessageDialog.showMessageDialog(textGUI,
+					showMessageDialog(textGUI,
 							"Message metadata", finalMetaData,
 							MessageDialogButton.Close));
 		} catch (GeneralException e)

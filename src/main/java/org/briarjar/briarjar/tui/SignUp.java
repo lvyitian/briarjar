@@ -1,7 +1,6 @@
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
@@ -15,6 +14,8 @@ import org.briarproject.bramble.api.lifecycle.LifecycleManager.LifecycleState;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 
 import javax.inject.Inject;
+
+import static com.googlecode.lanterna.gui2.dialogs.MessageDialog.showMessageDialog;
 
 public class SignUp extends EventListenerViewModel {
 
@@ -78,25 +79,24 @@ public class SignUp extends EventListenerViewModel {
 							try {
 								lvm.signUp(username, passphrase);}
 							catch (GeneralException e) {
-								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
+								showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
 							}
 							try {
 								lifeCycleViewModel.start();
 							} catch (GeneralException e) {
-								MessageDialog.showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
+								tuiUtils.show(e);
 							}
 						} else
-							MessageDialog.showMessageDialog(textGUI, "Empty passphrase", "Please enter a valid passphrase.",
+							showMessageDialog(textGUI, "Empty passphrase", "Please enter a valid passphrase.",
 									MessageDialogButton.OK);
 					} else
-						MessageDialog.showMessageDialog(textGUI, "Empty username", "Please choose a username.",
+						showMessageDialog(textGUI, "Empty username", "Please choose a username.",
 								MessageDialogButton.OK);
 
 
 					if(lifeCycleViewModel.getLifeCycleState() == LifecycleState.RUNNING)
 						tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
 				}));
-		TUIUtils.addHorizontalSeparator(contentPanel);
 	}
 
 	/* PANELS REMOVER */
