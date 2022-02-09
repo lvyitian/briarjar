@@ -23,7 +23,7 @@ public class RootBorderPane extends BorderPane
 	private Menu    mBriar, mChat, mContact, mInfo;
 	private MenuItem
 				miSignOut, miDeleteAccount, miExit, 		// mBriar
-				miShowContactList, miDeleteAllMessages, 						// mChat
+				miShowContactList, miIncludePendingContacts, miDeleteAllMessages, 						// mChat
 				miAddContact, miRemoveContact, miChangeContactAlias, 	//mContact
 				miAbout;				// miInfo
 	
@@ -65,6 +65,7 @@ public class RootBorderPane extends BorderPane
 		miDeleteAccount		= new MenuItem("Delete account");
 		miExit 				= new MenuItem("Exit");
 		miShowContactList 	= new MenuItem("Hide contact list"); // default
+		miIncludePendingContacts = new MenuItem("Include pending contacts"); // default
 		miDeleteAllMessages = new MenuItem("Delete all messages");
 		miAddContact        = new MenuItem("Add a new contact");
 		miRemoveContact 	= new MenuItem("Remove this contact");
@@ -81,8 +82,8 @@ public class RootBorderPane extends BorderPane
 		menuBar.getMenus().addAll(mBriar, mChat, mContact, mInfo);
 		
 		mBriar.getItems().addAll(miSignOut, miDeleteAccount, miExit);
-		mChat.getItems().addAll(miShowContactList, new SeparatorMenuItem(),
-								miDeleteAllMessages);
+		mChat.getItems().addAll(miShowContactList, miIncludePendingContacts,
+								new SeparatorMenuItem(), miDeleteAllMessages);
 		mContact.getItems().addAll(miAddContact, miRemoveContact,
 				miChangeContactAlias);
 		mInfo.getItems().addAll(miAbout);
@@ -109,6 +110,7 @@ public class RootBorderPane extends BorderPane
 
 		// menu: mChat
 		miShowContactList.setOnAction(e -> showContactList());
+		miIncludePendingContacts.setOnAction(e -> includePendingContacts());
 		miDeleteAllMessages.setOnAction(e -> messagesBorderPane.deleteAllMessagesDialog());
 		
 		// menu: mContact
@@ -120,7 +122,6 @@ public class RootBorderPane extends BorderPane
 		miAbout.setOnAction(e -> about());
 
 	}
-
 
 	public void disableComponents(boolean disable)
 	{
@@ -185,18 +186,35 @@ public class RootBorderPane extends BorderPane
 
 	private void showContactList()
 	{
-		if(!messagesBorderPane.isContactListVisible())
+		if(messagesBorderPane.isContactListVisible())
 		{
-			messagesBorderPane.showContactList();
-			miShowContactList.setText("Hide contact list");
+			messagesBorderPane.showContactList(false);
+			miShowContactList.setText("Show contact list");
 		}
 		else
 		{
-			messagesBorderPane.hideContactList();
-			miShowContactList.setText("Show contact list");
+			messagesBorderPane.showContactList(true);
+			miShowContactList.setText("Hide contact list");
 		}
 	}
-	
+
+
+	private void includePendingContacts()
+	{
+		if(messagesBorderPane.isIncludingPendingContacts())
+		{
+			messagesBorderPane.includePendingContacts(false);
+			miIncludePendingContacts.setText("Include pending contacts");
+		}
+		else
+		{
+			messagesBorderPane.includePendingContacts(true);
+			miIncludePendingContacts.setText("Exclude pending contacts");
+		}
+	}
+
+
+
 	// ============================ menu: mContact ============================
 
 	private void addContact()
@@ -213,9 +231,9 @@ public class RootBorderPane extends BorderPane
 		guiUtils.showMaterialDialog("BriarJar GUI",
 				"""
 						This development build is a GUI prototype.Try out the TUI Mode with --tui or tui option.
-						Briar is licensed unser GPLv3.
+						Briar is licensed under GPLv3.
 						This project uses the following third-party libraries:
-						- JFoenix (Apache V2, jfoenix.com)
+						- JFoenix (Apache v2, jfoenix.com)
 						- TrayNotification by PlusHaze (MIT, github.com/PlusHaze)
 						"""
 						);

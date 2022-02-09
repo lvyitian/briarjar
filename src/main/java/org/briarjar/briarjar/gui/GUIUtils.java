@@ -1,6 +1,5 @@
 package org.briarjar.briarjar.gui;
 
-import com.intel.bluetooth.SelectServiceHandler;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
@@ -8,15 +7,9 @@ import com.jfoenix.controls.events.JFXDialogEvent;
 
 import org.briarjar.briarjar.Main;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.StackPane;

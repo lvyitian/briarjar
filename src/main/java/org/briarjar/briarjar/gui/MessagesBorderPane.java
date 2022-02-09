@@ -7,11 +7,12 @@ import com.jfoenix.controls.events.JFXDialogEvent;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
-import org.briarproject.bramble.api.contact.Contact;
-import org.briarproject.bramble.api.contact.ContactId;
+import org.briarproject.bramble.api.Pair;
+import org.briarproject.bramble.api.contact.*;
 import org.briarproject.bramble.api.contact.event.ContactAddedEvent;
 import org.briarproject.bramble.api.contact.event.ContactRemovedEvent;
 import org.briarproject.bramble.api.contact.event.PendingContactAddedEvent;
+import org.briarproject.bramble.api.contact.event.PendingContactStateChangedEvent;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.event.EventListener;
@@ -31,6 +32,7 @@ import javax.inject.Singleton;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
@@ -49,7 +51,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	private JFXTextArea messageBox;
 	private MessageListView messageListView;
 	private VBox contactList;
-	private boolean isContactListVisible;
+	private boolean isContactListVisible, isIncludingPendingContacts;
 	private GUIUtils guiUtils;
 	private Image briarLogo;
 	private Label noContactsSelected;
@@ -69,7 +71,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		initComponents();
 		addComponents();
 		addHandlers();
-		showContactList();
+		showContactList(true);
 	}
 
 
@@ -91,7 +93,8 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		contactList = new VBox();
 		contactList.setPrefWidth(110);
-		isContactListVisible = false;
+		isContactListVisible = true;        // default
+		isIncludingPendingContacts = false;
 
 		messageListView = guiUtils.getMessageListView();
 
@@ -106,7 +109,6 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	private void addComponents()
 	{
 		setCenter(noContactsSelected);
-		setBottom(messageBox);
 	}
 
 
@@ -131,23 +133,43 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		return isContactListVisible;
 	}
 
+	public boolean isIncludingPendingContacts() { return isIncludingPendingContacts; }
+
 	// ============================ logic ============================
 
 	/*
 	 * This method will be used in the RootBorderPane.
 	 */
-	public void showContactList()
+	public void showContactList(boolean show)
 	{
-		updateContactList();
-		guiUtils.getRootBorderPane().setLeft(contactList);
-		isContactListVisible = true;
+		if(show)
+		{
+			isContactListVisible = true;
+			updateContactList();
+			guiUtils.getRootBorderPane().setLeft(contactList);
+		}
+		else
+		{
+			isContactListVisible = false;
+			guiUtils.getRootBorderPane().setLeft(null);
+		}
 	}
 
-	public void hideContactList()
+
+	public void includePendingContacts(boolean include)
 	{
-		guiUtils.getRootBorderPane().setLeft(null);
-		isContactListVisible = false;
+		if(include)
+		{
+			isIncludingPendingContacts = true;
+			updateContactList();
+		}
+		else
+		{
+			isIncludingPendingContacts = false;
+			updateContactList();
+		}
 	}
+
 
 	private void updateContactList()
 	{
@@ -167,10 +189,43 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 					messageListView.setContact(c);
 					messageListView.initListView();
 					messageBox.setDisable(false);
+
+					setBottom(messageBox);          // TODO is that necessary?
 					setCenter(messageListView);
 				});
 				contactList.getChildren().add(b);
 			}
+
+			// pending contacts
+			if(isIncludingPendingContacts)
+			{
+				contactList.getChildren().add(new Separator());
+
+				var pendingContacts = cvm.getPendingContacts();
+				for(Pair<PendingContact, PendingContactState> pendingContact : pendingContacts)
+				{
+					String alias = pendingContact.getFirst().getAlias();
+					String state = "";
+					switch(pendingContact.getSecond())
+					{
+						case OFFLINE -> state = " (Offline)";
+						case WAITING_FOR_CONNECTION -> state = " (Waiting for connection)";
+						case CONNECTING -> state = " (Connecting)";
+						case ADDING_CONTACT -> state = " (Adding contact)";
+						case FAILED -> state = " (Failed)";
+					}
+
+					JFXButton b = new JFXButton(alias + state);
+					b.setPrefWidth(contactList.getPrefWidth());
+					b.setTextFill(Color.LIGHTSLATEGREY);
+					b.setRipplerFill(Color.ORANGERED);
+					b.setOnAction(e -> removePendingContactOffer(pendingContact
+															.getFirst().getId()));
+					contactList.getChildren().add(b);
+				}
+
+			}
+
 		} catch (GeneralException e)
 		{
 			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
@@ -182,6 +237,8 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		return onlineStatusHashMap
 				.getOrDefault( id, false ) ? Color.LIMEGREEN : Color.DIMGREY;
 	}
+
+	/* DIALOGS */
 
 	public void contactRemovalDialog()
 	{
@@ -203,6 +260,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 					messageListView.setContact(null);
 					updateContactList();
 					setCenter(noContactsSelected);
+					setBottom(null);
 					dialog.close();
 				} catch (GeneralException ex)
 				{
@@ -215,11 +273,11 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			dialogLayout.setActions(remove, cancel);
 			dialogLayout.setHeading(new Label("Removing contact"));
 			dialogLayout.setBody(
-					new Label("Are you sure you want to remove this contact?"));
+					new Label("Are you sure you want to remove " + messageListView.getContact().getAlias() + "?"));
 			dialog.show();
 
 			dialog.setOnDialogClosed(
-					(JFXDialogEvent event1) -> guiUtils.getRootBorderPane()
+					(JFXDialogEvent e) -> guiUtils.getRootBorderPane()
 					                                   .setEffect(null));
 			guiUtils.getRootBorderPane().setEffect(blur);
 		} else
@@ -254,7 +312,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			dialog.show();
 
 			dialog.setOnDialogClosed(
-					(JFXDialogEvent event1) -> guiUtils.getRootBorderPane()
+					(JFXDialogEvent e) -> guiUtils.getRootBorderPane()
 					                                   .setEffect(null));
 			guiUtils.getRootBorderPane().setEffect(blur);
 		} else
@@ -299,13 +357,50 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			dialog.show();
 
 			dialog.setOnDialogClosed(
-					(JFXDialogEvent event1) -> guiUtils.getRootBorderPane()
+					(JFXDialogEvent e) -> guiUtils.getRootBorderPane()
 					                                   .setEffect(null));
 			guiUtils.getRootBorderPane().setEffect(blur);
 		} else
 			guiUtils.showMaterialDialog("Changing alias",
-					"Please open the chat, which you want to wipe.");
+					"Please select whose alias you'd like to change.");
 
+	}
+
+	public void removePendingContactOffer(PendingContactId id)
+	{
+		BoxBlur blur = new BoxBlur(3, 3, 3);
+		JFXDialogLayout dialogLayout = new JFXDialogLayout();
+		JFXDialog dialog =
+				new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
+						JFXDialog.DialogTransition.TOP);
+		JFXButton remove = new JFXButton("Remove pending contact");
+		JFXButton close = new JFXButton("Close");
+
+		remove.setOnAction(e -> {
+			try
+			{
+				cvm.removePendingContact(id);
+				updateContactList();
+				messageListView.setContact(cvm.getContact(messageListView.getContact().getId())); // reset
+				dialog.close();
+			} catch (GeneralException ex)
+			{
+				guiUtils.showMaterialDialog(ex.getTitle(), ex.getMessage());
+			}
+		});
+
+		close.setOnAction(e -> dialog.close());
+
+		dialogLayout.setActions(remove, close);
+		dialogLayout.setHeading(new Label("Removing pending contact"));
+		dialogLayout.setBody(
+				new Label("Are you sure you want to remove this pending contact?"));
+		dialog.show();
+
+		dialog.setOnDialogClosed(
+				(JFXDialogEvent e) -> guiUtils.getRootBorderPane()
+				                              .setEffect(null));
+		guiUtils.getRootBorderPane().setEffect(blur);
 	}
 
 
@@ -367,6 +462,13 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		else if (e instanceof PendingContactAddedEvent)
 		{
 			System.out.println("PendingContactAddedEvent...");
+			Platform.runLater(
+					this::updateContactList
+			);
+		}
+		else if (e instanceof PendingContactStateChangedEvent)
+		{
+			System.out.println("PendingContactStateChangedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
