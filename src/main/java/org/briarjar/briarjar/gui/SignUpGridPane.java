@@ -1,5 +1,6 @@
 package org.briarjar.briarjar.gui;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 
@@ -7,14 +8,12 @@ import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
-import java.text.DecimalFormat;
 import java.util.Objects;
 
 import javax.inject.Inject;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -22,6 +21,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -38,8 +38,7 @@ public class SignUpGridPane extends GridPane {
 	private Text txtSubtext;
 	private JFXTextField tfUsername;
 	private JFXPasswordField passphraseField;
-	private Text passphraseStrength;
-	private Button btSignUp;
+	private JFXButton btSignUp;
 	private GUIUtils guiUtils;
 
 	@Inject
@@ -87,9 +86,7 @@ public class SignUpGridPane extends GridPane {
 		passphraseField = new JFXPasswordField();
 		passphraseField.setPromptText("Enter a passphrase");
 
-		passphraseStrength = new Text("0.00");
-
-		btSignUp = new Button("Sign up");
+		btSignUp = new JFXButton("Sign up");
 	}
 
 	private void addComponents()
@@ -100,7 +97,6 @@ public class SignUpGridPane extends GridPane {
 		add(txtSubtext, 0, 3);
 		add(tfUsername, 0, 4);
 		add(passphraseField, 0, 5);
-		add(passphraseStrength, 1, 5);
 		add(btSignUp, 0, 6);
 	}
 
@@ -132,8 +128,17 @@ public class SignUpGridPane extends GridPane {
 	private void passphraseStrength()
 	{
 		lvm.setPassphrase(passphraseField.getText());
-		DecimalFormat df = new DecimalFormat("#.##");
-		passphraseStrength.setText(df.format(lvm.getPassphraseStrength()));
+		float strength = lvm.getPassphraseStrength();
+		if(strength < 0.25)
+			passphraseField.setFocusColor(Color.DARKRED);
+		else if (strength < 0.5)
+			passphraseField.setFocusColor(Color.RED);
+		else if (strength < 0.75)
+			passphraseField.setFocusColor(Color.ORANGE);
+		else if (strength < 1)
+			passphraseField.setFocusColor(Color.YELLOW);
+		else
+			passphraseField.setFocusColor(Color.LIMEGREEN);
 	}
 
 	private void switchToPassphrase(KeyEvent e)

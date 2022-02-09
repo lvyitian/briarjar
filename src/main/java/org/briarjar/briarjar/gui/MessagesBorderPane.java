@@ -52,6 +52,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	private boolean isContactListVisible;
 	private GUIUtils guiUtils;
 	private Image briarLogo;
+	private Label noContactsSelected;
 
 	private HashMap<ContactId, Boolean > onlineStatusHashMap;
 
@@ -76,6 +77,8 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	{
 
 		onlineStatusHashMap = new HashMap<>();
+
+		noContactsSelected = new Label("No contacts selected. Click on a contact or add a new one from the Contact menu.");
 
 		messageBox = new JFXTextArea();
 		messageBox.setLabelFloat(true);
@@ -102,7 +105,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 	private void addComponents()
 	{
-		setCenter(messageListView);
+		setCenter(noContactsSelected);
 		setBottom(messageBox);
 	}
 
@@ -164,6 +167,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 					messageListView.setContact(c);
 					messageListView.initListView();
 					messageBox.setDisable(false);
+					setCenter(messageListView);
 				});
 				contactList.getChildren().add(b);
 			}
@@ -198,6 +202,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 							messageListView.getContact().getId());
 					messageListView.setContact(null);
 					updateContactList();
+					setCenter(noContactsSelected);
 					dialog.close();
 				} catch (GeneralException ex)
 				{
@@ -278,6 +283,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 				{
 					cvm.setContactAlias(messageListView.getContact().getId(), newAlias.getText());
 					updateContactList();
+					messageListView.setContact(cvm.getContact(messageListView.getContact().getId())); // reset
 					dialog.close();
 				} catch (GeneralException ex)
 				{
