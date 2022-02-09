@@ -162,7 +162,7 @@ public class Conversation extends EventListenerViewModel {
 				var updatedHeader = cvm.getMessageHeaders(contact.getId()).stream().toList();
 				// starting index = last index of header
 				int headersLastIndex = headers.size()-1;
-				if(headersLastIndex > 0)
+				if(headersLastIndex >= 0)
 				{
 					for (int i = headersLastIndex; i < updatedHeader.size(); i++)
 					{
