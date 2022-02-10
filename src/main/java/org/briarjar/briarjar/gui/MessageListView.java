@@ -71,6 +71,7 @@ public class MessageListView extends JFXListView<GUIMessage> {
 				}
 			}
 		});
+
 	}
 
 	private void addHandlers()

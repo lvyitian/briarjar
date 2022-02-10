@@ -73,3 +73,9 @@
 .context-menu {
     -fx-background-color: -fx-my-menu-color;
 }
+
+/* LIST VIEW */
+/*** Hide horizontal scrollbar ***/
+.list-view .scroll-bar:horizontal {
+    -fx-scale-x: 0;
+}
