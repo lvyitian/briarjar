@@ -4,7 +4,7 @@
     -fx-my-menu-color: #ffffff;                  /* Change according to your needs */
     -fx-my-menu-color-highlighted: #95DE2D;      /* Change according to your needs */
     -fx-my-menu-font-color: #4F4F4F;             /* Change according to your needs */
-    -fx-my-menu-font-color-highlighted: #000000; /* Change according to your needs */
+    -fx-my-menu-font-color-highlighted: #ffffff; /* Change according to your needs */
 }
 
 /* MENU BAR + Top-level MENU BUTTONS */
@@ -78,4 +78,24 @@
 /*** Hide horizontal scrollbar ***/
 .list-view .scroll-bar:horizontal {
     -fx-scale-x: 0;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: limegreen;
+    -fx-text-fill: white;
+}
+
+.list-cell:odd {
+    -fx-background-color: white;
+}
+
+.list-cell:filled:hover {
+    -fx-text-fill: white;
+    -fx-background-color: lightgreen;
+}
+
+/* ROOT */
+.root {
+    -fx-accent: lightgreen;
+    -fx-focus-color: lightgreen;
 }

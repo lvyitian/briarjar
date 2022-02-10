@@ -2,8 +2,6 @@ package org.briarjar.briarjar.gui;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXDialogLayout;
-import com.jfoenix.controls.events.JFXDialogEvent;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
@@ -146,7 +144,7 @@ public class RootBorderPane extends BorderPane
 
 	private void accountDeletionDialog()
 	{
-		JFXButton remove = new JFXButton("Delete account");
+		JFXButton remove = new JFXButton("Remove account");
 		JFXDialog dialog = guiUtils.showConfirmationDialog(
 				"Removing account",
 				"Are you sure you want to remove your account? " +

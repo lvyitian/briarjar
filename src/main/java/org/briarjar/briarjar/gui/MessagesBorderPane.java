@@ -246,7 +246,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 	public void contactRemovalDialog()
 	{
-		JFXButton remove = new JFXButton("Removing contact");
+		JFXButton remove = new JFXButton("Remove contact");
 		JFXDialog dialog = guiUtils.showConfirmationDialog(
 				"Removing contact",
 				"Are you sure you want to remove " +
