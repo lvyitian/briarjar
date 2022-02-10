@@ -464,7 +464,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		/* CONVERSATION RELATED EVENTS */
 
-		if (e instanceof PrivateMessageReceivedEvent && messageListView.getContact() != null)
+		if (e instanceof PrivateMessageReceivedEvent)
 		{
 			System.out.println("PrivateMessageReceivedEvent...");
 			Platform.runLater(() -> {
@@ -472,7 +472,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 				if(messageListView.getContact() != null)
 					messageListView.updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
 				});
-		} else if (e instanceof MessageAddedEvent && messageListView.getContact() != null)
+		} else if (e instanceof MessageAddedEvent)
 		{
 			System.out.println("MessageAddedEvent...");
 			if(messageListView.getContact() != null)
