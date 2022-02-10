@@ -80,7 +80,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		onlineStatusHashMap = new HashMap<>();
 
-		noContactsSelected = new Label("No contacts selected. Click on a contact or add a new one from the Contact menu.");
+		noContactsSelected = new Label("No contact selected. Click on a contact or add a new one from the Contact menu.");
 
 		messageBox = new JFXTextArea();
 		messageBox.setLabelFloat(true);
@@ -370,7 +370,8 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 	private void notifyOnNewMessage(ContactId sender)
 	{
-		if(messageListView.getContact() == null || !messageListView.getContact().getId().equals(sender) ||
+		if( messageListView.getContact() == null ||
+				!messageListView.getContact().getId().equals(sender) ||
 				MainGUI.getPrimaryStage().isIconified() )
 		{
 			TrayNotification notification = new TrayNotification();
@@ -468,12 +469,14 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			System.out.println("PrivateMessageReceivedEvent...");
 			Platform.runLater(() -> {
 				notifyOnNewMessage(((PrivateMessageReceivedEvent) e).getContactId());
-				messageListView.updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
-			});
+				if(messageListView.getContact() != null)
+					messageListView.updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
+				});
 		} else if (e instanceof MessageAddedEvent && messageListView.getContact() != null)
 		{
 			System.out.println("MessageAddedEvent...");
-			Platform.runLater(() -> messageListView.updateOnMessageAdded());
+			if(messageListView.getContact() != null)
+				Platform.runLater(() -> messageListView.updateOnMessageAdded());
 		}
 	}
 }

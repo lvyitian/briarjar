@@ -138,53 +138,48 @@ public class Conversation extends EventListenerViewModel {
 
 	private void updateOnMessageReceived(PrivateMessageHeader header)
 	{
-		if(contact != null)
+
+		try
 		{
-			try
-			{
-				// update headers
-				this.headers = cvm.getMessageHeaders(contact.getId()).stream().toList();
+			// update headers
+			this.headers = cvm.getMessageHeaders(contact.getId()).stream().toList();
 
-				// add message
-				addMessageToChatBox(header);
+			// add message
+			addMessageToChatBox(header);
 
-				// set selected
-				chatBox.setSelectedIndex(headers.size() - 1);
-			} catch (GeneralException e)
-			{
-				tuiUtils.show(e);
-			}
+			// set selected
+			chatBox.setSelectedIndex(headers.size() - 1);
+		} catch (GeneralException e)
+		{
+			tuiUtils.show(e);
 		}
 	}
 
 	private void updateOnMessageAdded()
 	{
-		if(contact != null)
+		try
 		{
-			try
+			var updatedHeader = cvm.getMessageHeaders(contact.getId()).stream().toList();
+			// starting index = last index of header
+			int headersLastIndex = headers.size()-1;
+			if(headersLastIndex >= 0)
 			{
-				var updatedHeader = cvm.getMessageHeaders(contact.getId()).stream().toList();
-				// starting index = last index of header
-				int headersLastIndex = headers.size()-1;
-				if(headersLastIndex >= 0)
+				for (int i = headersLastIndex; i < updatedHeader.size(); i++)
 				{
-					for (int i = headersLastIndex; i < updatedHeader.size(); i++)
-					{
-						if (updatedHeader.get(i).getTimestamp() >
-								headers.get(headersLastIndex).getTimestamp())
-							addMessageToChatBox(updatedHeader.get(i));
-					}
-				} else
-					addMessageToChatBox(updatedHeader.get(0));
-				// update headers
-				this.headers = updatedHeader;
+					if (updatedHeader.get(i).getTimestamp() >
+							headers.get(headersLastIndex).getTimestamp())
+						addMessageToChatBox(updatedHeader.get(i));
+				}
+			} else
+				addMessageToChatBox(updatedHeader.get(0));
+			// update headers
+			this.headers = updatedHeader;
 
-				// set selected
-				chatBox.setSelectedIndex(headers.size() - 1);
-			} catch (GeneralException e)
-			{
-				tuiUtils.show(e);
-			}
+			// set selected
+			chatBox.setSelectedIndex(headers.size() - 1);
+		} catch (GeneralException e)
+		{
+			tuiUtils.show(e);
 		}
 	}
 
@@ -337,14 +332,18 @@ public class Conversation extends EventListenerViewModel {
 		AttachmentReceivedEvent
 		PrivateMessageReceivedEvent
 		*/
-		if (e instanceof PrivateMessageReceivedEvent)
+		if(contact != null)
 		{
-			System.out.println("PrivateMessageReceivedEvent...");
-			updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
-		} else if (e instanceof MessageAddedEvent)
-		{
-			System.out.println("MessageAddedEvent...");
-			updateOnMessageAdded();
+			if (e instanceof PrivateMessageReceivedEvent)
+			{
+				System.out.println("PrivateMessageReceivedEvent...");
+				updateOnMessageReceived(
+						((PrivateMessageReceivedEvent) e).getMessageHeader());
+			} else if (e instanceof MessageAddedEvent)
+			{
+				System.out.println("MessageAddedEvent...");
+				updateOnMessageAdded();
+			}
 		}
 		/* TODO handle these events
 		else if (e instanceof MessagesSentEvent)
