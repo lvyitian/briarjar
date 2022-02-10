@@ -305,7 +305,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			JFXButton cancel = new JFXButton("Cancel");
 
 			JFXTextField newAlias = new JFXTextField();
-			newAlias.setPromptText("Change alias of " + messageListView.getContact().getAlias() + " here");
+			newAlias.setPromptText("Change alias of " + messageListView.getContact().getAlias() + " here.");
 			newAlias.setLabelFloat(true);
 
 			change.setOnAction(e -> {
@@ -347,15 +347,15 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	{
 		JFXButton remove = new JFXButton("Remove pending contact");
 		JFXDialog dialog = guiUtils.showConfirmationDialog(
-				"Wiping chat",
+				"Removing pending contact",
 				"Are you sure you want to remove this pending contact?",
 				remove);
 		remove.setOnAction(e -> {
 			try
 			{
 				cvm.removePendingContact(id);
+				messageListView.setContact(null);
 				updateContactList();
-				messageListView.setContact(cvm.getContact(messageListView.getContact().getId())); // reset
 				dialog.close();
 			} catch (GeneralException ex)
 			{
@@ -370,21 +370,25 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 	private void notifyOnNewMessage(ContactId sender)
 	{
-		TrayNotification notification = new TrayNotification();
-		String alias = "";
-		try
+		if(messageListView.getContact() == null || !messageListView.getContact().getId().equals(sender) ||
+				MainGUI.getPrimaryStage().isIconified() )
 		{
-			alias = cvm.getContact(sender).getAlias();
-		} catch (GeneralException e)
-		{
-			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
-		}
+			TrayNotification notification = new TrayNotification();
+			String alias = "";
+			try
+			{
+				alias = cvm.getContact(sender).getAlias();
+			} catch (GeneralException e)
+			{
+				guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
+			}
 
-		notification.setTitle("New message");
-		notification.setMessage(alias + " sent you a private message.");
-		notification.setImage(briarLogo);
-		notification.setAnimation(Animations.FADE);
-		notification.showAndDismiss(Duration.seconds(1.5));
+			notification.setTitle("New message");
+			notification.setMessage(alias + " sent you a private message.");
+			notification.setImage(briarLogo);
+			notification.setAnimation(Animations.FADE);
+			notification.showAndDismiss(Duration.seconds(1.5));
+		}
 	}
 
 	public void setGUIUtils(GUIUtils guiUtils)
