@@ -16,6 +16,10 @@ import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 import org.briarproject.briar.api.messaging.PrivateMessageHeader;
 import org.briarproject.briar.api.messaging.event.PrivateMessageReceivedEvent;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -212,25 +216,25 @@ public class Conversation extends EventListenerViewModel {
 	private void addMessageToChatBox(ConversationMessageHeader header)
 	{
 		try {
+			String time = millisecondsToLocalDateTime(header.getTimestamp(), "HH:mm");
 			String message = header.isLocal() ?
-					"<- " + cvm.getMessageText(header.getId()) :
-					"-> " + cvm.getMessageText(header.getId());
+				"[" + time + "] <- " + cvm.getMessageText(header.getId()) :
+				"[" + time + "] -> " + cvm.getMessageText(header.getId());
 
-			String metaData;
+			String metadata;
 			if(header.isLocal())
 			{
-				metaData = "ID: " + header.getId() +
-						"\nisRead:" + header.isRead() +
-						"\nisLocal: " + header.isLocal() +
-						"\nisSent: " + header.isSent() +
-						"\nisSeen: " + header.isSeen() +
-						"\nTimestamp: " + header.getTimestamp();
+				metadata = "ID: " + header.getId() +
+						"\nMessage read: " + header.isRead() +
+						"\nMessage sent: " + header.isSent() +
+						"\nMessage seen: " + header.isSeen() +
+						"\nTimestamp: " + millisecondsToLocalDateTime(header.getTimestamp(), "dd.MM.yyyy HH:mm");
 			} else
 			{
-				metaData = "ID: " + header.getId() +
-							"\nTimestamp: " + header.getTimestamp();
+				metadata = "ID: " + header.getId() +
+						"\nTimestamp: " + millisecondsToLocalDateTime(header.getTimestamp(), "dd.MM.yyyy HH:mm");
 			}
-			String finalMetaData = metaData;
+			String finalMetaData = metadata;
 
 			chatBox.addItem(message, () ->
 					showMessageDialog(textGUI,
@@ -240,6 +244,16 @@ public class Conversation extends EventListenerViewModel {
 		{
 			tuiUtils.show(e);
 		}
+	}
+
+	private static String millisecondsToLocalDateTime(long ms, String pattern)
+	{
+		Instant instant = Instant.ofEpochMilli(ms);
+		DateTimeFormatter formatter
+				= DateTimeFormatter.ofPattern(pattern);
+		LocalDateTime dateTime =
+				instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+		return formatter.format(dateTime);
 	}
 
 	/* SETTERS */

@@ -92,7 +92,9 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		messageBox.setDisable(true);
 
 		contactList = new VBox();
-		contactList.setPrefWidth(110);
+		contactList.setMinWidth(100);
+		contactList.setPrefWidth(150);
+		contactList.setMaxWidth(230);
 		isContactListVisible = true;        // default
 		isIncludingPendingContacts = false;
 
@@ -240,85 +242,55 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 	/* DIALOGS */
 
+	/* REMOVE CONTACT */
+
 	public void contactRemovalDialog()
 	{
-		if(messageListView.getContact() != null)
-		{
-			BoxBlur blur = new BoxBlur(3, 3, 3);
-			JFXDialogLayout dialogLayout = new JFXDialogLayout();
-			JFXDialog dialog =
-					new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
-							JFXDialog.DialogTransition.TOP);
-			JFXButton remove = new JFXButton("Remove");
-			JFXButton cancel = new JFXButton("Cancel");
+		JFXButton remove = new JFXButton("Removing contact");
+		JFXDialog dialog = guiUtils.showConfirmationDialog(
+				"Removing contact",
+				"Are you sure you want to remove " +
+						messageListView.getContact().getAlias() + "?",
+						remove);
+		remove.setOnAction(e -> {
+			try
+			{
+				ContactId contactIdToRemove = messageListView.getContact().getId();
+				messageListView.setContact(null); // prevent NoSuchContactException
+				cvm.removeAcceptedContact(contactIdToRemove);
+				updateContactList();
+				setCenter(noContactsSelected);
+				setBottom(null);
+				dialog.close();
+			} catch (GeneralException ex)
+			{
+				guiUtils.showMaterialDialog(ex.getTitle(), ex.getMessage());
+			}
+		});
 
-			remove.setOnAction(e -> {
-				try
-				{
-					cvm.removeAcceptedContact(
-							messageListView.getContact().getId());
-					messageListView.setContact(null);
-					updateContactList();
-					setCenter(noContactsSelected);
-					setBottom(null);
-					dialog.close();
-				} catch (GeneralException ex)
-				{
-					guiUtils.showMaterialDialog(ex.getTitle(), ex.getMessage());
-				}
-			});
-
-			cancel.setOnAction(e -> dialog.close());
-
-			dialogLayout.setActions(remove, cancel);
-			dialogLayout.setHeading(new Label("Removing contact"));
-			dialogLayout.setBody(
-					new Label("Are you sure you want to remove " + messageListView.getContact().getAlias() + "?"));
-			dialog.show();
-
-			dialog.setOnDialogClosed(
-					(JFXDialogEvent e) -> guiUtils.getRootBorderPane()
-					                                   .setEffect(null));
-			guiUtils.getRootBorderPane().setEffect(blur);
-		} else
-			guiUtils.showMaterialDialog("Removing contact", "No contact to remove selected.");
+		dialog.show();
 	}
+
+	/* DELETE ALL MESSAGES */
 
 	public void deleteAllMessagesDialog()
 	{
-		if(messageListView.getContact() != null)
-		{
-			BoxBlur blur = new BoxBlur(3, 3, 3);
-			JFXDialogLayout dialogLayout = new JFXDialogLayout();
-			JFXDialog dialog =
-					new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
-							JFXDialog.DialogTransition.TOP);
-			JFXButton wipe = new JFXButton("Wipe");
-			JFXButton cancel = new JFXButton("Cancel");
+		JFXButton wipe = new JFXButton("Wipe");
+		JFXDialog dialog = guiUtils.showConfirmationDialog(
+				"Wiping chat",
+				"You are about to wipe your chat history with " +
+						messageListView.getContact().getAlias() + ". Are you sure?",
+				wipe);
+		wipe.setOnAction(e -> {
+			messageListView.deleteAllMessages();
+			messageListView.initListView(); // re-init
+			dialog.close();
+		});
 
-			wipe.setOnAction(e -> {
-				messageListView.deleteAllMessages();
-				messageListView.initListView(); // re-init
-				dialog.close();
-			});
-
-			cancel.setOnAction(e -> dialog.close());
-
-			dialogLayout.setActions(wipe, cancel);
-			dialogLayout.setHeading(new Label("Wiping chat"));
-			dialogLayout.setBody(
-					new Label("You are about to wipe your chat history with " +
-							messageListView.getContact().getAlias() + ". Are you sure?"));
-			dialog.show();
-
-			dialog.setOnDialogClosed(
-					(JFXDialogEvent e) -> guiUtils.getRootBorderPane()
-					                                   .setEffect(null));
-			guiUtils.getRootBorderPane().setEffect(blur);
-		} else
-			guiUtils.showMaterialDialog("Wiping chat",
-					"Please open the chat, which you want to wipe.");
+		dialog.show();
 	}
+
+	/* CHANGE CONTACT ALIAS */
 
 	public void changeContactAlias()
 	{
@@ -359,23 +331,25 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			dialog.setOnDialogClosed(
 					(JFXDialogEvent e) -> guiUtils.getRootBorderPane()
 					                                   .setEffect(null));
+			dialog.setOnKeyPressed(e -> {
+				if(e.getCode().equals(KeyCode.ESCAPE))
+					dialog.close();
+			});
 			guiUtils.getRootBorderPane().setEffect(blur);
 		} else
 			guiUtils.showMaterialDialog("Changing alias",
 					"Please select whose alias you'd like to change.");
-
 	}
+
+	/* REMOVE PENDING CONTACT */
 
 	public void removePendingContactOffer(PendingContactId id)
 	{
-		BoxBlur blur = new BoxBlur(3, 3, 3);
-		JFXDialogLayout dialogLayout = new JFXDialogLayout();
-		JFXDialog dialog =
-				new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
-						JFXDialog.DialogTransition.TOP);
 		JFXButton remove = new JFXButton("Remove pending contact");
-		JFXButton close = new JFXButton("Close");
-
+		JFXDialog dialog = guiUtils.showConfirmationDialog(
+				"Wiping chat",
+				"Are you sure you want to remove this pending contact?",
+				remove);
 		remove.setOnAction(e -> {
 			try
 			{
@@ -389,20 +363,10 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			}
 		});
 
-		close.setOnAction(e -> dialog.close());
-
-		dialogLayout.setActions(remove, close);
-		dialogLayout.setHeading(new Label("Removing pending contact"));
-		dialogLayout.setBody(
-				new Label("Are you sure you want to remove this pending contact?"));
 		dialog.show();
-
-		dialog.setOnDialogClosed(
-				(JFXDialogEvent e) -> guiUtils.getRootBorderPane()
-				                              .setEffect(null));
-		guiUtils.getRootBorderPane().setEffect(blur);
 	}
 
+	/* TRAY NOTIFICATIONS */
 
 	private void notifyOnNewMessage(ContactId sender)
 	{

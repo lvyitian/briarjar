@@ -7,12 +7,22 @@ import com.jfoenix.controls.events.JFXDialogEvent;
 
 import org.briarjar.briarjar.Main;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
 
 public class GUIUtils {
 
@@ -31,7 +41,7 @@ public class GUIUtils {
 	                SignUpGridPane signUpGridPane,
 	                MessagesBorderPane messagesBorderPane,
 	                AddContactDialog addContactDialog,
-					MessageListView messageListView)
+	                MessageListView messageListView)
 	{
 
 		// no create() call
@@ -65,7 +75,10 @@ public class GUIUtils {
 		return rootBorderPane;
 	}
 
-	public RootStackPane getRootStackPane() { return rootStackPane; }
+	public RootStackPane getRootStackPane()
+	{
+		return rootStackPane;
+	}
 
 	public SignInGridPane getSignInGridPane()
 	{
@@ -77,11 +90,20 @@ public class GUIUtils {
 		return signUpGridPane;
 	}
 
-	public AddContactDialog getAddContactDialog() { return addContactDialog; }
+	public AddContactDialog getAddContactDialog()
+	{
+		return addContactDialog;
+	}
 
-	public MessagesBorderPane getMessagesBorderPane() { return messagesBorderPane; }
+	public MessagesBorderPane getMessagesBorderPane()
+	{
+		return messagesBorderPane;
+	}
 
-	public MessageListView getMessageListView() { return messageListView; }
+	public MessageListView getMessageListView()
+	{
+		return messageListView;
+	}
 
 	public void switchToMain()
 	{
@@ -113,15 +135,20 @@ public class GUIUtils {
 		mainGUI.start(MainGUI.getPrimaryStage());
 	}
 
-	public void showMaterialDialog(String header, String body) {
+	/* DIALOGS */
+
+	public void showMaterialDialog(String header, String body)
+	{
 		showMaterialDialog(rootStackPane, rootBorderPane, header, body);
 	}
 
-	public void showMaterialDialog(StackPane root, Node nodeToBlur, String header, String body) {
+	public void showMaterialDialog(StackPane root, Node nodeToBlur, String header, String body)
+	{
 		BoxBlur blur = new BoxBlur(3, 3, 3);
 
 		JFXDialogLayout dialogLayout = new JFXDialogLayout();
-		JFXDialog dialog = new JFXDialog(root, dialogLayout, JFXDialog.DialogTransition.TOP);
+		JFXDialog dialog = new JFXDialog(root, dialogLayout,
+				JFXDialog.DialogTransition.TOP);
 		JFXButton button = new JFXButton("Okay");
 
 		button.setOnAction(e -> dialog.close());
@@ -129,9 +156,69 @@ public class GUIUtils {
 		dialogLayout.setHeading(new Label(header));
 		dialogLayout.setBody(new Label(body));
 		dialog.show();
-
-
-		dialog.setOnDialogClosed((JFXDialogEvent event1) -> nodeToBlur.setEffect(null));
+		dialog.setOnDialogClosed(
+				(JFXDialogEvent e) -> nodeToBlur.setEffect(null));
+		dialog.setOnKeyPressed(e -> {
+			if(e.getCode().equals(KeyCode.ESCAPE) ||
+					e.getCode().equals(KeyCode.ENTER) )
+				dialog.close();
+		});
 		nodeToBlur.setEffect(blur);
+	}
+
+	public JFXDialog showConfirmationDialog(String header, String message,
+	                                         JFXButton confirmationButton)
+	{
+		BoxBlur blur = new BoxBlur(3, 3, 3);
+		JFXDialogLayout dialogLayout = new JFXDialogLayout();
+		JFXDialog dialog =
+				new JFXDialog(rootStackPane, dialogLayout,
+						JFXDialog.DialogTransition.TOP);
+		JFXButton cancel = new JFXButton("Cancel");
+
+		cancel.setOnAction(e -> dialog.close());
+
+		dialogLayout.setActions(confirmationButton, cancel);
+		dialogLayout.setHeading(new Label(header));
+		dialogLayout.setBody(
+				new Label(message));
+
+		dialog.setOnDialogClosed(
+				(JFXDialogEvent e) -> rootBorderPane.setEffect(null));
+		dialog.setOnKeyPressed(e -> {
+			if(e.getCode().equals(KeyCode.ESCAPE))
+				dialog.close();
+		});
+		rootBorderPane.setEffect(blur);
+
+		return dialog;
+	}
+
+
+	/* WELCOME SCREEN */
+
+	public ImageView initBriarLogo()
+	{
+		try
+		{
+			String obj = Objects.requireNonNull(
+					                    getClass().getResource("/images/briar-icon.png"))
+			                    .toExternalForm();
+			return new ImageView(new Image(obj));
+		} catch (Exception e)
+		{
+			showMaterialDialog("Image not found.", e.getMessage());
+		}
+		return null;
+	}
+
+	public void initWelcomeGridPane(GridPane gridPane)
+	{
+		gridPane.setBackground(new Background(new BackgroundFill(
+				Paint.valueOf("#ffffff"), null, gridPane.getInsets())));
+
+		gridPane.setHgap(10);
+		gridPane.setVgap(10);
+		gridPane.setAlignment(Pos.CENTER);
 	}
 }

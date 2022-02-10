@@ -7,20 +7,13 @@ import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
-import java.util.Objects;
-
 import javax.inject.Inject;
 
 import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -37,8 +30,8 @@ public class SignInGridPane extends GridPane {
 	private GUIUtils guiUtils;
 
 	@Inject
-	public SignInGridPane( LoginViewModel     lvm,
-	                       LifeCycleViewModel lifeCycleViewModel )
+	public SignInGridPane(LoginViewModel lvm,
+	                      LifeCycleViewModel lifeCycleViewModel)
 	{
 		this.lvm = lvm;
 		this.lifeCycleViewModel = lifeCycleViewModel;
@@ -53,26 +46,12 @@ public class SignInGridPane extends GridPane {
 
 	private void initComponents()
 	{
-		setBackground(new Background(new BackgroundFill(
-				Paint.valueOf("#ffffff"), null, getInsets())));
-
-		setHgap(10);
-		setVgap(10);
-		setAlignment(Pos.CENTER);
-
-		try
-		{
-			String obj = Objects.requireNonNull(
-					getClass().getResource("/images/briar-icon.png")).toExternalForm();
-			imgWelcome = new ImageView(new Image(obj));
-		} catch (Exception e)
-		{
-			guiUtils.showMaterialDialog("Image not found.", e.getMessage());
-		}
+		guiUtils.initWelcomeGridPane(this);
+		imgWelcome = guiUtils.initBriarLogo();
 
 		txtWelcome = new Text("Welcome to BriarJar!");
 		txtWelcome.setFont(Font.font("Arial", FontWeight.LIGHT, 20));
-		txtSubtext = new Text("Please Sign In with your account");
+		txtSubtext = new Text("Please sign in with your account.");
 		txtSubtext.setFont(Font.font("Arial", FontWeight.LIGHT, 15));
 		setHalignment(txtWelcome, HPos.CENTER);
 
@@ -111,7 +90,7 @@ public class SignInGridPane extends GridPane {
 			lifeCycleViewModel.start();
 			guiUtils.switchToMain();
 
-		} catch ( GeneralException e )
+		} catch (GeneralException e)
 		{
 			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}

@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import javafx.scene.control.*;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.BorderPane;
 
 @Singleton
@@ -147,14 +146,12 @@ public class RootBorderPane extends BorderPane
 
 	private void accountDeletionDialog()
 	{
-		BoxBlur blur = new BoxBlur(3, 3, 3);
-		JFXDialogLayout dialogLayout = new JFXDialogLayout();
-		JFXDialog dialog =
-				new JFXDialog(guiUtils.getRootStackPane(), dialogLayout,
-						JFXDialog.DialogTransition.TOP);
 		JFXButton remove = new JFXButton("Delete account");
-		JFXButton cancel = new JFXButton("Cancel");
-
+		JFXDialog dialog = guiUtils.showConfirmationDialog(
+				"Removing account",
+				"Are you sure you want to remove your account? " +
+						"This is permanent and can't be recovered.",
+						remove);
 		remove.setOnAction(e -> {
 			try
 			{
@@ -167,18 +164,7 @@ public class RootBorderPane extends BorderPane
 			}
 		});
 
-		cancel.setOnAction(e -> dialog.close());
-
-		dialogLayout.setActions(remove, cancel);
-		dialogLayout.setHeading(new Label("Removing account"));
-		dialogLayout.setBody(
-				new Label("Are you sure you want to remove your account? This is permanent and can't be recovered."));
 		dialog.show();
-
-		dialog.setOnDialogClosed(
-				(JFXDialogEvent event1) -> guiUtils.getRootBorderPane()
-				                                   .setEffect(null));
-		guiUtils.getRootBorderPane().setEffect(blur);
 	}
 
 	// ============================ menu: mChat ============================
