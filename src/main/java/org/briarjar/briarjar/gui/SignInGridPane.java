@@ -21,7 +21,6 @@ import javafx.scene.text.Text;
 public class SignInGridPane extends GridPane {
 
 	private final LoginViewModel lvm;
-	private final LifeCycleViewModel lifeCycleViewModel;
 	private ImageView imgWelcome;
 	private Text txtWelcome;
 	private Text txtSubtext;
@@ -30,11 +29,9 @@ public class SignInGridPane extends GridPane {
 	private GUIUtils guiUtils;
 
 	@Inject
-	public SignInGridPane(LoginViewModel lvm,
-	                      LifeCycleViewModel lifeCycleViewModel)
+	public SignInGridPane(LoginViewModel lvm)
 	{
 		this.lvm = lvm;
-		this.lifeCycleViewModel = lifeCycleViewModel;
 	}
 
 	public void create()
@@ -87,7 +84,6 @@ public class SignInGridPane extends GridPane {
 		{
 			lvm.signIn(passphraseField.getText());
 			btSignIn.setDisable(true);
-			lifeCycleViewModel.start();
 			guiUtils.switchToMain();
 
 		} catch (GeneralException e)

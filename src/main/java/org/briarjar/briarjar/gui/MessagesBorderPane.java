@@ -178,7 +178,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		try
 		{
 			contactList.getChildren().clear();
-			Collection<Contact> contacts =	cvm.getAcceptedContacts();
+			Collection<Contact> contacts =	cvm.getContacts();
 			//.getContacts();
 
 			for (Contact c : contacts)
@@ -257,7 +257,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			{
 				ContactId contactIdToRemove = messageListView.getContact().getId();
 				messageListView.setContact(null); // prevent NoSuchContactException
-				cvm.removeAcceptedContact(contactIdToRemove);
+				cvm.removeContact(contactIdToRemove);
 				updateContactList();
 				setCenter(noContactsSelected);
 				setBottom(null);

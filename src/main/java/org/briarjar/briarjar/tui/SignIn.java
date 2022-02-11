@@ -19,7 +19,6 @@ import static com.googlecode.lanterna.gui2.dialogs.MessageDialog.showMessageDial
 public class SignIn extends EventListenerViewModel {
 
 	private final LoginViewModel lvm;
-	private final LifeCycleViewModel lifeCycleViewModel;
 
 	private Panel contentPanel;
 	private BasicWindow window;
@@ -28,13 +27,11 @@ public class SignIn extends EventListenerViewModel {
 
 	@Inject
 	public SignIn( EventBus           eventBus,
-	               LoginViewModel     lvm,
-	               LifeCycleViewModel lifeCycleViewModel )
+	               LoginViewModel     lvm )
 	{
 		super(eventBus);
 
 		this.lvm = lvm;
-		this.lifeCycleViewModel = lifeCycleViewModel;
 
 		init();
 	}
@@ -99,7 +96,6 @@ public class SignIn extends EventListenerViewModel {
 
 			try {
 				lvm.signIn( passphrase );
-				lifeCycleViewModel.start();
 				repeatDialog = false;
 				tuiUtils.switchWindow( TUIWindow.CONTACTLIST );
 

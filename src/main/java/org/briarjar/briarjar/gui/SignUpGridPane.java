@@ -94,7 +94,6 @@ public class SignUpGridPane extends GridPane {
 		try
 		{
 			lvm.signUp(tfUsername.getText(), passphraseField.getText());
-			lifeCycleViewModel.start();
 		} catch (GeneralException e)
 		{
 			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
@@ -106,8 +105,8 @@ public class SignUpGridPane extends GridPane {
 
 	private void passphraseStrength()
 	{
-		lvm.setPassphrase(passphraseField.getText());
-		float strength = lvm.getPassphraseStrength();
+		String pw = passphraseField.getText();
+		float strength = lvm.getPassphraseStrength(pw);
 		if(strength < 0.25)
 			passphraseField.setFocusColor(Color.DARKRED);
 		else if (strength < 0.5)

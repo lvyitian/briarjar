@@ -117,9 +117,9 @@ public class ContactList extends EventListenerViewModel {
 
 		try
 		{
-			if ( cvm.getAcceptedContacts().size() > 0 )   // TODO accepted only currently
+			if ( cvm.getContacts().size() > 0 )   // TODO accepted only currently
 			{
-				for ( Contact c : cvm.getAcceptedContacts() )
+				for ( Contact c : cvm.getContacts() )
 				{
 					contactListBox.addItem( getAliasForList(c.getId()),
 					                        () -> {

@@ -73,30 +73,12 @@ public class SignUp extends EventListenerViewModel {
 
 		contentPanel.addComponent(
 				new Button("Sign up", () -> {
-					if(username != null && !username.isEmpty())
-					{
-						if(passphrase != null && !passphrase.isEmpty())
-						{
-							try {
-								lvm.signUp(username, passphrase);}
-							catch (GeneralException e) {
-								showMessageDialog(textGUI, "InterruptedException occurred", e.getMessage(), MessageDialogButton.OK);
-							}
-							try {
-								lifeCycleViewModel.start();
-							} catch (GeneralException e) {
-								tuiUtils.show(e);
-							}
-						} else
-							showMessageDialog(textGUI, "Empty passphrase", "Please enter a valid passphrase.",
-									MessageDialogButton.OK);
-					} else
-						showMessageDialog(textGUI, "Empty username", "Please choose a username.",
-								MessageDialogButton.OK);
-
-
-					if(lifeCycleViewModel.getLifeCycleState() == LifecycleState.RUNNING)
+					try {
+						lvm.signUp(username, passphrase);
 						tuiUtils.switchWindow(window, TUIWindow.CONTACTLIST);
+					} catch (GeneralException e) {
+						tuiUtils.show(e);
+					}
 				}));
 	}
 

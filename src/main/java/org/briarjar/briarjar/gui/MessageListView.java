@@ -176,7 +176,7 @@ public class MessageListView extends JFXListView<GUIMessage> {
 	{
 		try
 		{
-			cvm.write(contact.getId(), System.currentTimeMillis(), messageText);
+			cvm.write(contact.getId(), messageText);
 		} catch (GeneralException e)
 		{
 			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());

@@ -85,7 +85,7 @@ public class Conversation extends EventListenerViewModel {
 					{
 						try
 						{
-							cvm.write(contact.getId(), System.currentTimeMillis(), newMessage.getText());
+							cvm.write(contact.getId(), newMessage.getText());
 							newMessage.setText("");     // clear the newMessage text field
 						} catch (GeneralException e)
 						{
