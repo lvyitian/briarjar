@@ -15,9 +15,9 @@ Make sure you have the correct Java version:
 java -version
 ```
 
-To start in GUI Mode, simply run the FatJAR
+To start in GUI Mode, simply run the FatJAR with
 ```
-java -jar briarjar-0.1-all.jar
+java -jar --add-opens=java.base/java.lang.reflect=ALL-UNNAMED briarjar-0.1-all.jar
 ```
 
 TUI Mode can be invoked with either  
@@ -36,9 +36,18 @@ The briar-as-subproject submodule has to be cloned too, when cloning BriarJar.
 git clone --recurse-submodules git@code.briarproject.org:briar/briarjar 
 ```
 
-Simply run the ShadowJAR Gradle Task to compile the FatJAR.
+Simply run the ShadowJar Gradle Task to compile the FatJAR.
 
+```
+./gradlew shadowJar
+```
 
+ShadowJar will create the jar-file in the directory `build/libs/`
+
+For convenience, you can use the `start_briarjar.sh` script after building.
+```
+./start_briarjar.sh [--tui | tui ]
+```
 
 ## Disclaimer
 

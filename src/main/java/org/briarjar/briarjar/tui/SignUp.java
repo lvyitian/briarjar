@@ -49,7 +49,8 @@ public class SignUp extends EventListenerViewModel {
 		contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
 		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Please create an account")));
+		window.setComponent(
+				contentPanel.withBorder(Borders.singleLine("Please create an account")));
 	}
 
 	/* CREATE WINDOW */

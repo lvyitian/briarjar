@@ -55,7 +55,8 @@ public class ContactList extends EventListenerViewModel {
 		buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
 
 		window = new BasicWindow("Contact Selection");
-		window.setComponent(contentPanel.withBorder(Borders.singleLine("Choose your peer or add a new one")));
+		window.setComponent(contentPanel.withBorder(Borders.singleLine("Choose your peer or add a new one"))
+				.setLayoutData(BorderLayout.Location.CENTER));
 
 	}
 
@@ -84,7 +85,7 @@ public class ContactList extends EventListenerViewModel {
 
 
 		// contentPanel.addComponent(...)
-		contentPanel.addComponent(buttonPanel.withBorder(Borders.singleLine()).setLayoutData(BorderLayout.Location.BOTTOM));
+		contentPanel.addComponent(buttonPanel.withBorder(Borders.singleLine()));
 	}
 
 	/* PANELS REMOVER */
