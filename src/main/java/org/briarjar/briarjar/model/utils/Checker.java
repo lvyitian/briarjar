@@ -1,5 +1,7 @@
 package org.briarjar.briarjar.model.utils;
 
+import java.util.Objects;
+
 
 /**
  * Simple reference/variable checker (validator)
@@ -9,25 +11,29 @@ package org.briarjar.briarjar.model.utils;
 public interface Checker {
 
 	/**
-	 * Checks if a passed parameter <b>from a previous method caller</b> which
-	 * should not be null is actually not null. Otherwise the method caller
-	 * should be notified about the illegal behaviour / bug.
+	 * Checks if a passed object reference which should not be null is actually
+	 * not null or otherwise throw an
+	 * {@link IllegalArgumentException}. The
+	 * Exception type differs from {@link Objects#requireNonNull}'s
+	 * {@link NullPointerException}.
 	 * <p>
-	 * But its up to the user of this method to notify the call causer, since
-	 * the thrown {@link IllegalArgumentException} extends the
-	 * {@link RuntimeException} and is therefore an unchecked exception, too.
-	 * <b>Note</b>: an IDE will likely not remind to catch an unchecked
-	 * exception.
+	 * <b>Note</b>: Since it's an unchecked exception, an IDE will not complain
+	 * about a missing optional catch block!
 	 *
 	 * @param name  a {@code string}, to be included in the detail message
 	 *
-	 * @param o     an {@link Object object} to be checked for {@code null}
+	 * @param object  an {@link Object object} to be checked for {@code null}
 	 *
-	 * @throws IllegalArgumentException if {@code o} is null
+	 * @param <T>  reference type
+	 *
+	 * @return  the checked {@code object} if it's not null
+	 *
+	 * @throws IllegalArgumentException if {@code object} is null
 	 */
-	static void throwOnNullParam(String name, Object o) throws IllegalArgumentException
+	static <T> T throwOnNullParam(String name, T object) throws IllegalArgumentException
 	{
-		if ( o == null )
+		if ( object == null )
 			throw new IllegalArgumentException( name+" can not be null" );
+		return object;
 	}
 }
