@@ -73,7 +73,7 @@ public class LifeCycleViewModel {
 	 * @throws GeneralException if the {@code dbKey} is null or another start-up
 	 *                          problem occurs
 	 *
-	 * @see org.briarproject.bramble.api.lifecycle.LifecycleManager#startServices
+	 * @see org.briarproject.bramble.api.lifecycle.LifecycleManager#startServices(SecretKey)
 	 * @see org.briarproject.bramble.api.lifecycle.LifecycleManager#waitForStartup
 	 *
 	 * @since 1.0
@@ -116,8 +116,8 @@ public class LifeCycleViewModel {
 	/**
 	 * Stops Briar (all running lifecycle services) to exit the application
 	 * gratefully. {@link LoginViewModel}'s {@link LoginViewModel#signUp signUp}
-	 * / {@link LoginViewModel#signIn signIn} should be used to {@link #start}
-	 * Briar again.
+	 * / {@link LoginViewModel#signIn signIn} should be used to
+	 * {@link #start(SecretKey) start} Briar again.
 	 *
 	 * @throws GeneralException  if an error occurs during stopping
 	 *

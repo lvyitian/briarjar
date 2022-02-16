@@ -62,13 +62,13 @@ public class ContactViewModel {
 	 * Adds a new pending (yet not mutually accepted) contact for communication.
 	 * The alias (shown contact name) can also be changed later on if desired.
 	 *
-	 * @param link  a {@code string}, not null, not empty, not blank
+	 * @param link  a string, not null, not empty, not blank
 	 *
-	 * @param alias  a {@code string}, not null, not empty, not blank
+	 * @param alias  a string, not null, not empty, not blank
 	 *
 	 * @throws GeneralException if compliance is not met or adding is not
 	 *                          possible for another reason
-	 * @see org.briarproject.bramble.api.contact.ContactManager#addPendingContact
+	 * @see org.briarproject.bramble.api.contact.ContactManager#addPendingContact(String, String) 
 	 *
 	 * @since 1.0
 	 */
@@ -134,8 +134,8 @@ public class ContactViewModel {
 
 	/**
 	 * Returns the mutually accepted (not pending any more) contact with the
-	 * provided {@link org.briarproject.bramble.api.contact.ContactId}. Useful
-	 * to acquire further information.
+	 * provided {@link org.briarproject.bramble.api.contact.ContactId}
+	 * . Useful to acquire further information.
 	 *
 	 * @param contactId  contact's {@link org.briarproject.bramble.api.contact.ContactId}
 	 *                   , not null
@@ -144,7 +144,7 @@ public class ContactViewModel {
 	 * @throws GeneralException if compliance is not met or returning is not
 	 *                          possible for another reason
 	 *
-	 * @see org.briarproject.bramble.api.contact.ContactManager#getContact
+	 * @see org.briarproject.bramble.api.contact.ContactManager#getContact(ContactId)
 	 *
 	 * @since 1.0
 	 */
@@ -166,11 +166,11 @@ public class ContactViewModel {
 	 * Returns the own handshake link which is needed to be mutually shared with
 	 * a new contact in order to get connected to each other for communication.
 	 *
-	 * @return a {@code string} of the own handshake link
+	 * @return a string of the own handshake link
 	 *
 	 * @throws GeneralException if returning is not possible for an underlying
 	 *                          reason
-	 * @see org.briarproject.bramble.api.contact.ContactManager#getContact
+	 * @see org.briarproject.bramble.api.contact.ContactManager#getContact(ContactId) 
 	 *
 	 * @since 1.0
 	 */
@@ -226,7 +226,7 @@ public class ContactViewModel {
 	 * @throws GeneralException if compliance is not met or removing is not
 	 *                          possible for another reason
 	 *
-	 * @see org.briarproject.bramble.api.contact.ContactManager#removeContact
+	 * @see org.briarproject.bramble.api.contact.ContactManager#removeContact(ContactId) 
 	 *
 	 * @since 1.0
 	 */
@@ -255,7 +255,7 @@ public class ContactViewModel {
 	 * @throws GeneralException if compliance is not met or removing is not
 	 *                          possible for another reason
 	 *
-	 * @see org.briarproject.bramble.api.contact.ContactManager#removePendingContact
+	 * @see org.briarproject.bramble.api.contact.ContactManager#removePendingContact(PendingContactId) 
 	 *
 	 * @since 1.0
 	 */
@@ -281,12 +281,12 @@ public class ContactViewModel {
 	 * @param contactId  contact's {@link org.briarproject.bramble.api.contact.ContactId}
 	 *                   , not null
 	 *
-	 * @param alias  a {@code string}, not null, not empty, not blank
+	 * @param alias  a string, not null, not empty, not blank
 	 *
 	 * @throws GeneralException if compliance is not met or setting is not
 	 *                          possible for another reason
 	 *
-	 * @see org.briarproject.bramble.api.contact.ContactManager#setContactAlias
+	 * @see org.briarproject.bramble.api.contact.ContactManager#setContactAlias(ContactId, String) 
 	 *
 	 * @since 1.0
 	 */
@@ -315,7 +315,7 @@ public class ContactViewModel {
 	/**
 	 * Checks the provided alias for compliance.
 	 *
-	 * @param alias  a {@code string}, not null, not empty, not blank,
+	 * @param alias  a string, not null, not empty, not blank,
 	 *               with maximum {@link org.briarproject.bramble.api.identity.AuthorConstants#MAX_AUTHOR_NAME_LENGTH MAX_AUTHOR_NAME_LENGTH}
 	 *
 	 * @return the provided {@code alias} if compliance is met

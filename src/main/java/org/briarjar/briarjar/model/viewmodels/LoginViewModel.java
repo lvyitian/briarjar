@@ -4,6 +4,7 @@ import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarproject.bramble.api.account.AccountManager;
 import org.briarproject.bramble.api.crypto.DecryptionException;
 import org.briarproject.bramble.api.crypto.PasswordStrengthEstimator;
+import org.briarproject.bramble.api.crypto.SecretKey;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -102,13 +103,13 @@ public class LoginViewModel {
 	 * Returns the estimated strength of the {@code passphrase} provided to
 	 * assess its ability to withstand attacks.
 	 *
-	 * @param passphrase a {@code string} to assess
+	 * @param passphrase a string to assess
 	 *
 	 * @return a {@code float} between 0 (weakest) and 1 (strongest), inclusive
 	 *
 	 * @since 1.0
 	 *
-	 * @see org.briarproject.bramble.api.crypto.PasswordStrengthEstimator#estimateStrength 
+	 * @see org.briarproject.bramble.api.crypto.PasswordStrengthEstimator#estimateStrength(String) 
 	 */
 	public float
 	       getPassphraseStrength( String passphrase )
@@ -123,9 +124,10 @@ public class LoginViewModel {
 	 * possible while the {@link org.briarproject.bramble.api.account.AccountManager}
 	 * has the database key.
 	 *
-	 * @return  {@code true} after successful {@link #signUp} or {@link #signIn}
-	 *          until {@link #deleteAccount()} or {@link LifeCycleViewModel#stop()}
-	 *          is called or the process exits for another reason.
+	 * @return  {@code true} after successful {@link #signUp signUp} or
+	 *          {@link #signIn signIn} until {@link #deleteAccount()} or
+	 *          {@link LifeCycleViewModel#stop()} is called or the process exits
+	 *          for another reason.
 	 *
 	 * @see     org.briarproject.bramble.api.account.AccountManager#hasDatabaseKey
 	 *
@@ -145,10 +147,10 @@ public class LoginViewModel {
 	 * @param   passphrase the {@code string} used for account creation
 	 *
 	 * @throws  GeneralException when {@code passphrase} is not complying to
-	 *          {@link #checkPassphrase} or database decryption fails
-	 *          (usually the wrong {@code passphrase} provided)
+	 *          {@link #checkPassphrase checkPassphrase} or database decryption 
+	 *          fails (usually the wrong {@code passphrase} provided)
 	 *
-	 * @see     org.briarproject.bramble.api.account.AccountManager#signIn
+	 * @see     org.briarproject.bramble.api.account.AccountManager#signIn(String) 
 	 *
 	 * @since   1.0
 	 */
@@ -173,7 +175,7 @@ public class LoginViewModel {
 
 	/**
 	 * Creates a required, local stored user account with the provided
-	 * credentials and starts Briar (no extra {@link #signIn} call is needed).
+	 * credentials and starts Briar (no extra {@link #signIn signIn} call is needed).
 	 *<p>
 	 * The freely chosen {@code username} is transmitted / displayed to contacts
 	 * and may be locally extended by them with an alias.
@@ -182,17 +184,18 @@ public class LoginViewModel {
 	 * {@link #deleteAccount() deleting} the whole user account and sign-up for
 	 * a new one.
 	 *
-	 * @param   username a {@code string}, complying to {@link #checkUsername}
+	 * @param   username a string, complying to {@link #checkUsername checkUsername}
 	 *
-	 * @param   passphrase a {@code string}, complying to {@link #checkPassphrase}
+	 * @param   passphrase a string, complying to {@link #checkPassphrase checkPassphrase}
 	 * 	                   <p><b>Note:</b> Currently, the {@code passphrase}
-	 * 	                   can not be altered after account creation.</p>
+	 * 	                   can not be altered after account creation since it is
+	 * 	                   out of scope for this implementation.</p>
 	 *
 	 * @throws  GeneralException if compliance is not met or signing up is not
 	 * 	                         possible for another reason
 	 *
-	 * @see     org.briarproject.bramble.api.account.AccountManager#createAccount
-	 * @see     LifeCycleViewModel#start
+	 * @see     org.briarproject.bramble.api.account.AccountManager#createAccount(String, String) 
+	 * @see     LifeCycleViewModel#start(SecretKey) 
 	 *
 	 * @since   1.0
 	 */
@@ -223,7 +226,7 @@ public class LoginViewModel {
 	 *
 	 * @throws  GeneralException if compliance is not met
 	 *
-	 * @see     #checkPassphrase
+	 * @see     #checkPassphrase(String) 
 	 *
 	 * @since   1.0
 	 *
@@ -257,7 +260,7 @@ public class LoginViewModel {
 	 *
 	 * @throws  GeneralException if compliance is not met
 	 *
-	 * @see     #checkUsername
+	 * @see     #checkUsername(String) 
 	 *
 	 * @since   1.0
 	 *

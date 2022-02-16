@@ -83,7 +83,7 @@ public class ConversationViewModel {
 	 * @throws GeneralException  if compliance is not met or deleting is
 	 *                           currently not possible
 	 *
-	 * @see org.briarproject.briar.api.conversation.ConversationManager#deleteAllMessages
+	 * @see org.briarproject.briar.api.conversation.ConversationManager#deleteAllMessages(ContactId) 
 	 *
 	 * @since 1.0
 	 */
@@ -117,7 +117,7 @@ public class ConversationViewModel {
 	 * @throws GeneralException if compliance is not met or deleting is
 	 *                          currently not possible
 	 *
-	 * @see org.briarproject.briar.api.conversation.ConversationManager#deleteMessages
+	 * @see org.briarproject.briar.api.conversation.ConversationManager#deleteMessages(ContactId, Collection) 
 	 *
 	 * @since 1.0
 	 */
@@ -141,37 +141,77 @@ public class ConversationViewModel {
 	    }
     }
 
-	//TODO gets completed if used by UI
+
+	/**
+	 * Returns the {@link org.briarproject.bramble.api.contact.ContactId} of the
+	 * provided {@link org.briarproject.bramble.api.sync.GroupId} (private
+	 * conversation ID).
+	 *
+	 * @param g  contact's {@link org.briarproject.bramble.api.sync.GroupId}
+	 *           , not null
+	 * @return the related {@link org.briarproject.bramble.api.contact.ContactId}
+	 *
+	 * @throws GeneralException if compliance is not met or returning is not
+	 *                          possible for another reason
+	 *
+	 * @see #getConversationId(ContactId)
+	 * @see org.briarproject.briar.api.messaging.MessagingManager#getContactId(GroupId)
+	 *
+	 * @since 1.0
+	 */
 	public ContactId
 	       getContactId( GroupId g )
 	throws GeneralException
 	{
 		try {
+			throwOnNullParam( "GroupId", g );
 			return messagingManager.getContactId( g );
 		}
-		catch (DbException e) {
+		catch (DbException | IllegalArgumentException e) {
 			throw new GeneralException( e, true,
 			                        "Attempting to get contact's internal ID" );
 		}
 	}
 
 
-	//TODO gets completed if used by UI
+	/**
+	 * Returns the {@link org.briarproject.bramble.api.sync.GroupId} (private
+	 * conversation ID) of the provided {@link org.briarproject.bramble.api.contact.ContactId}
+	 * , useful for instance to mark read messages by calling {@link #setReadFlag setReadFlag}.
+	 *
+	 * @param c  contact's {@link org.briarproject.bramble.api.contact.ContactId}
+	 *           , not null
+	 * @return the related {@link org.briarproject.bramble.api.sync.GroupId}
+	 *
+	 * @throws GeneralException if compliance is not met or returning is not
+	 *                          possible for another reason
+	 *
+	 * @see #getContactId(GroupId)
+	 * @see org.briarproject.briar.api.messaging.MessagingManager#getConversationId(ContactId)
+	 *
+	 * @since 1.0
+	 */
 	public GroupId
 	       getConversationId( ContactId c )
 	throws GeneralException
 	{
 		try {
+			throwOnNullParam( "ContactId", c );
 			return messagingManager.getConversationId( c );
 		}
-		catch (DbException e) {
+		catch (DbException | IllegalArgumentException e) {
 			throw new GeneralException( e, true,
 			           "Attempting to get contact's internal conversation ID" );
 		}
 	}
 
-	//TODO gets completed if used by UI
-	public GroupCount                // TODO = msgCount, unreadCount, latestTime
+
+// TODO
+	/**
+	 * @deprecated Will only be completely implemented if UI makes use of it
+	 *         since it is not required (out of scope) for this diploma project.
+	 */
+	public GroupCount            // currently: msgCount, unreadCount, latestTime
 	       getGroupCount( ContactId contactId )
     throws GeneralException
     {
@@ -188,7 +228,7 @@ public class ConversationViewModel {
 	/**
 	 * Gets a collection of private message headers exchanged with the passed
 	 * {@link org.briarproject.bramble.api.contact.ContactId}, useful for
-	 * calling {@link #getMessageText}.
+	 * calling {@link #getMessageText(MessageId)}.
 	 *
 	 * @param   c  contact's {@link org.briarproject.bramble.api.contact.ContactId}
 	 *             , not null
@@ -197,7 +237,7 @@ public class ConversationViewModel {
 	 * @throws GeneralException if compliance is not met or returning is not
 	 * 	                        possible for another reason
 	 *
-	 * @see org.briarproject.briar.api.conversation.ConversationManager#getMessageHeaders
+	 * @see org.briarproject.briar.api.conversation.ConversationManager#getMessageHeaders(ContactId) 
 	 *
 	 * @since 1.0
 	 */
@@ -222,13 +262,13 @@ public class ConversationViewModel {
 	 *
 	 * @param m  the {@link org.briarproject.bramble.api.sync.MessageId} of
 	 *           interest, not null
-	 * @return  a {@code string} of the stored message text or a placeholder if
+	 * @return  a string of the stored message text or a placeholder if
 	 *          the message text is {@code null} or has been deleted before
 	 *
 	 * @throws GeneralException  if the requested message text can not be
 	 *                           fetched for another reason
 	 *
-	 * @see org.briarproject.briar.api.messaging.MessagingManager#getMessageText
+	 * @see org.briarproject.briar.api.messaging.MessagingManager#getMessageText(MessageId) 
 	 *
 	 * @since 1.0
 	 */
@@ -255,7 +295,12 @@ public class ConversationViewModel {
 	    }
     }
 
-//TODO gets completed if used by UI
+
+//TODO
+	/**
+	 * @deprecated Will only be completely implemented if UI makes use of it
+	 *         since it is not required (out of scope) for this diploma project.
+	 */
 	public void
 	       setReadFlag( GroupId   g,
 	                    MessageId m,
@@ -282,9 +327,9 @@ public class ConversationViewModel {
 	 * @throws GeneralException  if compliance is not met or writing is not
 	 * 	                         possible for another reason
 	 *
-	 * @see org.briarproject.briar.api.messaging.PrivateMessageFactory#createLegacyPrivateMessage
-	 * @see org.briarproject.briar.api.messaging.MessagingManager#addLocalMessage
-	 * @see System#currentTimeMillis
+	 * @see org.briarproject.briar.api.messaging.PrivateMessageFactory#createLegacyPrivateMessage(GroupId, long, String) 
+	 * @see org.briarproject.briar.api.messaging.MessagingManager#addLocalMessage(PrivateMessage)
+	 * @see System#currentTimeMillis()
 	 *
 	 * @since 1.0
 	 */
