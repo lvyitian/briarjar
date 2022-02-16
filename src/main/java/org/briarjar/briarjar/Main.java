@@ -23,7 +23,7 @@ public class Main {
 				ui = UserInterface.GRAPHICAL;
 
 			// testing for terminal
-			// ui = UserInterface.TERMINAL;
+			//ui = UserInterface.TERMINAL;
 
 			var briarJarApp = launchApp();
 

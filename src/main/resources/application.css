@@ -1,5 +1,5 @@
 /* VARIABLE DEFINITIONS: Only these 4 variables have to be adjusted, the rest is copy-paste */
-/* Source: */
+/* Source: https://stackoverflow.com/a/45352793 */
 * {
     -fx-my-menu-color: #ffffff;                  /* Change according to your needs */
     -fx-my-menu-color-highlighted: #95DE2D;      /* Change according to your needs */
@@ -85,17 +85,17 @@
     -fx-text-fill: white;
 }
 
-.list-cell:odd {
-    -fx-background-color: white;
-}
-
 .list-cell:filled:hover {
     -fx-text-fill: white;
     -fx-background-color: lightgreen;
 }
 
+.list-cell:odd {
+    -fx-background-color: white;
+}
+
 /* ROOT */
 .root {
-    -fx-accent: lightgreen;
-    -fx-focus-color: lightgreen;
+    -fx-accent: limegreen;
+    -fx-focus-color: limegreen;
 }

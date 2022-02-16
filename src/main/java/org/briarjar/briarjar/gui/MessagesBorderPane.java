@@ -372,7 +372,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 	{
 		if( messageListView.getContact() == null ||
 				!messageListView.getContact().getId().equals(sender) ||
-				MainGUI.getPrimaryStage().isIconified() )
+				!MainGUI.getPrimaryStage().isFocused() )
 		{
 			TrayNotification notification = new TrayNotification();
 			String alias = "";
