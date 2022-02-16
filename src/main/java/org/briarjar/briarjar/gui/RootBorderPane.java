@@ -62,7 +62,7 @@ public class RootBorderPane extends BorderPane
 		miDeleteAccount		= new MenuItem("Delete account");
 		miExit 				= new MenuItem("Exit");
 		miShowContactList 	= new MenuItem("Hide contact list"); // default
-		miIncludePendingContacts = new MenuItem("Include pending contacts"); // default
+		miIncludePendingContacts = new MenuItem("Exclude pending contacts");
 		miDeleteAllMessages = new MenuItem("Delete all messages");
 		miAddContact        = new MenuItem("Add a new contact");
 		miRemoveContact 	= new MenuItem("Remove this contact");
@@ -125,7 +125,6 @@ public class RootBorderPane extends BorderPane
 		miSignOut.setDisable(disable);
 		mContact.setDisable(disable);
 		mChat.setDisable(disable);
-		miDeleteAccount.setDisable(disable);
 	}
 
 	// ============================ menu: mBriar ============================
@@ -144,21 +143,22 @@ public class RootBorderPane extends BorderPane
 
 	private void accountDeletionDialog()
 	{
-		JFXButton remove = new JFXButton("Remove account");
+		JFXButton delete = new JFXButton("Delete account");
 		JFXDialog dialog = guiUtils.showConfirmationDialog(
-				"Removing account",
-				"Are you sure you want to remove your account? " +
-						"This is permanent and can't be recovered.",
-						remove);
-		remove.setOnAction(e -> {
+				"Deleting account",
+				"Are you sure that you want to delete your account?\n\n" +
+				"A deleted account can not be recovered without any " +
+				"kind of file-system based backup or recovery approach.\n\n" +
+				"When finished, BriarJar exits automatically and can be " +
+				"started again manually",
+						delete);
+		delete.setOnAction(e -> {
 			try
 			{
 				lvm.deleteAccount();
-				guiUtils.switchToSignUp();
-				dialog.close();
 			} catch (Exception ex)
 			{
-				guiUtils.showMaterialDialog("Removing account", ex.getMessage());
+				guiUtils.showMaterialDialog("Deleting account", ex.getMessage());
 			}
 		});
 
@@ -214,8 +214,11 @@ public class RootBorderPane extends BorderPane
 	{
 		guiUtils.showMaterialDialog("BriarJar GUI",
 				"""
-						This development build is a GUI prototype.Try out the TUI Mode with --tui or tui option.
-						Briar is licensed under GPLv3.
+						This development build is the GUI prototype.
+						Try out the TUI mode by starting the application with --tui or tui option.
+						
+						Briar (briarproject.org) is licensed under GPLv3.
+						
 						This project uses the following third-party libraries:
 						- JFoenix (Apache v2, jfoenix.com)
 						- TrayNotification by PlusHaze (MIT, github.com/PlusHaze)

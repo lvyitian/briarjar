@@ -96,7 +96,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		contactList.setPrefWidth(150);
 		contactList.setMaxWidth(230);
 		isContactListVisible = true;        // default
-		isIncludingPendingContacts = false;
+		isIncludingPendingContacts = true;
 
 		messageListView = guiUtils.getMessageListView();
 

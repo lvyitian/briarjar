@@ -63,15 +63,18 @@ public class SignUpGridPane extends GridPane {
 		tfUsername = new JFXTextField("");
 		tfUsername.setPromptText("Enter a username");
 		passphraseField = new JFXPasswordField();
-		passphraseField.setPromptText("Enter a passphrase");
+		passphraseField.setMinSize(235d, USE_COMPUTED_SIZE);
+		passphraseField.setPromptText("Enter a passphrase  (min. 15 chars)");
 
 		btSignUp = new JFXButton("Sign up");
+		btSignUp.setDisable(true);
 	}
 
 	private void addComponents()
 	{
 		// TODO: don't skip rows, instead correct the heights!
 		add(imgWelcome, 0, 0);
+		setHalignment(imgWelcome, HPos.CENTER);
 		add(txtWelcome, 0, 2);
 		add(txtSubtext, 0, 3);
 		add(tfUsername, 0, 4);
@@ -94,13 +97,12 @@ public class SignUpGridPane extends GridPane {
 		try
 		{
 			lvm.signUp(tfUsername.getText(), passphraseField.getText());
+			btSignUp.setDisable(true);
+			guiUtils.switchToMain();
 		} catch (GeneralException e)
 		{
 			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
-
-		btSignUp.setDisable(true);
-		guiUtils.switchToMain();
 	}
 
 	private void passphraseStrength()
@@ -117,6 +119,11 @@ public class SignUpGridPane extends GridPane {
 			passphraseField.setFocusColor(Color.YELLOW);
 		else
 			passphraseField.setFocusColor(Color.LIMEGREEN);
+
+		if ( pw.length() >= LoginViewModel.MIN_PASSPHRASE_LENGTH)
+			btSignUp.setDisable(false);
+		else
+			btSignUp.setDisable(true);
 	}
 
 	private void switchToPassphrase(KeyEvent e)

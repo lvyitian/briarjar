@@ -34,6 +34,7 @@ import javax.inject.Singleton;
 public class LifeCycleViewModel {
 
 	private final LifecycleManager lifecycleManager;
+	private @Nullable Thread shutdownThread;
 
 	/**
 	 * Constructs a LifeCycleViewModel.
@@ -149,6 +150,26 @@ public class LifeCycleViewModel {
 	}
 
 
+	/**
+	 * Calls {@link #stop()} and removes the shutdown hook on success to be
+	 * prepared to delete the existing user account and exit the application
+	 * gratefully immediately afterwards.
+	 * <p>This method <b>should not</b> be  called by the programmer, instead it
+	 * is prepared to be called by {@link LoginViewModel}'s
+	 * {@link LoginViewModel#deleteAccount()} method.
+	 *
+	 * @throws GeneralException if a problem occurs during {@link #stop()}
+	 *
+	 * @since 1.0
+	 */
+	public void
+	       stopForAccountDeletion()
+	throws GeneralException
+	{
+		stop();
+		Runtime.getRuntime().removeShutdownHook( shutdownThread );
+	}
+
 
 
 
@@ -164,7 +185,7 @@ public class LifeCycleViewModel {
 	 */
 	private void addShutdownThread()
 	{
-		Thread shutdownThread = new Thread(() -> {
+		shutdownThread = new Thread(() -> {
 			try {
 				stop();
 			}

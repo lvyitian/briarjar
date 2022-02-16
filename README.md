@@ -20,7 +20,7 @@ To start in GUI Mode, simply run the FatJAR with
 java -jar --add-opens=java.base/java.lang.reflect=ALL-UNNAMED briarjar-0.1-all.jar
 ```
 
-TUI Mode can be invoked with either  
+The TUI Mode can be invoked with either  
 ```
 java -jar briarjar-0.1-all.jar tui
 ```
@@ -46,9 +46,9 @@ ShadowJar will create the jar-file in the directory `build/libs/`
 
 For convenience, you can use the `start_briarjar.sh` script after building.
 ```
-./start_briarjar.sh [--tui | tui ]
+./start_briarjar.sh [--tui | tui]
 ```
 
 ## Disclaimer
 
-This is a diploma thesis and is not intended for public use at the moment. Use at your own risk.
+This is a diploma project and is not intended for public use at the moment. Use at your own risk.

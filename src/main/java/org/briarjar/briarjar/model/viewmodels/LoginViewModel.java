@@ -35,11 +35,11 @@ public class LoginViewModel {
 	private final LifeCycleViewModel lifeCycleViewModel;
 	private final PasswordStrengthEstimator pwStrengthEstimator;
 
-	int MIN_USERNAME_LENGTH = 1;
-	int MAX_USERNAME_LENGTH = 50;
+	public static final int MIN_USERNAME_LENGTH = 1;
+	public static final int MAX_USERNAME_LENGTH = 50;
 
-	int MIN_PASSPHRASE_LENGTH = 1; //TODO set higher value in production
-	int MAX_PASSPHRASE_LENGTH = 200;
+	public static final int MIN_PASSPHRASE_LENGTH = 15;
+	public static final int MAX_PASSPHRASE_LENGTH = 200;
 
 
 	/**
@@ -85,8 +85,11 @@ public class LoginViewModel {
 
 
 	/**
-	 * Deletes a local existing user account completely, contacts are not
-	 * getting notified about.
+	 * Deletes a local existing user account completely (contacts are not
+	 * getting notified about) and exits the application gratefully.
+	 *
+	 * @throws GeneralException if a problem occurs during
+	 *                          {@link LifeCycleViewModel#stopForAccountDeletion()}
 	 *
 	 * @since 1.0
 	 *
@@ -94,8 +97,11 @@ public class LoginViewModel {
 	 */
 	public void
 	       deleteAccount()
-	{ //TODO maybe ask beforehand for reading unseen messages
+	throws GeneralException
+	{
+		lifeCycleViewModel.stopForAccountDeletion();
 		accountManager.deleteAccount();
+		System.exit(0);
 	}
 
 
