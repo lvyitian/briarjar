@@ -231,13 +231,12 @@ public class MessageListView extends JFXListView<GUIMessage> {
 				if(header.isLocal())
 				{
 					metadata = "Message ID: " + StringUtils.toHexString(header.getId().getBytes()) +
-							"\nMessage read: " + header.isRead() +
 							"\nMessage sent: " + header.isSent() +
-							"\nMessage seen: " + header.isSeen() +
+							"\nMessage seen: " + header.isSeen() + " (not implemented yet)" +
 							"\nTimestamp: " + millisecondsToLocalDateTime(header.getTimestamp(), "dd.MM.yyyy HH:mm");
 				} else
 				{
-					metadata = "ID: " + header.getId() +
+					metadata = "Message ID: " + StringUtils.toHexString(header.getId().getBytes()) +
 							"\nTimestamp: " + millisecondsToLocalDateTime(header.getTimestamp(), "dd.MM.yyyy HH:mm");
 				}
 
