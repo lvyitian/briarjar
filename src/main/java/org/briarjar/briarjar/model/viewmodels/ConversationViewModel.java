@@ -211,6 +211,7 @@ public class ConversationViewModel {
 	 * @deprecated Will only be completely implemented if UI makes use of it
 	 *         since it is not required (out of scope) for this diploma project.
 	 */
+	@Deprecated
 	public GroupCount            // currently: msgCount, unreadCount, latestTime
 	       getGroupCount( ContactId contactId )
     throws GeneralException
@@ -301,6 +302,7 @@ public class ConversationViewModel {
 	 * @deprecated Will only be completely implemented if UI makes use of it
 	 *         since it is not required (out of scope) for this diploma project.
 	 */
+	@Deprecated
 	public void
 	       setReadFlag( GroupId   g,
 	                    MessageId m,
@@ -322,7 +324,8 @@ public class ConversationViewModel {
 	 *
 	 * @param contactId  the {@link org.briarproject.bramble.api.contact.ContactId}
 	 *                   of the receiver, not null
-	 * @param text       a {@code string} to be sent, not null, not blank
+	 * @param text       a {@code string} to be sent, not null, not blank,
+	 *                   maximum 30.720 UTF-8 bytes long
 	 *
 	 * @throws GeneralException  if compliance is not met or writing is not
 	 * 	                         possible for another reason
@@ -359,9 +362,11 @@ public class ConversationViewModel {
 			pm = pmFactory.createLegacyPrivateMessage(
 			                         groupId, System.currentTimeMillis(), text);
 		}
-		catch (FormatException e) {
-			throw new GeneralException("The message format seems to be invalid",
-			                           "Attempting to create message", e, true);
+		catch (FormatException | IllegalArgumentException e) {
+			String msg = "The message format seems to be invalid. Maybe the " +
+			             "text is longer than 30.720 UTF-8 characters?";
+			throw new GeneralException( msg, "Attempting to create message", e,
+			                            true );
 		}
 
 		try {

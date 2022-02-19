@@ -7,6 +7,7 @@ import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ConversationViewModel;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.sync.MessageId;
+import org.briarproject.bramble.util.StringUtils;
 import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 import org.briarproject.briar.api.messaging.PrivateMessageHeader;
 
@@ -83,10 +84,7 @@ public class MessageListView extends JFXListView<GUIMessage> {
 	{
 		if(e.getButton() == MouseButton.SECONDARY)
 		{
-			System.out.println("show");
 			messageContextMenu.show(guiUtils.getRootStackPane(), e.getScreenX(), e.getScreenY());
-			System.out.println("show done");
-
 		}
 	}
 
@@ -232,7 +230,7 @@ public class MessageListView extends JFXListView<GUIMessage> {
 				String metadata;
 				if(header.isLocal())
 				{
-					metadata = "ID: " + header.getId() +
+					metadata = "Message ID: " + StringUtils.toHexString(header.getId().getBytes()) +
 							"\nMessage read: " + header.isRead() +
 							"\nMessage sent: " + header.isSent() +
 							"\nMessage seen: " + header.isSeen() +

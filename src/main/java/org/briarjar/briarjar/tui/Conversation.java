@@ -12,6 +12,7 @@ import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.sync.event.MessageAddedEvent;
+import org.briarproject.bramble.util.StringUtils;
 import org.briarproject.briar.api.conversation.ConversationMessageHeader;
 import org.briarproject.briar.api.messaging.PrivateMessageHeader;
 import org.briarproject.briar.api.messaging.event.PrivateMessageReceivedEvent;
@@ -219,7 +220,7 @@ public class Conversation extends EventListenerViewModel {
 			String metadata;
 			if(header.isLocal())
 			{
-				metadata = "ID: " + header.getId() +
+				metadata = "Message ID: " + StringUtils.toHexString(header.getId().getBytes()) +
 						"\nMessage read: " + header.isRead() +
 						"\nMessage sent: " + header.isSent() +
 						"\nMessage seen: " + header.isSeen() +
