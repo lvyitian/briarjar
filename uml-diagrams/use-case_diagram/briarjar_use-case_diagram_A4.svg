@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="837px" preserveAspectRatio="none" style="width:969px;height:837px;background:#FFFFFF;" version="1.1" viewBox="0 0 969 837" width="969px" zoomAndPan="magnify"><defs><filter height="300%" id="fhpyl7ot6tn0d" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="3.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="6.0" dy="6.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[c25bfb6aac2b8e33a2ce971e6e4be7da]
+cluster BriarJar (GUI/TUI)--><polygon fill="#FFFFFF" filter="url(#fhpyl7ot6tn0d)" points="127.5,9,339,9,349.5,42.4453,943.5,42.4453,943.5,826.5,127.5,826.5,127.5,9" style="stroke:#000000;stroke-width:2.25;"/><line style="stroke:#000000;stroke-width:2.25;" x1="127.5" x2="349.5" y1="42.4453" y2="42.4453"/><text fill="#000000" font-family="sans-serif" font-size="21" font-weight="bold" lengthAdjust="spacing" textLength="202.5" x="133.5" y="31.4927">BriarJar (GUI/TUI)</text><ellipse cx="301.321" cy="85.4642" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="101.821" ry="23.9642" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="130.5" x="231.571" y="91.0855">Add Contact</text><ellipse cx="301.818" cy="190.4136" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="124.068" ry="28.4136" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="187.5" x="207.0312" y="195.0323">Chat with Contact</text><ellipse cx="301.6717" cy="302.8843" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="135.1717" ry="30.6343" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="213" x="195.1717" y="307.1544">Alter Contact's Alias</text><ellipse cx="301.3104" cy="442.6063" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="149.8104" ry="56.3563" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="70.5" x="266.0604" y="422.431">Delete</text><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="187.5" x="207.5604" y="446.8764">local Chat History</text><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="124.5" x="239.0604" y="471.3217">per Contact</text><ellipse cx="301.1758" cy="578.7852" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="119.6758" ry="27.5352" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="177" x="210.0534" y="583.8919">Remove Contact</text><ellipse cx="301.7515" cy="685.7003" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="114.2515" ry="26.4503" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="163.5" x="215.5015" y="691.3216">Delete Account</text><ellipse cx="779.504" cy="195.2008" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="140.504" ry="31.7008" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="225" x="667.004" y="199.4708">Get own Contact Link</text><ellipse cx="778.9713" cy="86.6443" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="100.2213" ry="23.6443" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="126" x="711.4713" y="92.2656">Assign Alias</text><path d="M162,764.25 L162,801.9492 L441,801.9492 L441,779.25 L426,764.25 L162,764.25 " fill="#FBFB77" filter="url(#fhpyl7ot6tn0d)" style="stroke:#A80036;stroke-width:1.5;"/><path d="M426,764.25 L426,779.25 L441,779.25 L426,764.25 " fill="#FBFB77" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="19.5" lengthAdjust="spacing" textLength="247.5" x="171" y="789.8503">Version: 1.0 (2022-02-19)</text><!--MD5=[8fc3522a43f8c7199df5e09e5bb0188e]
+entity user--><ellipse cx="33" cy="346.5" fill="#FEFECE" filter="url(#fhpyl7ot6tn0d)" rx="12" ry="12" style="stroke:#A80036;stroke-width:2.25;"/><path d="M33,358.5 L33,399 M13.5,370.5 L52.5,370.5 M33,399 L13.5,421.5 M33,399 L52.5,421.5 " fill="none" filter="url(#fhpyl7ot6tn0d)" style="stroke:#A80036;stroke-width:2.25;"/><text fill="#000000" font-family="sans-serif" font-size="21" lengthAdjust="spacing" textLength="48" x="9" y="449.2427">User</text><!--MD5=[d167ef4ac8e91900b1f67c1260a8aa27]
+link user to ac--><path d="M37.365,332.205 C43.425,273.675 61.62,186.66 115.5,135 C139.32,112.17 172.5,99.6 204.15,92.775 " fill="none" id="user-ac" style="stroke:#A80036;stroke-width:1.5;"/><!--MD5=[4e4f4dd54239bc4437f70b7c6f8ddf4f]
+link user to cwc--><path d="M55.44,331.965 C68.475,302.22 88.08,268.155 115.5,246 C139.05,226.98 169.005,214.47 197.895,206.235 " fill="none" id="user-cwc" style="stroke:#A80036;stroke-width:1.5;"/><!--MD5=[9f711a52637a649015bbd742a669b3ed]
+link user to acdn--><path d="M57.69,382.92 C73.77,376.095 95.76,367.05 115.5,360 C148.335,348.27 184.935,336.66 216.825,327.015 " fill="none" id="user-acdn" style="stroke:#A80036;stroke-width:1.5;"/><!--MD5=[64642889970b27e933cf67b0f550e871]
+link user to dlchpc--><path d="M57.135,397.215 C82.095,401.88 124.335,409.755 166.665,417.645 " fill="none" id="user-dlchpc" style="stroke:#A80036;stroke-width:1.5;"/><!--MD5=[dae815de3da471ad34c18e770ceede1a]
+link user to rc--><path d="M57.09,448.59 C70.47,475.185 89.865,505.41 115.5,525 C140.025,543.75 170.925,555.99 200.37,564 " fill="none" id="user-rc" style="stroke:#A80036;stroke-width:1.5;"/><!--MD5=[cd6e334a3ca6e4dc13053bed76f554f6]
+link user to da--><path d="M39.405,454.17 C46.995,508.425 66.315,586.125 115.5,633 C137.805,654.255 168.075,667.005 197.64,674.61 " fill="none" id="user-da" style="stroke:#A80036;stroke-width:1.5;"/><!--MD5=[20d1ae7ac742bf1b2d29b3d0e6af3be2]
+link ac to gocl--><path d="M375.105,102.135 C456.555,120.915 589.545,151.59 680.22,172.5 " fill="none" id="ac-gocl" style="stroke:#A80036;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><text fill="#000000" font-family="sans-serif" font-size="19.5" lengthAdjust="spacing" textLength="94.5" x="498" y="124.6003">«include»</text><!--MD5=[66cd2d2db1cd6dace8594df401f323a7]
+link ac to an--><path d="M403.68,85.815 C484.65,86.07 597.825,86.43 678.435,86.685 " fill="none" id="ac-an" style="stroke:#A80036;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><text fill="#000000" font-family="sans-serif" font-size="19.5" lengthAdjust="spacing" textLength="94.5" x="498" y="81.1003">«include»</text><!--MD5=[952f4a3fbcd22ffd8d26f6e4f72b4505]
+@startuml
+
+
+
+
+    actor User AS user
+
+package "BriarJar (GUI/TUI)" {
+left to right direction
+
+        usecase ac AS "Add Contact"
+        usecase cwc AS "Chat with Contact"
+        usecase acdn AS "Alter Contact's Alias"
+        usecase dlchpc AS "Delete\nlocal Chat History\nper Contact"
+        usecase rc AS "Remove Contact"
+        usecase da AS "Delete Account"
+
+        usecase gocl AS "Get own Contact Link"
+        usecase an AS "Assign Alias"
+
+        user - - ac
+        user - - cwc
+        user - - acdn
+        user - - dlchpc
+        user - - rc
+        user - - da
+
+        ac .. gocl : <<include>>
+        ac .. an : <<include>>
+        
+        note "Version: 1.0 (2022-02-19)" as version
+}
+
+@enduml
+
+PlantUML version 1.2022.0(Tue Jan 11 17:16:42 CET 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: GB
+--></g></svg>

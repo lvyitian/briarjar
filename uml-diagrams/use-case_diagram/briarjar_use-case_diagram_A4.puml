@@ -1,9 +1,6 @@
 
 @startuml
 
-note "=Version: DRAFT (2022-01-31)\n\n===Further needs/possibilities:\n\
-*?\n" as version
-( ) .down. version
 
 
 
@@ -14,13 +11,13 @@ left to right direction
 
         usecase ac AS "Add Contact"
         usecase cwc AS "Chat with Contact"
-        usecase acdn AS "Alter Contact's\nDisplay Name"
+        usecase acdn AS "Alter Contact's Alias"
         usecase dlchpc AS "Delete\nlocal Chat History\nper Contact"
         usecase rc AS "Remove Contact"
         usecase da AS "Delete Account"
 
         usecase gocl AS "Get own Contact Link"
-        usecase an AS "Assign\nDisplay Name"
+        usecase an AS "Assign Alias"
 
         user -- ac
         user -- cwc
@@ -31,6 +28,8 @@ left to right direction
 
         ac .. gocl : <<include>>
         ac .. an : <<include>>
+
+        note "Version: 1.0 (2022-02-19)" as version
 }
 
 @enduml

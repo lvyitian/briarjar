@@ -3,8 +3,8 @@
 
 <style>
 activityDiagram {
-  BackgroundColor #e9fdcc
-
+      BackgroundColor #f1fede
+      FontSize 20
   activity {
     BackgroundColor #cefd8c
   }
@@ -29,14 +29,7 @@ document {
 
 
 (.)
-note: =Version: DRAFT (2022-01-27)\n\n===Further needs/possibilities:\n\
-*Show/Accept Contact Request\n\
-*Sign-Out/Quit\n\
-*Set/Change Contact's Nickname\n\
-*Recognise own Online/Offline Status\n\
-*Handle Notifications (new Contact/Message)\n\n\
-*Split Diagram into multiple ones?\n\
-*...\n
+note: Version: 1.0 (2022-02-19)
 detach
 
 
@@ -46,13 +39,13 @@ start
 :         Start\nBriar Process (BP);
 
 fork
-    :      Running\nBriar Process (BP);
+    :Running\n  Briar\nProcess\n   (BP);
 
 fork again
     if (Account exists?) then ([Yes])
         :Show Screen\n   'Sign-In';
         repeat :Ask User for Passphrase;
-            backward :Show Error;
+            backward :Show\nError;
             :Validation\n   via BP>
             :Result\nvia BP<
         repeat while (Passphrase valid?) is ([No]) not ([Yes])
@@ -65,8 +58,8 @@ fork again
             end fork;
             :Validation\n   via BP>
             :Result\nvia BP<
-            backward :Show Error;
-        repeat while (Valid Credentials?) is ([No]) not ([Yes])
+            backward :Show\nError;
+        repeat while (Credentials valid?) is ([No]) not ([Yes])
     endif
 
 
@@ -80,30 +73,31 @@ detach
 
     #a5fd29 :=**Show Main Screen**;
         switch (User selects?)
-            case ([Add Contact])
+            case ( [Add Contact])
                 :Show Screen\n'Add Contact';
                 fork
-                    :Show User's\nContact Link;
+                    : Show\n User's\n  own\nContact\n  Link;
                 fork again
-                    repeat :      Ask User for\nforeign Contact Link;
-                        backward :Show Error;
-                    repeat while (Link valid?) is ([No]) not ([Yes])
+                    repeat :Ask User for\n    foreign\nContact Link;
+                    : Ask User for\nContact Alias;
+                        backward :Show\nError;
+                    repeat while (Link & Alias\n    valid?) is ([No]) not ([Yes])
                     :        Send\nContact Request\n        via BP>
                     :   Update\nContact List;
                 end fork
                 (M)
                 detach
 
-            case ([Remove Contact])
+            case (\n [Remove\n  Contact])
                 repeat :Show Screen\n'Contact List';
-                    if (Contacts existing?) then ([Yes])
+                    if (Contacts\nexisting?) then ([Yes])
                     else ([No])
-                        :  Show Info\n'No Contact';
+                        : Show Info\n'No Contact';
                         detach
                     endif
-                    :User selects Contact;
+                    :       User\nselects Contact;
                     :Show Screen\n'Confirmation';
-                repeat while (User confirmed Removal?) is ([No]) not ([Yes])
+                repeat while (   User\nconfirmed\nRemoval?) is ([No]) not ([Yes])
                 :Remove Contact\n        via BP>
                 :    Update\nMessage List;
                 :       Update\nConversation List;
@@ -111,37 +105,50 @@ detach
                 (M)
                 detach
 
-            case ([Conversations])
+            case ( [Conversations])
                 repeat :    Show Screen\n'Conversation List';
-                    if (User selects?) then ([Existing Conversation])
-                    else ([New Conversation])
+                    if (User selects?) then ([Existing\n Conversation])
+                    else ([New\n Conversation]\n)
                         :Show Screen\n'Contact List';
                         if (Contacts existing?) then ([Yes])
                         else ([No])
-                            :  Show Info\n'No Contact';
+                            : Show Info\n'No Contact';
                             detach
                         endif
                         :User selects Contact;
                     endif
                     :Show Screen\n'Conversation';
                     fork
-                        :        User\nreads Messages;
+                        :   User\n  reads\nMessages;
                     fork again
                         repeat
                             repeat
-                                :       User\nedits Message;
-                            repeat while (Message Format is valid) is ([No]) not ([Yes])
-                            :      User\npost Message;
+                                :  User\n  edits\nMessage;
+                            repeat while (Message\n Format\n  valid?) is (   [No]) not ([Yes])
+                            :       User\nposts Message;
                             :Send Message\n      via BP>
                             :Message Status\n       via BP<
-                            backward :Show Info;
-                        repeat while (Message is sent?) is ([No]) not ([Yes])
+                            backward :Show\n Info;
+                        repeat while (Message\n   sent?) is ([No]) not ([Yes])
                         :    Update\nMessage List;
-                    end fork {and/or}
+                    end fork {and\n  /or}
                 repeat while () is ([User goes back])
                 detach
+
         endswitch
-    detach
+
+
+:User selected Quit<
+:Ask BP to Stop>
+    :Stop Result from BP<
+    if (Error occurred?) then ([Yes])
+        :Inform User via UI & Terminal Output;
+    else ([No])
+    endif
+
+
+
+
 end fork;
 
 
