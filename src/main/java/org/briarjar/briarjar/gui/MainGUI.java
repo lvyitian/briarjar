@@ -1,5 +1,7 @@
 package org.briarjar.briarjar.gui;
 
+import com.sun.javafx.runtime.VersionInfo;
+
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -50,9 +52,11 @@ public class MainGUI extends Application {
 	public void init()
 	{
 		System.out.println("===== BriarJar GUI Mode (development version) GUI mode =====");
-		System.out.println("JDK Version (java.version): "+System.getProperty("java.version"));
-		System.out.println("JRE Version (java.runtime.version): "+System.getProperty("java.runtime.version"));
-		System.out.println("Operating System (os.name): "+System.getProperty("os.name"));
+		System.out.println("JDK Version (java.version): "+ System.getProperty("java.version"));
+		System.out.println("JRE Version (java.runtime.version): "+ System.getProperty("java.runtime.version"));
+		System.out.println(("JavaFX Version: " + VersionInfo.getVersion()));
+		System.out.println(("JavaFX Runtime Version: " + VersionInfo.getRuntimeVersion()));
+		System.out.println("Operating System (os.name): "+ System.getProperty("os.name"));
 		System.out.println("==========================================");
 	}
 
