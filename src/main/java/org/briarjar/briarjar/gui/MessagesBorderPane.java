@@ -16,7 +16,6 @@ import org.briarproject.bramble.api.contact.event.PendingContactStateChangedEven
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.event.EventListener;
-import org.briarproject.bramble.api.identity.Author;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
 import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
@@ -32,6 +31,7 @@ import javax.inject.Singleton;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
@@ -81,7 +81,8 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		onlineStatusHashMap = new HashMap<>();
 
-		noContactsSelected = new Label("No contact selected. Click on a contact or add a new one from the Contact menu.");
+		noContactsSelected = new Label("No contact selected. " +
+				"Click on a contact or add a new one from the Contact menu.");
 
 		messageBox = new JFXTextArea();
 		messageBox.setLabelFloat(true);
@@ -93,9 +94,10 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		messageBox.setDisable(true);
 
 		contactList = new VBox();
-		contactList.setMinWidth(100);
 		contactList.setPrefWidth(150);
-		contactList.setMaxWidth(230);
+		contactList.setMaxWidth(Double.MAX_VALUE);
+		// contactList.setMinHeight(Region.USE_PREF_SIZE);
+
 		isContactListVisible = true;        // default
 		isIncludingPendingContacts = true;
 
@@ -193,7 +195,8 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 				else
 					b = new JFXButton(author);
 
-				b.setPrefWidth(contactList.getPrefWidth());
+				b.setMaxWidth(Double.MAX_VALUE);
+				b.setMinWidth(Control.USE_PREF_SIZE);
 				b.setTextFill(getColorsForList(c.getId()));
 				b.setRipplerFill(getColorsForList(c.getId()));
 				b.setOnAction(e -> {
@@ -201,9 +204,10 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 					messageListView.initListView();
 					messageBox.setDisable(false);
 
-					setBottom(messageBox);          // TODO is that necessary?
+					setBottom(messageBox);
 					setCenter(messageListView);
 				});
+
 				contactList.getChildren().add(b);
 			}
 
@@ -226,16 +230,20 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 						case FAILED -> state = " (Failed)";
 					}
 
-					JFXButton b = new JFXButton(alias + state);
-					b.setPrefWidth(contactList.getPrefWidth());
+					String fullButtonText = alias + state;
+					JFXButton b = new JFXButton(fullButtonText);
+
+					b.setMaxWidth(Double.MAX_VALUE);
+					b.setMinWidth(Control.USE_PREF_SIZE);
 					b.setTextFill(Color.LIGHTSLATEGREY);
 					b.setRipplerFill(Color.ORANGERED);
+					b.setTooltip(new JFXTooltip(state));
 					b.setOnAction(e -> removePendingContactOffer(pendingContact
 															.getFirst().getId()));
 					contactList.getChildren().add(b);
 				}
-
 			}
+
 
 		} catch (GeneralException e)
 		{
