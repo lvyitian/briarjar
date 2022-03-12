@@ -1,26 +1,21 @@
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
-import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
-import org.briarproject.bramble.api.lifecycle.LifecycleManager.LifecycleState;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 
 import javax.inject.Inject;
 
-import static com.googlecode.lanterna.gui2.dialogs.MessageDialog.showMessageDialog;
 
 public class SignUp extends EventListenerViewModel {
 
 	private final LoginViewModel lvm;
-	private final LifeCycleViewModel lifeCycleViewModel;
 
 	private Panel contentPanel;
 	private TUIUtils tuiUtils;
@@ -31,13 +26,11 @@ public class SignUp extends EventListenerViewModel {
 
 	@Inject
 	public SignUp ( EventBus           eventBus,
-			        LoginViewModel     lvm,
-			        LifeCycleViewModel lifeCycleViewModel )
+			        LoginViewModel     lvm )
 	{
 		super(eventBus);
 
 		this.lvm = lvm;
-		this.lifeCycleViewModel = lifeCycleViewModel;
 
 		init();
 	}
@@ -174,7 +167,5 @@ public class SignUp extends EventListenerViewModel {
 		AttachmentReceivedEvent
 		PrivateMessageReceivedEvent
 		*/
-
-		System.out.println("EvListConfigured@TUISignUp   ====> "+e.getClass().getSimpleName());
 	}
 }

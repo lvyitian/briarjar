@@ -16,6 +16,7 @@ import org.briarproject.bramble.api.contact.event.PendingContactStateChangedEven
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
 import org.briarproject.bramble.api.event.EventListener;
+import org.briarproject.bramble.api.identity.Author;
 import org.briarproject.bramble.api.nullsafety.NotNullByDefault;
 import org.briarproject.bramble.api.plugin.event.ContactConnectedEvent;
 import org.briarproject.bramble.api.plugin.event.ContactDisconnectedEvent;
@@ -183,7 +184,15 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 			for (Contact c : contacts)
 			{
-				JFXButton b = new JFXButton(c.getAlias());
+				String alias = c.getAlias(), author = c.getAuthor().getName();
+				String fullButtonText = alias + " (" + author + ")";
+				JFXButton b;
+
+				if(alias != null)
+					b = new JFXButton(fullButtonText);
+				else
+					b = new JFXButton(author);
+
 				b.setPrefWidth(contactList.getPrefWidth());
 				b.setTextFill(getColorsForList(c.getId()));
 				b.setRipplerFill(getColorsForList(c.getId()));
@@ -305,7 +314,11 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 			JFXButton cancel = new JFXButton("Cancel");
 
 			JFXTextField newAlias = new JFXTextField();
-			newAlias.setPromptText("Change alias of " + messageListView.getContact().getAlias() + " here.");
+			String oldAlias = messageListView.getContact().getAlias();
+			if(oldAlias == null)
+				oldAlias = messageListView.getContact().getAuthor().getName();
+
+			newAlias.setPromptText("Change alias of " + oldAlias + " here.");
 			newAlias.setLabelFloat(true);
 
 			change.setOnAction(e -> {
@@ -416,35 +429,36 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		if (e instanceof ContactAddedEvent)
 		{
-			System.out.println("ContactAddedEvent...");
+			System.out.println("I: ContactAddedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
 		}
 		else if (e instanceof ContactRemovedEvent)
 		{
-			System.out.println("ContactRemovedEvent...");
+			System.out.println("I: ContactRemovedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
 		}
 		else if (e instanceof PendingContactAddedEvent)
 		{
-			System.out.println("PendingContactAddedEvent...");
+			System.out.println("I: PendingContactAddedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
 		}
+
 		else if (e instanceof PendingContactStateChangedEvent)
 		{
-			System.out.println("PendingContactStateChangedEvent...");
+			System.out.println("I: PendingContactStateChangedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
 		}
 		else if (e instanceof ContactConnectedEvent)
 		{
-			System.out.println("ContactConnectedEvent...");
+			System.out.println("I: ContactConnectedEvent...");
 			onlineStatusHashMap.put(
 					((ContactConnectedEvent) e).getContactId(), true );
 
@@ -454,7 +468,7 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		}
 		else if (e instanceof ContactDisconnectedEvent)
 		{
-			System.out.println("ContactDisconnectedEvent...");
+			System.out.println("I: ContactDisconnectedEvent...");
 			onlineStatusHashMap.put(
 					((ContactDisconnectedEvent) e).getContactId(), false );
 			Platform.runLater(
@@ -466,16 +480,16 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		if (e instanceof PrivateMessageReceivedEvent)
 		{
-			System.out.println("PrivateMessageReceivedEvent...");
+			System.out.println("I: PrivateMessageReceivedEvent...");
 			Platform.runLater(() -> {
 				notifyOnNewMessage(((PrivateMessageReceivedEvent) e).getContactId());
-				if(messageListView.getContact() != null)
+				if(messageListView != null && messageListView.getContact() != null)
 					messageListView.updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
 				});
 		} else if (e instanceof MessageAddedEvent)
 		{
-			System.out.println("MessageAddedEvent...");
-			if(messageListView.getContact() != null)
+			System.out.println("I: MessageAddedEvent...");
+			if(messageListView != null && messageListView.getContact() != null)
 				Platform.runLater(() -> messageListView.updateOnMessageAdded());
 		}
 	}

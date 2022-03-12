@@ -18,10 +18,6 @@ public class TUIMessageDialog {
 	}
 
 
-
-
-
-
 	public void show( GeneralException       e,
 	                  MessageDialogButton... buttons )
 	{

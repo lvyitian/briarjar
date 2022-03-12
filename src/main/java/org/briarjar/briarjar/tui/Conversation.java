@@ -336,12 +336,12 @@ public class Conversation extends EventListenerViewModel {
 		{
 			if (e instanceof PrivateMessageReceivedEvent)
 			{
-				System.out.println("PrivateMessageReceivedEvent...");
+				System.out.println("I: PrivateMessageReceivedEvent...");
 				updateOnMessageReceived(
 						((PrivateMessageReceivedEvent) e).getMessageHeader());
 			} else if (e instanceof MessageAddedEvent)
 			{
-				System.out.println("MessageAddedEvent...");
+				System.out.println("I: MessageAddedEvent...");
 				updateOnMessageAdded();
 			}
 		}

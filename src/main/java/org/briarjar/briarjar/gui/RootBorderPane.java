@@ -77,8 +77,9 @@ public class RootBorderPane extends BorderPane
 	private void addComponents()
 	{
 		menuBar.getMenus().addAll(mBriar, mChat, mContact, mInfo);
-		
-		mBriar.getItems().addAll(miSignOut, miDeleteAccount, miExit);
+
+								// TODO uncomment if sign out bug is fixed
+		mBriar.getItems().addAll(/*miSignOut, */miDeleteAccount, miExit);
 		mChat.getItems().addAll(miShowContactList, miIncludePendingContacts,
 								new SeparatorMenuItem(), miDeleteAllMessages);
 		mContact.getItems().addAll(miAddContact, miRemoveContact,
@@ -130,9 +131,10 @@ public class RootBorderPane extends BorderPane
 	// ============================ menu: mBriar ============================
 
 
+	// FIXME Sign Out functionality is too buggy - For now, it's out of the scope of this prototype
 	private void signOut()
 	{
-		// TODO check this - might be dangerous!
+		// this might be dangerous!
 		try {
 			lifeCycleViewModel.stop();
 			guiUtils.switchToSignIn();
@@ -140,6 +142,7 @@ public class RootBorderPane extends BorderPane
 			guiUtils.showMaterialDialog(e.getTitle(), e.getMessage());
 		}
 	}
+
 
 	private void accountDeletionDialog()
 	{

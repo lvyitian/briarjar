@@ -23,7 +23,7 @@ public class Main {
 				ui = UserInterface.GRAPHICAL;
 
 			// testing for terminal
-			//ui = UserInterface.TERMINAL;
+			ui = UserInterface.TERMINAL;
 
 			var briarJarApp = launchApp();
 
@@ -31,7 +31,6 @@ public class Main {
 			{
 				MainTUI mainTUI = briarJarApp.getMainTUI();
 				mainTUI.start();
-				System.out.println("STOPPING BriarJar TUI …");
 				System.exit(0);
 
 			} else

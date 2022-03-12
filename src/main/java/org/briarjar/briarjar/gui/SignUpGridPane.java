@@ -5,7 +5,6 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
-import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 
 import javax.inject.Inject;
@@ -24,7 +23,6 @@ import javafx.scene.text.Text;
 public class SignUpGridPane extends GridPane {
 
 	private final LoginViewModel lvm;
-	private final LifeCycleViewModel lifeCycleViewModel;
 
 	private ImageView imgWelcome;
 	private Text txtWelcome;
@@ -35,11 +33,9 @@ public class SignUpGridPane extends GridPane {
 	private GUIUtils guiUtils;
 
 	@Inject
-	public SignUpGridPane( LoginViewModel     lvm,
-	                       LifeCycleViewModel lifeCycleViewModel )
+	public SignUpGridPane( LoginViewModel     lvm )
 	{
 		this.lvm = lvm;
-		this.lifeCycleViewModel = lifeCycleViewModel;
 	}
 
 	public void create()
@@ -120,10 +116,7 @@ public class SignUpGridPane extends GridPane {
 		else
 			passphraseField.setFocusColor(Color.LIMEGREEN);
 
-		if ( pw.length() >= LoginViewModel.MIN_PASSPHRASE_LENGTH)
-			btSignUp.setDisable(false);
-		else
-			btSignUp.setDisable(true);
+		btSignUp.setDisable(pw.length() < LoginViewModel.MIN_PASSPHRASE_LENGTH);
 	}
 
 	private void switchToPassphrase(KeyEvent e)

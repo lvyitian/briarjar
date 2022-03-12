@@ -1,13 +1,18 @@
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
-import org.briarjar.briarjar.Main;
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
+import org.briarproject.bramble.api.Pair;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
+import org.briarproject.bramble.api.contact.PendingContact;
+import org.briarproject.bramble.api.contact.PendingContactState;
 import org.briarproject.bramble.api.contact.event.*;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
@@ -71,6 +76,39 @@ public class ContactList extends EventListenerViewModel {
 						tuiUtils.switchWindow(window, TUIWindow.ADDCONTACT)));
 
 		buttonPanel.addComponent(
+
+				new Button("Change alias", () -> {
+
+						try
+						{
+							// FIXME this is a very quick solution, this needs to be better
+							var contactId = cvm.getContacts().stream().toList()
+							                   .get(contactListBox.getSelectedIndex()).getId();
+
+							String oldAlias = cvm.getContact(contactId).getAlias();
+							if(oldAlias == null)
+								oldAlias = cvm.getContact(contactId).getAuthor().getName();
+
+							String newAlias = TextInputDialog.showDialog(textGUI, "Changing alias",
+									"Change alias of " + oldAlias + " here.", oldAlias);
+							if(newAlias != null && !newAlias.equals(oldAlias))
+							{
+								cvm.setContactAlias(contactId, newAlias);
+								updateContactList();
+							}
+
+						} catch (GeneralException e)
+						{
+							tuiUtils.show(e);
+						}
+				})
+		);
+
+
+
+
+		/*  FIXME Sign Out functionality is too buggy - For now, it's out of the scope of this prototype
+		buttonPanel.addComponent(
 				new Button("Sign out", () -> {
 					// launches a new instance in a new thread
 					var instance = new Thread(() -> {
@@ -80,6 +118,7 @@ public class ContactList extends EventListenerViewModel {
 					instance.start();
 					Thread.currentThread().interrupt(); // FIXME causes Tor Plugin Exception
 				}));
+		 */
 
 		buttonPanel.addComponent( new Button("Exit", () -> System.exit(0)) );
 
@@ -117,21 +156,83 @@ public class ContactList extends EventListenerViewModel {
 
 		try
 		{
-			if ( cvm.getContacts().size() > 0 )   // TODO accepted only currently
+			if ( cvm.getContacts().size() > 0 )
 			{
 				for ( Contact c : cvm.getContacts() )
 				{
-					contactListBox.addItem( getAliasForList(c.getId()),
-					                        () -> {
-							tuiUtils.getConversation().setContact( c );
-							tuiUtils.switchWindow( window,
-									               TUIWindow.CONVERSATION );
-							}
-					);
+					String  alias = c.getAlias(),
+							author = c.getAuthor().getName();
+
+					if(alias != null)
+					{
+						String fullButtonText = getAliasForList(c.getId()) +
+												" (" + author + ")";
+						contactListBox.addItem( fullButtonText,
+								() -> {
+									tuiUtils.getConversation().setContact( c );
+									tuiUtils.switchWindow( window,
+											TUIWindow.CONVERSATION );
+								}
+						);
+					} else
+					{
+						contactListBox.addItem( author,
+								() -> {
+									tuiUtils.getConversation().setContact( c );
+									tuiUtils.switchWindow( window,
+											TUIWindow.CONVERSATION );
+								}
+						);
+					}
 				}
 				contentPanel.addComponent(contactListBox.setLayoutData(BorderLayout.Location.CENTER));
 			} else
 				contentPanel.addComponent(noContactsLabel);
+
+
+			/* PENDING CONTACTS */
+			var pendingContacts = cvm.getPendingContacts();
+			if(pendingContacts.size() > 0)
+			{
+				for (Pair<PendingContact, PendingContactState> pendingContact : pendingContacts)
+				{
+					String alias = pendingContact.getFirst().getAlias();
+					String state = "";
+					switch (pendingContact.getSecond())
+					{
+						case OFFLINE -> state = " [Offline]";
+						case WAITING_FOR_CONNECTION -> state =
+								" [Waiting for connection]";
+						case CONNECTING -> state = " [Connecting]";
+						case ADDING_CONTACT -> state = " [Adding contact]";
+						case FAILED -> state = " [Failed]";
+					}
+
+					contactListBox.addItem("[Pending] " + alias + state,
+							() -> {
+								MessageDialogButton b =
+										MessageDialog.showMessageDialog(textGUI,
+												"Remove pending contact",
+												"Are you sure you want to remove this pending contact?",
+												MessageDialogButton.Yes,
+												MessageDialogButton.Cancel);
+								if (b == MessageDialogButton.Yes)
+								{
+									try
+									{
+										cvm.removePendingContact(
+												pendingContact.getFirst()
+												              .getId());
+									} catch (GeneralException e)
+									{
+										tuiUtils.show(e);
+									}
+								}
+						}
+					);
+				}
+			}
+
 		}
 		catch (GeneralException e)
 		{
@@ -237,22 +338,22 @@ public class ContactList extends EventListenerViewModel {
 		*/
 		if (e instanceof ContactAddedEvent)
 		{
-			System.out.println("ContactAddedEvent...");
+			System.out.println("I: ContactAddedEvent...");
 			updateContactList();
 		}
 		else if (e instanceof ContactRemovedEvent)
 		{
-			System.out.println("ContactRemovedEvent...");
+			System.out.println("I: ContactRemovedEvent...");
 			updateContactList();
 		}
 		else if (e instanceof PendingContactAddedEvent)
 		{
-			System.out.println("PendingContactAddedEvent...");
+			System.out.println("I: PendingContactAddedEvent...");
 			updateContactList();
 		}
 		else if (e instanceof ContactConnectedEvent)
 		{
-			System.out.println("ContactConnectedEvent...");
+			System.out.println("I: ContactConnectedEvent...");
 
 			onlineStatusHashMap.put(
 			              ((ContactConnectedEvent) e).getContactId(), true );
@@ -261,7 +362,7 @@ public class ContactList extends EventListenerViewModel {
 		}
 		else if (e instanceof ContactDisconnectedEvent)
 		{
-			System.out.println("ContactDisconnectedEvent...");
+			System.out.println("I: ContactDisconnectedEvent...");
 
 			onlineStatusHashMap.put(
 			             ((ContactDisconnectedEvent) e).getContactId(), false );

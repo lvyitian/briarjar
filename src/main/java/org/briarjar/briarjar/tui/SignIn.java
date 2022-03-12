@@ -6,7 +6,6 @@ import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
-import org.briarjar.briarjar.model.viewmodels.LifeCycleViewModel;
 import org.briarjar.briarjar.model.viewmodels.LoginViewModel;
 import org.briarproject.bramble.api.event.Event;
 import org.briarproject.bramble.api.event.EventBus;
@@ -90,7 +89,6 @@ public class SignIn extends EventListenerViewModel {
 					"Enter your account passphrase", "");
 
 			if ( passphrase == null ) {
-				System.out.println("STOPPING BriarJar TUI …");
 				System.exit(0);
 			}
 

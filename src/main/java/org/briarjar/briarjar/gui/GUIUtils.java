@@ -112,12 +112,14 @@ public class GUIUtils {
 		rootBorderPane.setCenter(messagesBorderPane);
 	}
 
+	/** TODO uncomment when fixed
 	public void switchToSignUp()
 	{
 		rootBorderPane.disableComponents(false);
 		rootBorderPane.setCenter(signUpGridPane);
 		relaunchApp();
 	}
+	 */
 
 	public void switchToSignIn()
 	{
