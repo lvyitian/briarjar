@@ -3,7 +3,6 @@ package org.briarjar.briarjar.tui;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
-import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 import org.briarjar.briarjar.model.exceptions.GeneralException;
 import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
@@ -78,33 +77,15 @@ public class ContactList extends EventListenerViewModel {
 		buttonPanel.addComponent(
 
 				new Button("Change alias", () -> {
-
-						try
-						{
-							// FIXME this is a very quick solution, this needs to be better
-							var contactId = cvm.getContacts().stream().toList()
-							                   .get(contactListBox.getSelectedIndex()).getId();
-
-							String oldAlias = cvm.getContact(contactId).getAlias();
-							if(oldAlias == null)
-								oldAlias = cvm.getContact(contactId).getAuthor().getName();
-
-							String newAlias = TextInputDialog.showDialog(textGUI, "Changing alias",
-									"Change alias of " + oldAlias + " here.", oldAlias);
-							if(newAlias != null && !newAlias.equals(oldAlias))
-							{
-								cvm.setContactAlias(contactId, newAlias);
-								updateContactList();
-							}
-
-						} catch (GeneralException e)
-						{
-							tuiUtils.show(e);
-						}
+					// Code removed since it is very prone to bugs
+					// TODO Impl. alias changer
+					/* The design of the alias changer should be:
+					 * 1. Create an ActionListDialog with all contacts
+					 * 2. After user chooses contact, create an TextInputField to change alias
+					 * 3. Change alias on "Yes", otherwise do nothing
+					 */
 				})
 		);
-
-
 
 
 		/*  FIXME Sign Out functionality is too buggy - For now, it's out of the scope of this prototype
@@ -187,13 +168,14 @@ public class ContactList extends EventListenerViewModel {
 				}
 				contentPanel.addComponent(contactListBox.setLayoutData(BorderLayout.Location.CENTER));
 			} else
-				contentPanel.addComponent(noContactsLabel);
+			{
 
 
-			/* PENDING CONTACTS */
 			var pendingContacts = cvm.getPendingContacts();
 			if(pendingContacts.size() > 0)
 			{
+				/* PENDING CONTACTS */
+
 				for (Pair<PendingContact, PendingContactState> pendingContact : pendingContacts)
 				{
 					String alias = pendingContact.getFirst().getAlias();
@@ -228,11 +210,11 @@ public class ContactList extends EventListenerViewModel {
 										tuiUtils.show(e);
 									}
 								}
-						}
-					);
-				}
+							});
+					}
+				} else
+					contentPanel.addComponent(noContactsLabel);
 			}
-
 		}
 		catch (GeneralException e)
 		{
