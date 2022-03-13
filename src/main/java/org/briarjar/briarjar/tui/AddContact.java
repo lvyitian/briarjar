@@ -59,10 +59,21 @@ public class AddContact {
 		contentPanel.addComponent(
 				new Button("Copy your handshake-link to clipboard", () ->
 				{
-					StringSelection selection = new StringSelection(ownLink);
-					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-					clipboard.setContents(selection, selection);
-					MessageDialog.showMessageDialog(textGUI, "Your handshake-link is in the clipboard", ownLink, MessageDialogButton.OK);
+					String title = "Your handshake-link is in the clipboard";
+					try
+					{
+						StringSelection selection =
+								new StringSelection(ownLink);
+						Clipboard clipboard = Toolkit.getDefaultToolkit()
+						                             .getSystemClipboard();
+						clipboard.setContents(selection, selection);
+					} catch (Exception ex)
+					{
+						MessageDialog.showMessageDialog(textGUI, "Copying link",
+								"Error:\n"+ ex.getMessage(), MessageDialogButton.OK);
+						title = "Copying was not possible, you will have to type-out the link manually.";
+					}
+					MessageDialog.showMessageDialog(textGUI, title, ownLink, MessageDialogButton.OK);
 				}));
 
 			System.out.println(ownLink);
