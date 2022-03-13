@@ -79,7 +79,7 @@ public class MainTUI {
 	}
 
 	public void init() {
-		System.out.println("===== BriarJar TUI Mode (development version) =====");
+		System.out.println("===== BriarJar TUI Mode =====");
 		System.out.println("JDK Version (java.version): "+System.getProperty("java.version"));
 		System.out.println("JRE Version (java.runtime.version): "+System.getProperty("java.runtime.version"));
 		System.out.println("Operating System (os.name): "+System.getProperty("os.name"));

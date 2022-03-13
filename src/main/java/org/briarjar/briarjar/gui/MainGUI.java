@@ -54,7 +54,7 @@ public class MainGUI extends Application {
 			MainGUI.primaryStage = primaryStage;
 			Scene sceneRoot = new Scene(guiUtils.getRootStackPane(), 850, 560);
 			primaryStage.setScene(sceneRoot);
-			primaryStage.setTitle("BriarJar GUI Mode (development version)");
+			primaryStage.setTitle("BriarJar GUI Mode");
 			String img = Objects.requireNonNull(
 					getClass().getResource("/images/briar-icon.png")).toExternalForm();
 			primaryStage.getIcons().add(new Image(img));
@@ -71,7 +71,7 @@ public class MainGUI extends Application {
 
 	public void init()
 	{
-		System.out.println("===== BriarJar GUI Mode (development version) GUI mode =====");
+		System.out.println("===== BriarJar GUI Mode =====");
 		System.out.println("JDK Version (java.version): "+ System.getProperty("java.version"));
 		System.out.println("JRE Version (java.runtime.version): "+ System.getProperty("java.runtime.version"));
 		System.out.println(("JavaFX Version: " + VersionInfo.getVersion()));

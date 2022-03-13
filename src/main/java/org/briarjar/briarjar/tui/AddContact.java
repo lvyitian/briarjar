@@ -61,7 +61,7 @@ public class AddContact {
 		contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
 		peerHandshakeLink = "";
-		peerAlias = "Bob";
+		peerAlias = "";
 
 		window = new BasicWindow("Contact Manager");
 		window.setComponent(contentPanel.withBorder(Borders.singleLine("Add a new contact")));
@@ -108,7 +108,7 @@ public class AddContact {
 
 		contentPanel.addComponent(
 				new Button("Choose an alias for your friends", () ->
-						peerAlias = TextInputDialog.showDialog(textGUI, "Enter alias of Friend", "Choose how you want your friend to be referred to", "Bob")
+						peerAlias = TextInputDialog.showDialog(textGUI, "Enter alias of Friend", "Choose how you want your friend to be referred to", "")
 		));
 
 		contentPanel.addComponent(

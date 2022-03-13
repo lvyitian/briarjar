@@ -61,7 +61,7 @@ public class SignUp extends EventListenerViewModel {
 	{
 		contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
-		this.window = new BasicWindow("Welcome to BriarJar TUI (development mode)");
+		this.window = new BasicWindow("Welcome to BriarJar TUI");
 		window.setComponent(
 				contentPanel.withBorder(Borders.singleLine("Please create an account")));
 	}
@@ -74,7 +74,7 @@ public class SignUp extends EventListenerViewModel {
 		// contentPanel.addComponent(...)
 		contentPanel.addComponent(
 				new Button("Choose username", () ->
-						username = TextInputDialog.showDialog(textGUI, "Choose a username", "No account has been found, please choose a username.", "alice")
+						username = TextInputDialog.showDialog(textGUI, "Choose a username", "No account has been found, please choose a username.", "")
 				));
 
 		contentPanel.addComponent(
