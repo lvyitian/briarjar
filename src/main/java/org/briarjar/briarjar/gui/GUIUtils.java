@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -18,10 +19,7 @@ import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 
 public class GUIUtils {
@@ -196,6 +194,52 @@ public class GUIUtils {
 		return dialog;
 	}
 
+	public void showAboutDialog()
+	{
+		BoxBlur blur = new BoxBlur(3, 3, 3);
+
+		JFXDialogLayout dialogLayout = new JFXDialogLayout();
+		JFXDialog dialog = new JFXDialog(rootStackPane, dialogLayout,
+				JFXDialog.DialogTransition.TOP);
+		JFXButton button = new JFXButton("Okay");
+
+		VBox body = new VBox();
+		body.setSpacing(10);
+		body.setPadding(new Insets(10));
+		body.setAlignment(Pos.CENTER);
+
+		Label aboutText = new Label("""
+				BriarJar version 1.00 Copyright (C) 2022 BriarJar Project Team
+
+				This is the GUI mode of the prototype. Try out the TUI mode by starting the application with -t or --tui option.
+				
+				Briar (briarproject.org) is licensed under AGPL-3.0-or-later.
+										
+				This project uses the following third-party libraries:
+				- JFoenix (Apache v2, jfoenix.com)
+				- TrayNotification by PlusHaze (MIT, github.com/PlusHaze)
+				
+				BriarJar is licensed under AGPL-3.0-or-later.
+				""");
+
+		body.getChildren().addAll(aboutText, initAgplLogo());
+
+		button.setOnAction(e -> dialog.close());
+		dialogLayout.setActions(button);
+		dialogLayout.setHeading(new Label("BriarJar GUI"));
+		dialogLayout.setBody(body);
+		dialogLayout.setPrefWidth(600);
+		dialog.show();
+		dialog.setOnDialogClosed(
+				(JFXDialogEvent e) -> rootBorderPane.setEffect(null));
+		dialog.setOnKeyPressed(e -> {
+			if(e.getCode().equals(KeyCode.ESCAPE) ||
+					e.getCode().equals(KeyCode.ENTER) )
+				dialog.close();
+		});
+		rootBorderPane.setEffect(blur);
+	}
+
 
 	/* WELCOME SCREEN */
 
@@ -207,6 +251,26 @@ public class GUIUtils {
 					                    getClass().getResource("/images/briar-icon.png"))
 			                    .toExternalForm();
 			return new ImageView(new Image(obj));
+		} catch (Exception e)
+		{
+			showMaterialDialog("Image not found.", e.getMessage());
+		}
+		return null;
+	}
+
+	public ImageView initAgplLogo()
+	{
+		try
+		{
+			String obj = Objects.requireNonNull(
+					                    getClass().getResource("/images/agpl-v3-logo.png"))
+			                    .toExternalForm();
+
+			var img = new ImageView(new Image(obj));
+			img.setPreserveRatio(true);
+			img.setFitWidth(120);
+
+			return img;
 		} catch (Exception e)
 		{
 			showMaterialDialog("Image not found.", e.getMessage());

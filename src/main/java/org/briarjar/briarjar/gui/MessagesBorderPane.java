@@ -437,21 +437,18 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		if (e instanceof ContactAddedEvent)
 		{
-			System.out.println("I: ContactAddedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
 		}
 		else if (e instanceof ContactRemovedEvent)
 		{
-			System.out.println("I: ContactRemovedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
 		}
 		else if (e instanceof PendingContactAddedEvent)
 		{
-			System.out.println("I: PendingContactAddedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
@@ -459,14 +456,12 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		else if (e instanceof PendingContactStateChangedEvent)
 		{
-			System.out.println("I: PendingContactStateChangedEvent...");
 			Platform.runLater(
 					this::updateContactList
 			);
 		}
 		else if (e instanceof ContactConnectedEvent)
 		{
-			System.out.println("I: ContactConnectedEvent...");
 			onlineStatusHashMap.put(
 					((ContactConnectedEvent) e).getContactId(), true );
 
@@ -476,7 +471,6 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		}
 		else if (e instanceof ContactDisconnectedEvent)
 		{
-			System.out.println("I: ContactDisconnectedEvent...");
 			onlineStatusHashMap.put(
 					((ContactDisconnectedEvent) e).getContactId(), false );
 			Platform.runLater(
@@ -488,7 +482,6 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 		if (e instanceof PrivateMessageReceivedEvent)
 		{
-			System.out.println("I: PrivateMessageReceivedEvent...");
 			Platform.runLater(() -> {
 				notifyOnNewMessage(((PrivateMessageReceivedEvent) e).getContactId());
 				if(messageListView != null && messageListView.getContact() != null)
@@ -496,7 +489,6 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 				});
 		} else if (e instanceof MessageAddedEvent)
 		{
-			System.out.println("I: MessageAddedEvent...");
 			if(messageListView != null && messageListView.getContact() != null)
 				Platform.runLater(() -> messageListView.updateOnMessageAdded());
 		}

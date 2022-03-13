@@ -101,10 +101,7 @@ public class RootBorderPane extends BorderPane
 		// menu: mBriar
 		miSignOut.setOnAction(e -> signOut());
 		miDeleteAccount.setOnAction(e -> accountDeletionDialog());
-		miExit.setOnAction( event -> {
-			System.out.println("STOPPING BriarJar GUI …");
-			System.exit(0);
-		} );
+		miExit.setOnAction( e -> System.exit(0));
 
 		// menu: mChat
 		miShowContactList.setOnAction(e -> showContactList());
@@ -149,11 +146,13 @@ public class RootBorderPane extends BorderPane
 		JFXButton delete = new JFXButton("Delete account");
 		JFXDialog dialog = guiUtils.showConfirmationDialog(
 				"Deleting account",
-				"Are you sure that you want to delete your account?\n\n" +
-				"A deleted account can not be recovered without any " +
-				"kind of file-system based backup or recovery approach.\n\n" +
-				"When finished, BriarJar exits automatically and can be " +
-				"started again manually",
+				"""
+						Are you sure that you want to delete your account?
+
+						A deleted account can not be recovered without any kind of file-system based backup or recovery approach.
+
+						When finished, BriarJar exits automatically and can be started again manually
+						""",
 						delete);
 		delete.setOnAction(e -> {
 			try
@@ -215,18 +214,7 @@ public class RootBorderPane extends BorderPane
 	
 	private void about()
 	{
-		guiUtils.showMaterialDialog("BriarJar GUI",
-				"""
-						This development build is the GUI prototype.
-						Try out the TUI mode by starting the application with --tui or tui option.
-						
-						Briar (briarproject.org) is licensed under GPLv3.
-						
-						This project uses the following third-party libraries:
-						- JFoenix (Apache v2, jfoenix.com)
-						- TrayNotification by PlusHaze (MIT, github.com/PlusHaze)
-						"""
-						);
+		guiUtils.showAboutDialog();
 	}
 	
 	public void setGUIUtils(GUIUtils guiUtils)

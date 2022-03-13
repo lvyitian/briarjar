@@ -83,7 +83,7 @@ public class LifeCycleViewModel {
 	       start( @Nullable SecretKey dbKey )
 	throws GeneralException
 	{
-		System.out.println( "STARTING LifecycleManager Services …" );
+		// System.out.println( "STARTING LifecycleManager Services …" );
 
 		String exTitle = "Attempting to start services";
 
@@ -110,7 +110,7 @@ public class LifeCycleViewModel {
 					          exTitle, e, true );
 		}
 
-		System.out.println("STARTING LifecycleManager Services … done");
+		// System.out.println("STARTING LifecycleManager Services … done");
 	}
 
 
@@ -134,13 +134,14 @@ public class LifeCycleViewModel {
 		try {
 			if ( lifecycleManager.getLifecycleState()
 			                     .isAfter(LifecycleState.STARTING) ) {
-				System.out.println( "STOPPING LifecycleManager Services …" );
+				// System.out.println( "STOPPING LifecycleManager Services …" );
 				lifecycleManager.stopServices();
 				lifecycleManager.waitForShutdown();
-				System.out.println("STOPPING LifecycleManager Services … done");
-			} else
+			  //System.out.println("STOPPING LifecycleManager Services … done");
+			} /*else
 				System.out.println( "LifecycleManager doesn't need to STOP " +
-				                    "services since none are running" );
+						"services since none are running" );
+			  */
 		}
 		catch ( InterruptedException e ) {
 			throw new GeneralException(
@@ -189,9 +190,9 @@ public class LifeCycleViewModel {
 			try {
 				stop();
 			}
-			catch (GeneralException e) {
+			catch (GeneralException e) { /*
 				System.out.println( "\n"+e+"The throwable and its backtrace " +
-				        "will now get printed to the standard error stream\n" );
+				     "will now get printed to the standard error stream\n" );*/
 				e.printStackTrace();
 			}
 		});

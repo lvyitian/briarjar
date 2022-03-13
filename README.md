@@ -22,11 +22,23 @@ java -jar --add-opens=java.base/java.lang.reflect=ALL-UNNAMED briarjar-0.1-all.j
 
 The TUI Mode can be invoked with either  
 ```
-java -jar briarjar-0.1-all.jar tui
+java -jar briarjar-0.1-all.jar -t
 ```
 or
 ```
 java -jar briarjar-0.1-all.jar --tui
+```
+
+### Options
+
+```
+BriarJar version 1.00 Copyright (C) 2022 BriarJar Project Team
+
+Options:
+-t, --tui        Start in TUI mode (default is GUI)
+
+-h, --help       Show (this) help menu
+-v, --verbose    Show all logs (floods the TUI, discouraged)
 ```
 
 ### Building
@@ -46,7 +58,7 @@ ShadowJar will create the jar-file in the directory `build/libs/`
 
 For convenience, you can use the `start_briarjar.sh` script after building.
 ```
-./start_briarjar.sh [--tui | tui]
+./start_briarjar.sh [options]
 ```
 
 ## Disclaimer

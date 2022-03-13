@@ -141,30 +141,13 @@ public class ContactList extends EventListenerViewModel {
 			{
 				for ( Contact c : cvm.getContacts() )
 				{
-					String  alias = c.getAlias(),
-							author = c.getAuthor().getName();
-
-					if(alias != null)
-					{
-						String fullButtonText = getAliasForList(c.getId()) +
-												" (" + author + ")";
-						contactListBox.addItem( fullButtonText,
-								() -> {
-									tuiUtils.getConversation().setContact( c );
-									tuiUtils.switchWindow( window,
-											TUIWindow.CONVERSATION );
-								}
-						);
-					} else
-					{
-						contactListBox.addItem( author,
-								() -> {
-									tuiUtils.getConversation().setContact( c );
-									tuiUtils.switchWindow( window,
-											TUIWindow.CONVERSATION );
-								}
-						);
-					}
+					contactListBox.addItem( getContactNameForList(c.getId()),
+						() -> {
+							tuiUtils.getConversation().setContact( c );
+							tuiUtils.switchWindow( window,
+									TUIWindow.CONVERSATION );
+						}
+					);
 				}
 				contentPanel.addComponent(contactListBox.setLayoutData(BorderLayout.Location.CENTER));
 			} else
@@ -224,21 +207,29 @@ public class ContactList extends EventListenerViewModel {
 
 	/* LOGIC */
 
-	private String getAliasForList( ContactId id )
+	private String getContactNameForList(ContactId id )
 	{
-		String alias = "Internal Error: ContactID not found";
-		String status = onlineStatusHashMap
-		                       .getOrDefault( id, false ) ? "[on ] " : "[off] ";
+		String name = null;
 		try
 		{
-			alias = cvm.getContact( id ).getAlias();
+			name = cvm.getContact( id ).getAlias();
+			String status = onlineStatusHashMap
+					.getOrDefault( id, false ) ? "[on ] " : "[off] ";
+
+			String author = cvm.getContact(id).getAuthor().getName();
+
+			if(name != null)
+				name = status + name + " (" + author + ")";
+			else
+				name = status + author;
+
 		}
 		catch (GeneralException e)
 		{
 			tuiUtils.show(e);
 		}
 
-		return status+alias;
+		return name;
 	}
 
 	/* SETTERS */
@@ -320,23 +311,18 @@ public class ContactList extends EventListenerViewModel {
 		*/
 		if (e instanceof ContactAddedEvent)
 		{
-			System.out.println("I: ContactAddedEvent...");
 			updateContactList();
 		}
 		else if (e instanceof ContactRemovedEvent)
 		{
-			System.out.println("I: ContactRemovedEvent...");
 			updateContactList();
 		}
 		else if (e instanceof PendingContactAddedEvent)
 		{
-			System.out.println("I: PendingContactAddedEvent...");
 			updateContactList();
 		}
 		else if (e instanceof ContactConnectedEvent)
 		{
-			System.out.println("I: ContactConnectedEvent...");
-
 			onlineStatusHashMap.put(
 			              ((ContactConnectedEvent) e).getContactId(), true );
 
@@ -344,8 +330,6 @@ public class ContactList extends EventListenerViewModel {
 		}
 		else if (e instanceof ContactDisconnectedEvent)
 		{
-			System.out.println("I: ContactDisconnectedEvent...");
-
 			onlineStatusHashMap.put(
 			             ((ContactDisconnectedEvent) e).getContactId(), false );
 			updateContactList();

@@ -63,7 +63,6 @@ public class MainGUI extends Application {
 	@Override
 	public void stop()
 	{
-		System.out.println("STOPPING BriarJar GUI …");
 		System.exit(0);
 	}
 
