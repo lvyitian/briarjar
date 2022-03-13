@@ -1,12 +1,32 @@
+/*
+ * BriarJar -- a GUI and TUI prototype for the messenger Briar.
+ * Copyright (C) 2022 BriarJar Project Team
+ *
+ * This file is part of BriarJar.
+ *
+ * BriarJar is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * BriarJar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with BriarJar.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.briarjar.briarjar.tui;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
-import org.briarjar.briarjar.model.exceptions.GeneralException;
-import org.briarjar.briarjar.model.viewmodels.ContactViewModel;
-import org.briarjar.briarjar.model.viewmodels.EventListenerViewModel;
+import org.briarjar.briarjar.GeneralException;
+import org.briarjar.briarjar.viewmodel.ContactViewModel;
+import org.briarjar.briarjar.viewmodel.EventListenerViewModel;
 import org.briarproject.bramble.api.Pair;
 import org.briarproject.bramble.api.contact.Contact;
 import org.briarproject.bramble.api.contact.ContactId;
@@ -74,19 +94,19 @@ public class ContactList extends EventListenerViewModel {
 				new Button("Add new", () ->
 						tuiUtils.switchWindow(window, TUIWindow.ADDCONTACT)));
 
+		/*
 		buttonPanel.addComponent(
 
 				new Button("Change alias", () -> {
 					// Code removed since it is very prone to bugs
-					// TODO Impl. alias changer
+					// TODO Implement alias changer
 					/* The design of the alias changer should be:
 					 * 1. Create an ActionListDialog with all contacts
 					 * 2. After user chooses contact, create an TextInputField to change alias
 					 * 3. Change alias on "Yes", otherwise do nothing
-					 */
+					 *//*
 				})
-		);
-
+		);*/
 
 		/*  FIXME Sign Out functionality is too buggy - For now, it's out of the scope of this prototype
 		buttonPanel.addComponent(

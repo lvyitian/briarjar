@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'org.briarjar'
-version '0.1'
+version '1.00'
 
 application {
     mainClassName = 'org.briarjar.briarjar.Main'

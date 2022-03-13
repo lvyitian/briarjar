@@ -1,6 +1,10 @@
 # BriarJar
 
-The aim of the BriarJar project is to provide a prototype of a simple messenger that can be run both with a graphical user interface and within a terminal on major GNU/Linux distributions. The messenger functionalities consist of the registration of an account, a contact management as well as a text communication with a desired conversation partner.
+BriarJar is a prototype based on the messenger [Briar](https://briarproject.org).
+It consists of two different user interfaces, a graphical one (GUI) and a
+terminal one (TUI). BriarJar can run on major GNU/Linux distributions and offers
+the following functionalities: registration of an account, management of
+contacts, as well as a text communication with a desired conversation partner.
 
 ### Requirements
 
@@ -17,16 +21,16 @@ java -version
 
 To start in GUI Mode, simply run the FatJAR with
 ```
-java -jar --add-opens=java.base/java.lang.reflect=ALL-UNNAMED briarjar-0.1-all.jar
+java -jar --add-opens=java.base/java.lang.reflect=ALL-UNNAMED briarjar-1.00-all.jar
 ```
 
 The TUI Mode can be invoked with either  
 ```
-java -jar briarjar-0.1-all.jar -t
+java -jar briarjar-1.00-all.jar -t
 ```
 or
 ```
-java -jar briarjar-0.1-all.jar --tui
+java -jar briarjar-1.00-all.jar --tui
 ```
 
 ### Options
@@ -63,4 +67,21 @@ For convenience, you can use the `start_briarjar.sh` script after building.
 
 ## Disclaimer
 
-This is a diploma project and is not intended for public use at the moment. Use at your own risk.
+This is a diploma project and not intended for public use at this time. Please
+use BriarJar only within a testing environment. For matured software and more
+information please visit the website of the messenger Briar: https://briarproject.org/
+
+## License
+
+BriarJar is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+BriarJar is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+[GNU Affero General Public License](LICENSE.md) for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with BriarJar.  If not, see <https://www.gnu.org/licenses/>.
