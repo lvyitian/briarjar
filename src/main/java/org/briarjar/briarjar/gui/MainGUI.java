@@ -71,7 +71,7 @@ public class MainGUI extends Application {
 
 	public void init()
 	{
-		System.out.println("===== BriarJar GUI Mode =====");
+		System.out.println("=========== BriarJar GUI Mode ============");
 		System.out.println("JDK Version (java.version): "+ System.getProperty("java.version"));
 		System.out.println("JRE Version (java.runtime.version): "+ System.getProperty("java.runtime.version"));
 		System.out.println(("JavaFX Version: " + VersionInfo.getVersion()));

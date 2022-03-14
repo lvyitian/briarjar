@@ -283,55 +283,67 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 
 	public void contactRemovalDialog()
 	{
-		JFXButton remove = new JFXButton("Remove contact");
-		JFXDialog dialog = guiUtils.showConfirmationDialog(
-				"Removing contact",
-				"Are you sure you want to remove " +
-						messageListView.getContact().getAlias() + "?",
-						remove);
-		remove.setOnAction(e -> {
-			try
-			{
-				ContactId contactIdToRemove = messageListView.getContact().getId();
-				messageListView.setContact(null); // prevent NoSuchContactException
-				cvm.removeContact(contactIdToRemove);
-				updateContactList();
-				setCenter(noContactsSelected);
-				setBottom(null);
-				dialog.close();
-			} catch (GeneralException ex)
-			{
-				guiUtils.showMaterialDialog(ex.getTitle(), ex.getMessage());
-			}
-		});
+		if(messageListView != null && messageListView.getContact() != null)
+		{
+			JFXButton remove = new JFXButton("Remove contact");
+			JFXDialog dialog = guiUtils.showConfirmationDialog(
+					"Removing contact",
+					"Are you sure you want to remove " +
+							messageListView.getContact().getAlias() + "?",
+					remove);
+			remove.setOnAction(e -> {
+				try
+				{
+					ContactId contactIdToRemove =
+							messageListView.getContact().getId();
+					messageListView.setContact(
+							null); // prevent NoSuchContactException
+					cvm.removeContact(contactIdToRemove);
+					updateContactList();
+					setCenter(noContactsSelected);
+					setBottom(null);
+					dialog.close();
+				} catch (GeneralException ex)
+				{
+					guiUtils.showMaterialDialog(ex.getTitle(), ex.getMessage());
+				}
+			});
 
-		dialog.show();
+			dialog.show();
+		} else
+			guiUtils.showMaterialDialog("Removing contact", "Please select a contact from the contact list first.");
+
 	}
 
 	/* DELETE ALL MESSAGES */
 
 	public void deleteAllMessagesDialog()
 	{
-		JFXButton wipe = new JFXButton("Wipe");
-		JFXDialog dialog = guiUtils.showConfirmationDialog(
-				"Wiping chat",
-				"You are about to wipe your chat history with " +
-						messageListView.getContact().getAlias() + ". Are you sure?",
-				wipe);
-		wipe.setOnAction(e -> {
-			messageListView.deleteAllMessages();
-			messageListView.initListView(); // re-init
-			dialog.close();
-		});
+		if(messageListView != null && messageListView.getContact() != null)
+		{
+			JFXButton wipe = new JFXButton("Wipe");
+			JFXDialog dialog = guiUtils.showConfirmationDialog(
+					"Wiping chat",
+					"You are about to wipe your chat history with " +
+							messageListView.getContact().getAlias() +
+							". Are you sure?",
+					wipe);
+			wipe.setOnAction(e -> {
+				messageListView.deleteAllMessages();
+				messageListView.initListView(); // re-init
+				dialog.close();
+			});
 
-		dialog.show();
+			dialog.show();
+		} else
+			guiUtils.showMaterialDialog("Deleting all messages", "Please select a contact from the contact list first.");
 	}
 
 	/* CHANGE CONTACT ALIAS */
 
 	public void changeContactAlias()
 	{
-		if(messageListView.getContact() != null)
+		if(messageListView != null && messageListView.getContact() != null)
 		{
 			BoxBlur blur = new BoxBlur(3, 3, 3);
 			JFXDialogLayout dialogLayout = new JFXDialogLayout();
