@@ -180,9 +180,12 @@ public class Conversation extends EventListenerViewModel {
 	{
 		try
 		{
-			var updatedHeader = cvm.getMessageHeaders(contact.getId()).stream().toList();
+			var updatedHeader =
+					cvm.getMessageHeaders(contact.getId()).stream().toList();
+
 			// starting index = last index of header
 			int headersLastIndex = headers.size()-1;
+
 			if(headersLastIndex >= 0)
 			{
 				for (int i = headersLastIndex; i < updatedHeader.size(); i++)
@@ -192,7 +195,11 @@ public class Conversation extends EventListenerViewModel {
 						addMessageToChatBox(updatedHeader.get(i));
 				}
 			} else
-				addMessageToChatBox(updatedHeader.get(0));
+			{
+				if(!updatedHeader.isEmpty())    // prevent indexOutOfBoundsExceptions
+					addMessageToChatBox(updatedHeader.get(0));
+			}
+
 			// update headers
 			this.headers = updatedHeader;
 

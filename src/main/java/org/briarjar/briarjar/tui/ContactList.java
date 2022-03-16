@@ -157,66 +157,77 @@ public class ContactList extends EventListenerViewModel {
 
 		try
 		{
-			if ( cvm.getContacts().size() > 0 )
+			if(cvm.getContacts().size() == 0 && cvm.getPendingContacts().size() == 0)
 			{
-				for ( Contact c : cvm.getContacts() )
+				contentPanel.addComponent(noContactsLabel);
+			}
+			else
+			{
+				if (cvm.getContacts().size() > 0)
 				{
-					contactListBox.addItem( getContactNameForList(c.getId()),
-						() -> {
-							tuiUtils.getConversation().setContact( c );
-							tuiUtils.switchWindow( window,
-									TUIWindow.CONVERSATION );
-						}
-					);
-				}
-				contentPanel.addComponent(contactListBox.setLayoutData(BorderLayout.Location.CENTER));
-			} else
-			{
-
-
-			var pendingContacts = cvm.getPendingContacts();
-			if(pendingContacts.size() > 0)
-			{
-				/* PENDING CONTACTS */
-
-				for (Pair<PendingContact, PendingContactState> pendingContact : pendingContacts)
-				{
-					String alias = pendingContact.getFirst().getAlias();
-					String state = "";
-					switch (pendingContact.getSecond())
+					for (Contact c : cvm.getContacts())
 					{
-						case OFFLINE -> state = " [Offline]";
-						case WAITING_FOR_CONNECTION -> state =
-								" [Waiting for connection]";
-						case CONNECTING -> state = " [Connecting]";
-						case ADDING_CONTACT -> state = " [Adding contact]";
-						case FAILED -> state = " [Failed]";
+						contactListBox.addItem(getContactNameForList(c.getId()),
+								() -> {
+									tuiUtils.getConversation().setContact(c);
+									tuiUtils.switchWindow(window,
+											TUIWindow.CONVERSATION);
+								}
+						);
 					}
+					contentPanel.addComponent(contactListBox.setLayoutData(
+							BorderLayout.Location.CENTER));
+				}
 
-					contactListBox.addItem("[Pending] " + alias + state,
-							() -> {
-								MessageDialogButton b =
-										MessageDialog.showMessageDialog(textGUI,
-												"Remove pending contact",
-												"Are you sure you want to remove this pending contact?",
-												MessageDialogButton.Yes,
-												MessageDialogButton.Cancel);
-								if (b == MessageDialogButton.Yes)
-								{
-									try
+
+				var pendingContacts = cvm.getPendingContacts();
+				if (pendingContacts.size() > 0)
+				{
+					/* PENDING CONTACTS */
+
+					for (Pair<PendingContact, PendingContactState> pendingContact : pendingContacts)
+					{
+						String alias = pendingContact.getFirst().getAlias();
+						String state = "";
+
+						switch (pendingContact.getSecond())
+						{
+							case OFFLINE -> state = " [Offline]";
+							case WAITING_FOR_CONNECTION -> state =
+									" [Waiting for connection]";
+							case CONNECTING -> state = " [Connecting]";
+							case ADDING_CONTACT -> state = " [Adding contact]";
+							case FAILED -> state = " [Failed]";
+						}
+
+						contactListBox.addItem("[Pending] " + alias + state,
+								() -> {
+									MessageDialogButton b =
+											MessageDialog.showMessageDialog(
+													textGUI,
+													"Remove pending contact",
+													"Are you sure you want to remove this pending contact?",
+													MessageDialogButton.Yes,
+													MessageDialogButton.Cancel);
+									if (b == MessageDialogButton.Yes)
 									{
-										cvm.removePendingContact(
-												pendingContact.getFirst()
-												              .getId());
-									} catch (GeneralException e)
-									{
-										tuiUtils.show(e);
+										try
+										{
+											cvm.removePendingContact(
+													pendingContact.getFirst()
+													              .getId());
+											updateContactList();
+										} catch (GeneralException e)
+										{
+											tuiUtils.show(e);
+										}
 									}
 								}
-							});
+						);
 					}
-				} else
-					contentPanel.addComponent(noContactsLabel);
+					contentPanel.addComponent(contactListBox.setLayoutData(
+							BorderLayout.Location.CENTER));
+				}
 			}
 		}
 		catch (GeneralException e)
@@ -338,6 +349,10 @@ public class ContactList extends EventListenerViewModel {
 			updateContactList();
 		}
 		else if (e instanceof PendingContactAddedEvent)
+		{
+			updateContactList();
+		}
+		else if (e instanceof PendingContactStateChangedEvent)
 		{
 			updateContactList();
 		}

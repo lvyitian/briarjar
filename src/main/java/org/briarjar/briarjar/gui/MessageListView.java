@@ -150,8 +150,10 @@ public class MessageListView extends JFXListView<GUIMessage> {
 						addMessageToListView(updatedHeader.get(i));
 				}
 			} else
-				addMessageToListView(updatedHeader.get(0));
-
+			{
+				if (!updatedHeader.isEmpty())
+					addMessageToListView(updatedHeader.get(0));
+			}
 			// update headers
 			this.headers = updatedHeader;
 
