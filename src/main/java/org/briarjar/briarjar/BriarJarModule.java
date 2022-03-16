@@ -65,7 +65,7 @@ import dagger.Provides;
 		})
 public class BriarJarModule {
 
-	private final File appDir = new File(System.getProperty("user.home") + "/.briar");
+	private final File appDir = new File(System.getProperty("user.home") + "/.briar/briarjar");
 
 	@Provides
 	@Singleton
