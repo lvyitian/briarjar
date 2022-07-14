@@ -52,29 +52,26 @@ public class Main {
 		if ( Arrays.stream(args).anyMatch(s -> s.equals("--verbose") || s.equals("-v")))
 			level = Level.ALL;
 
-			LogManager.getLogManager().getLogger("").setLevel(level);
+		LogManager.getLogManager().getLogger("").setLevel(level);
 
-			// testing for terminal
-			// ui = UserInterface.TERMINAL;
+		var briarJarApp = launchApp();
 
-			var briarJarApp = launchApp();
+		if ( ui.equals(UserInterface.TERMINAL) )
+		{
+			MainTUI mainTUI = briarJarApp.getMainTUI();
+			mainTUI.start();
+			System.exit(0);
 
-			if ( ui.equals(UserInterface.TERMINAL) )
-			{
-				MainTUI mainTUI = briarJarApp.getMainTUI();
-				mainTUI.start();
-				System.exit(0);
+		} else
+		{
+			Platform.startup( () -> {
+				MainGUI mainGUI = briarJarApp.getMainGUI();
+				mainGUI.init();
 
-			} else
-			{
-				Platform.startup( () -> {
-					MainGUI mainGUI = briarJarApp.getMainGUI();
-					mainGUI.init();
-
-					Stage stage = new Stage();
-					mainGUI.start( stage );
-				} );
-			}
+				Stage stage = new Stage();
+				mainGUI.start( stage );
+			} );
+		}
 	}
 
 	/**
@@ -91,15 +88,16 @@ public class Main {
 
 	private static void printHelp()
 	{
-		System.out.println("""
-                           BriarJar version 1.00 Copyright (C) 2022 BriarJar Project Team
-                           
-                           Options:
-                           -t, --tui        Start in TUI mode (default is GUI)
-                           
-                           -h, --help       Show (this) help menu
-                           -v, --verbose    Show all logs (floods the TUI, discouraged)
-                           """);
+		System.out.println(
+               """
+               BriarJar version 1.00 Copyright (C) 2022 BriarJar Project Team
+               
+               Options:
+               -t, --tui        Start in TUI mode (default is GUI)
+               
+               -h, --help       Show (this) help menu
+               -v, --verbose    Show all logs (floods the TUI, discouraged)
+               """);
 		System.exit(0);
 	}
 }
