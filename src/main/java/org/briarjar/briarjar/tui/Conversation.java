@@ -363,8 +363,12 @@ public class Conversation extends EventListenerViewModel {
 		{
 			if (e instanceof PrivateMessageReceivedEvent)
 			{
-				updateOnMessageReceived(
-						((PrivateMessageReceivedEvent) e).getMessageHeader());
+				var contactId = ((PrivateMessageReceivedEvent) e).getContactId();
+				if(contact.getId().equals(contactId))
+				{
+					updateOnMessageReceived(
+							((PrivateMessageReceivedEvent) e).getMessageHeader());
+				}
 			} else if (e instanceof MessageAddedEvent)
 			{
 				updateOnMessageAdded();

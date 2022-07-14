@@ -515,10 +515,14 @@ public class MessagesBorderPane extends BorderPane implements EventListener {
 		if (e instanceof PrivateMessageReceivedEvent)
 		{
 			Platform.runLater(() -> {
-				notifyOnNewMessage(((PrivateMessageReceivedEvent) e).getContactId());
-				if(messageListView != null && messageListView.getContact() != null)
-					messageListView.updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
-				});
+				var contactId = ((PrivateMessageReceivedEvent) e).getContactId();
+				notifyOnNewMessage(contactId);
+					if(messageListView != null &&
+							messageListView.getContact() != null &&
+							messageListView.getContact().getId().equals(contactId)
+					)
+						messageListView.updateOnMessageReceived(((PrivateMessageReceivedEvent) e).getMessageHeader());
+					});
 		} else if (e instanceof MessageAddedEvent)
 		{
 			if(messageListView != null && messageListView.getContact() != null)
