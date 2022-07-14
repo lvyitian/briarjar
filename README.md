@@ -1,10 +1,29 @@
 # BriarJar
 
-BriarJar is a prototype based on the messenger [Briar](https://briarproject.org).
-It consists of two different user interfaces, a graphical one (GUI) and a
-terminal one (TUI). BriarJar can run on major GNU/Linux distributions and offers
+BriarJar is a prototype based on the messenger [Briar](https://briarproject.org) and
+was developed in the course of a diploma project in the year 2022.
+The related diploma thesis is available [here](BriarJar_Diploma_Thesis.pdf).
+BriarJar consists of two different user interfaces, a graphical one (GUI) and a
+terminal one (TUI). It can run on major GNU/Linux distributions and offers
 the following functionalities: registration of an account, management of
 contacts, as well as a text communication with a desired conversation partner.
+
+You can get in touch with us via `briarjar@briarproject.org`. 
+For this project e-mail address we decided to not offer a PGP key. The inbox is checked by us from time to time.
+
+### Disclaimer
+
+BriarJar is considered as finalised and will not be maintained any further. 
+Please use BriarJar only within a testing environment. 
+For matured software and more information please visit the website of the messenger Briar: https://briarproject.org/
+
+### GUI Preview
+
+![GUI Preview](screenshot_gui.png "GUI Preview")
+
+### TUI Preview
+
+![TUI Preview](screenshot_tui.png "TUI Preview")
 
 ### Requirements
 
@@ -14,7 +33,7 @@ contacts, as well as a text communication with a desired conversation partner.
 
 ### Usage
 
-Make sure you have the correct Java version: 
+Make sure you have the correct Java version:
 ```
 java -version
 ```
@@ -64,12 +83,6 @@ For convenience, you can use the `start_briarjar.sh` script after building.
 ```
 ./start_briarjar.sh [options]
 ```
-
-## Disclaimer
-
-This is a diploma project and not intended for public use at this time. Please
-use BriarJar only within a testing environment. For matured software and more
-information please visit the website of the messenger Briar: https://briarproject.org/
 
 ## License
 
